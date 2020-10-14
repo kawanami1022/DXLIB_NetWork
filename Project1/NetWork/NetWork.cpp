@@ -1,5 +1,9 @@
+#include <iostream>
 #include <DxLib.h>
+#include "../_debug/_DebugConOut.h"
 #include "NetWork.h"
+#include "HostNetWorkState.h"
+#include "GuestNetWorkState.h"
 
 NetWork* NetWork::hInstance = nullptr;
 
@@ -10,6 +14,43 @@ IPDATA NetWork::GetIP()
 	return ipData;
 }
 
+bool NetWork::SetNetWorkMode(NetWorkMode mode)
+{
+
+	if (mode == NetWorkMode::OFFLINE) { state_ = std::make_unique<NetWorkState>(); }
+	else if (mode == NetWorkMode::HOST) { state_ = std::make_unique<HostNetWorkState>(); }
+	else if (mode == NetWorkMode::GUEST) { state_ = std::make_unique<GuestNetWorkState>(); }
+	else {
+#ifdef _DEBUG
+		if (mode != NetWorkMode::OFFLINE)
+		{
+			std::cout << "ネットワークのエラー検出" << std::endl;
+		}
+#endif
+	}
+	return false;
+}
+
+NetWorkMode NetWork::GetNetWorkMode()
+{
+	return state_->GetNetWorkMode();
+}
+
+bool NetWork::GetActice()
+{
+	return state_->GetActive();
+}
+
+bool NetWork::ConnectHost(IPDATA hostIP)
+{
+	return false;
+}
+
+
+
+
+
 NetWork::NetWork()
 {
+	std::cout << "OFFLINEに設定されてます" << std::endl;
 }

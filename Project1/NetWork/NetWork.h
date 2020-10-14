@@ -1,4 +1,8 @@
 #pragma once
+#include <memory>
+#include <DxLib.h>
+#include "NetWorkState.h"
+
 #define IpNetWork	NetWork::Gethinstance()
 class NetWork
 {
@@ -25,10 +29,18 @@ public:
 	}
 
 	IPDATA GetIP();
-	
+
+
+	bool SetNetWorkMode(NetWorkMode mode);
+	NetWorkMode GetNetWorkMode();
+	bool GetActice();
+
+	bool ConnectHost(IPDATA hostIP);
 
 
 private:
+	std::unique_ptr<NetWorkState> state_;
+
 	static NetWork* hInstance;
 	NetWork();
 };

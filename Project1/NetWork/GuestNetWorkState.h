@@ -7,5 +7,7 @@ public:
 	GuestNetWorkState();
 	~GuestNetWorkState();
 	NetWorkMode GetNetWorkMode();
+	bool ConnectHost(IPDATA hostIP);
+
 };
 

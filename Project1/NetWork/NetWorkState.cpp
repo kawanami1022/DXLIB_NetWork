@@ -14,6 +14,11 @@ NetWorkMode NetWorkState::GetNetWorkMode()
 	return NetWorkMode::OFFLINE;
 }
 
+bool NetWorkState::Update()
+{
+	return false;
+}
+
 bool NetWorkState::GetActive(void)
 {
 	return active_;

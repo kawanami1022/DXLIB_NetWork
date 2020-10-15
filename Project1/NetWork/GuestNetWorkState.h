@@ -8,6 +8,10 @@ public:
 	~GuestNetWorkState();
 	NetWorkMode GetNetWorkMode();
 	bool ConnectHost(IPDATA hostIP);
-
+	bool CheckNetWork();
+	bool Update();
+private:
+	// •Ï”éŒ¾
+	InputState input_;
 };
 

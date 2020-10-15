@@ -20,7 +20,7 @@ int SceneMng::Run()
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
-
+	nowScene = std::make_unique<TitleScene>();
 
 	// 描画先画面を裏画面にセット
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -39,7 +39,7 @@ int SceneMng::Run()
 SceneMng::SceneMng()
 {
 	SetChainCount_ = 0;
-	nowScene = std::make_unique<TitleScene>();
+	
 }
 
 SceneMng::~SceneMng()

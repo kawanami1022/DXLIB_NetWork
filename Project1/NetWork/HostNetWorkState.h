@@ -7,5 +7,6 @@ public:
 	HostNetWorkState();
 	~HostNetWorkState();
 	NetWorkMode GetNetWorkMode();
+	bool CheckNetWork();
 };
 

@@ -36,8 +36,6 @@ public:
 	bool GetActice();
 
 	bool ConnectHost(IPDATA hostIP);
-
-
 private:
 	std::unique_ptr<NetWorkState> state_;
 

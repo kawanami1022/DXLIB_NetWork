@@ -146,6 +146,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="input\controller.h" />
+    <ClInclude Include="input\InputID.h" />
+    <ClInclude Include="input\keyInput.h" />
+    <ClInclude Include="input\Pad.h" />
     <ClInclude Include="NetWork\GuestNetWorkState.h" />
     <ClInclude Include="NetWork\HostNetWorkState.h" />
     <ClInclude Include="NetWork\NetWorkState.h" />
@@ -157,6 +161,9 @@
     <ClInclude Include="_debug\_DebugDispOut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="input\controller.cpp" />
+    <ClCompile Include="input\keyInput.cpp" />
+    <ClCompile Include="input\Pad.cpp" />
     <ClCompile Include="NetWork\GuestNetWorkState.cpp" />
     <ClCompile Include="NetWork\HostNetWorkState.cpp" />
     <ClCompile Include="NetWork\NetWorkState.cpp" />

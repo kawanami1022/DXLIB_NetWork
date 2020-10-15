@@ -36,11 +36,34 @@ bool GuestNetWorkState::CheckNetWork()
 bool GuestNetWorkState::Update()
 {
     controller_.Update();
-    controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Now)];
-    //if ()
-    //{
+    
+    if (controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Old)] == 1)
+    {
+        //ビット演算
+        //input_.move_way|=0x
+    }
+    if (controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Now)]==1&& controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Old)]==1)
+    {
+        //ビット演算
+        //input_.move_way|=0x
 
-    //}
+    }
+
+    if (controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Old)] == 1)
+    {
+        //ビット演算
+        //input_.move_way|=0x
+
+    }
+
+
+    if (controller_.GetCntData()[InputID::Right][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Right][static_cast<int>(Trg::Old)] == 1)
+    {
+        //ビット演算
+        //input_.move_way|=0x
+    }
+
+
     NetWorkSend(netHandle, &input_, sizeof(input_));
 
 

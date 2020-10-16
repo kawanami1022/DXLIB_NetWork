@@ -14,6 +14,11 @@ IPDATA NetWork::GetIP()
 	return ipData;
 }
 
+void NetWork::Update()
+{
+	state_->Update();
+}
+
 bool NetWork::SetNetWorkMode(NetWorkMode mode)
 {
 

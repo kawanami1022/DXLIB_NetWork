@@ -8,5 +8,6 @@ public:
 	~HostNetWorkState();
 	NetWorkMode GetNetWorkMode();
 	bool CheckNetWork();
+	bool Update();
 };
 

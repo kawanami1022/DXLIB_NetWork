@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <DxLib.h>
+#include "../_debug/_DebugDispOut.h"
 #include "TitleScene.h"
 #include "../NetWork/NetWork.h"
 TitleScene::TitleScene():BaseScene()
@@ -69,7 +70,7 @@ void TitleScene::Init()
 		hostIp.d3 = GetIpNum();
 		hostIp.d4 = GetIpNum();
 
-		std::cout << "GESTのIPアドレス	:" << (unsigned int)(hostIp.d1) <<"." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) <<"に設定されました!"<< std::endl;
+		std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) <<"." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) <<"に設定されました!"<< std::endl;
 		succeedFlag = IpNetWork->ConnectHost(hostIp);
 		if (succeedFlag)
 		{
@@ -93,6 +94,17 @@ void TitleScene::Init()
 
 UniqueBase TitleScene::input(UniqueBase nowScene)
 {
+
+	auto InputMode = IpNetWork->GetInputState();
+	if (InputMode.move_way & 0x02)
+	{
+		pos_x += 3;
+	}
+	if (InputMode.move_way & 0x08)
+	{
+		pos_x -= 3;
+	}
+	
 	//controller_.Update();
 	//if (controller_.Hold(InputID::Left)) { pos_x -= 3; }
 	//if (controller_.Hold(InputID::Right)) { pos_x += 3; }
@@ -102,13 +114,14 @@ UniqueBase TitleScene::input(UniqueBase nowScene)
 UniqueBase TitleScene::UpDate(UniqueBase nowScene)
 {
 	
-	//IpNetWork->
+	IpNetWork->Update();
 	return nowScene;
 }
 
 void TitleScene::Draw()
 {
 	ClsDrawScreen();
+	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
 	DrawGraph(pos_x, pos_y, Handle, true);
 	ScreenFlip();
 }

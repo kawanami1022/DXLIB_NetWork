@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include "../input/controller.h"
 #include "../input/Pad.h"
-
+#include "../input/keyInput.h"
 struct InputState
 {
 	int move_way;
@@ -21,15 +21,25 @@ class NetWorkState
 public:
 	NetWorkState();
 	virtual ~NetWorkState();
-	virtual NetWorkMode GetNetWorkMode();
 	virtual bool Update();
-	bool GetActive(void);
 	bool ConnectHost(IPDATA hostIP);
 	//virtual bool CheckNetWork() = 0;
+
+	//ゲッターセッター
+	virtual NetWorkMode GetNetWorkMode();
+	InputState GetInputState()
+	{
+		return input_;
+	}
+	bool GetActive(void);
 protected:
 	const int portNum_ = 8086;
 	bool active_;
 	int netHandle = 0;		// dxlibが使用するハンドル
-	Pad controller_;
+	KeyInput controller_;
+
+
+	// 変数宣言
+	InputState input_;
 };
 

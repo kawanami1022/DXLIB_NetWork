@@ -10,8 +10,9 @@ public:
 	bool ConnectHost(IPDATA hostIP);
 	bool CheckNetWork();
 	bool Update();
+	//ゲッターセッター
+
 private:
-	// 変数宣言
-	InputState input_;
+
 };
 

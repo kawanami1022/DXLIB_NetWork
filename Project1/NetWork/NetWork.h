@@ -31,11 +31,18 @@ public:
 	IPDATA GetIP();
 
 
+	void Update();
+
 	bool SetNetWorkMode(NetWorkMode mode);
 	NetWorkMode GetNetWorkMode();
 	bool GetActice();
 
 	bool ConnectHost(IPDATA hostIP);
+		//ゲッターセッター
+	InputState GetInputState()
+	{
+		return state_->GetInputState();
+	}
 private:
 	std::unique_ptr<NetWorkState> state_;
 

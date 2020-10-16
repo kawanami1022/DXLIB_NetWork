@@ -13,7 +13,7 @@ bool KeyInput::Setup(int no)
 		_InputTbl = {
 			{InputID::Up,KEY_INPUT_UP},
 			{InputID::Down,KEY_INPUT_DOWN},
-			{InputID::Right,KEY_INPUT_LEFT},
+			{InputID::Left,KEY_INPUT_LEFT},
 			{InputID::Right,KEY_INPUT_RIGHT},
 			{InputID::TURN_L,KEY_INPUT_K},
 			{InputID::TURN_R,KEY_INPUT_L}

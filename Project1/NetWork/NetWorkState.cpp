@@ -3,6 +3,7 @@
 NetWorkState::NetWorkState()
 {
 	active_ = false;
+	input_.move_way = 0;
 }
 
 NetWorkState::~NetWorkState()

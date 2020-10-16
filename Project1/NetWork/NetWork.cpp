@@ -22,7 +22,8 @@ void NetWork::Update()
 bool NetWork::SetNetWorkMode(NetWorkMode mode)
 {
 
-	if (mode == NetWorkMode::OFFLINE) { state_ = std::make_unique<NetWorkState>(); }
+	if (mode == NetWorkMode::NON) { state_ = std::make_unique<NetWorkState>(); }
+	else if (mode == NetWorkMode::OFFLINE) { state_ = std::make_unique<NetWorkState>(); }
 	else if (mode == NetWorkMode::HOST) { state_ = std::make_unique<HostNetWorkState>(); }
 	else if (mode == NetWorkMode::GUEST) { state_ = std::make_unique<GuestNetWorkState>(); }
 	else {
@@ -48,6 +49,12 @@ bool NetWork::GetActice()
 
 bool NetWork::ConnectHost(IPDATA hostIP)
 {
+	auto handle = ConnectNetWork(hostIP, state_->GetPortNum());
+	
+	if (handle != -1) {
+		state_->SetNetHandle(handle);
+		return true;
+	}
 	return false;
 }
 

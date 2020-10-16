@@ -31,23 +31,25 @@ bool HostNetWorkState::CheckNetWork()
     }
     else {
         std::cout << "接続されてます" << std::endl;
+        netHandle = tmpID;
         GetNetWorkIP(netHandle, &ipdata);
         std::cout << "接続先IPアドレス" <<std::setw(15)<< (int)(ipdata.d1)<<'.'<<
             (int)(ipdata.d2) << '.'<< (int)(ipdata.d3) << '.'<< (int)(ipdata.d4) << '.'<<std::endl;
         return true;
     }
-
+    
     
     return false;
 }
 
 bool HostNetWorkState::Update()
 {
-    if (CheckNetWork())
+    CheckNetWork();
+    auto DataLength = GetNetWorkDataLength(netHandle);
+    if (DataLength >= sizeof(input_))
     {
-        GetNetWorkDataLength(netHandle);
         NetWorkRecv(netHandle, &input_, sizeof(input_));
-        std::cout << "取得したデータ" << std::setw(5) << input_.move_way << std::endl;
+        std::cout << "取得したデータ" << std::setw(5) << input_.moveDir << std::endl;
     }
     return false;
 }

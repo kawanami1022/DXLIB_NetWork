@@ -3,6 +3,20 @@
 #include <DxLib.h>
 #include "NetWorkState.h"
 
+enum class MesType
+{
+	STANBY,				// 初期化情報送信完了
+	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
+	POS
+};
+
+struct MesDate
+{
+	MesType type;
+	int data[2];
+};
+
+
 #define IpNetWork	NetWork::Gethinstance()
 class NetWork
 {

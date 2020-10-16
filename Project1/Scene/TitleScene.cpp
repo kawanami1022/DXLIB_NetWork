@@ -28,7 +28,7 @@ void TitleScene::Init()
 
 
 	auto inputNum = 0;
-	std::cout << "•¶Žš—ñ‚ð•\Ž¦‚µ‚Ä‚­‚¾‚³‚¢ OFFLINE:0 HOST:1 GUEST:2" << std::endl;
+	std::cout << "•¶Žš—ñ‚ð•\Ž¦‚µ‚Ä‚­‚¾‚³‚¢ OFFLINE:1 HOST:2 GUEST:3" << std::endl;
 	std::cin >> inputNum;
 
 	for (int mode = 0; mode < (int)(NetWorkMode::MAX); mode++)
@@ -96,11 +96,11 @@ UniqueBase TitleScene::input(UniqueBase nowScene)
 {
 
 	auto InputMode = IpNetWork->GetInputState();
-	if (InputMode.move_way & 0x02)
+	if (InputMode.moveDir & 0x02)
 	{
 		pos_x += 3;
 	}
-	if (InputMode.move_way & 0x08)
+	if (InputMode.moveDir & 0x08)
 	{
 		pos_x -= 3;
 	}

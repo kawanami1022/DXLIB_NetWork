@@ -47,7 +47,7 @@ public:
 	{
 		return input_;
 	}
-	bool GetActive(void);
+	ActiveState GetActive(void);
 	const int GetPortNum() {
 		return portNum_;
 	}
@@ -61,7 +61,6 @@ protected:
 	ActiveState active_;
 	int netHandle = 0;		// dxlibが使用するハンドル
 	KeyInput controller_;
-
 
 	// 変数宣言
 	InputState input_;

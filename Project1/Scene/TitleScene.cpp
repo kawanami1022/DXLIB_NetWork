@@ -1,3 +1,4 @@
+#include <memory>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -87,9 +88,10 @@ void TitleScene::Init()
 	default:
 		break;
 	}
-	std::cout << "ó‘Ô‚Í" << IpNetWork->GetActice() << "‚Å‚·\n" << std::endl;
+	std::cout << "ó‘Ô‚Í" << static_cast<int>(IpNetWork->GetActice()) << "‚Å‚·\n" << std::endl;
 
-
+	// ŠÖ”‰Šú‰»
+	updateFunc_[UpdateMode::SetNetWork]= std::bind(this->SetNetWork);
 }
 
 UniqueBase TitleScene::input(UniqueBase nowScene)
@@ -124,4 +126,20 @@ void TitleScene::Draw()
 	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
 	DrawGraph(pos_x, pos_y, Handle, true);
 	ScreenFlip();
+}
+
+void TitleScene::SetNetWork()
+{
+}
+
+void TitleScene::SetHostIP()
+{
+}
+
+void TitleScene::StartInit()
+{
+}
+
+void TitleScene::Play()
+{
 }

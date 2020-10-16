@@ -3,7 +3,7 @@
 
 GuestNetWorkState::GuestNetWorkState()
 {
-    active_ = false;
+    active_ = ActiveState::Init;
     input_.moveDir = 0;
     controller_.Setup(0);
 }
@@ -17,13 +17,13 @@ NetWorkMode GuestNetWorkState::GetNetWorkMode()
     return NetWorkMode::GUEST;
 }
 
-bool GuestNetWorkState::ConnectHost(IPDATA hostIP)
+ActiveState GuestNetWorkState::ConnectHost(IPDATA hostIP)
 {
     // ConnectNetWorkÇ™ê¨å˜ÇµÇƒÇ¢ÇΩÇÁtrueÇ…Ç∑ÇÈ
     netHandle = ConnectNetWork(hostIP);
-    active_ = false;
+    active_ = ActiveState::Init;
     if(netHandle!=-1)
-    active_ = true;
+    active_ = ActiveState::Stanby;
 
     return active_;
 }

@@ -42,7 +42,7 @@ NetWorkMode NetWork::GetNetWorkMode()
 	return state_->GetNetWorkMode();
 }
 
-bool NetWork::GetActice()
+ActiveState NetWork::GetActice()
 {
 	return state_->GetActive();
 }

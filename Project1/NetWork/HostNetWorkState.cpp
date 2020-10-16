@@ -5,8 +5,10 @@
 
 HostNetWorkState::HostNetWorkState()
 {
-    active_ = !PreparationListenNetWork(portNum_);
-    std::cout << active_ << "    " << portNum_<<"     ";
+
+    auto succeed = !PreparationListenNetWork(portNum_);
+    if (succeed) { active_ = ActiveState::Init; }
+    std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
 
     controller_.Setup(0);
 }
@@ -28,6 +30,7 @@ bool HostNetWorkState::CheckNetWork()
     if(tmpID==-1)
     {
         std::cout << "Ø’f‚³‚ê‚Ä‚Ü‚·" << std::endl;
+        active_ = ActiveState::Init;
     }
     else {
         std::cout << "Ú‘±‚³‚ê‚Ä‚Ü‚·" << std::endl;

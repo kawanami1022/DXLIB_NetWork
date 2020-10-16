@@ -7,7 +7,7 @@ public:
 	GuestNetWorkState();
 	~GuestNetWorkState();
 	NetWorkMode GetNetWorkMode();
-	bool ConnectHost(IPDATA hostIP);
+	ActiveState ConnectHost(IPDATA hostIP);
 	bool CheckNetWork();
 	bool Update();
 	//ゲッターセッター

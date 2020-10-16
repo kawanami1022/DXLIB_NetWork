@@ -1,5 +1,7 @@
 #pragma once
+#include <unordered_map>
 #include <array>
+#include <functional>
 #include "BaseScene.h"
 
 enum class UpdateMode
@@ -28,11 +30,16 @@ private:
 	void Draw();
 
 
+	void SetNetWork();
+	void SetHostIP();
+	void StartInit();
+	void Play();
+
+
 	// ïœêî
 	UpdateMode mode;
-	typedef void (TitleScene::* UpdateFunc)();
-	std::array<UpdateFunc, static_cast<int>(UpdateMode::Max)> drawFunc;
-
+	std::unordered_map<UpdateMode, std::function<void()>>updateFunc_;
+	 
 
 	int screen_size_x=800;
 	int screen_size_y=600;

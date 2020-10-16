@@ -49,7 +49,7 @@ public:
 
 	bool SetNetWorkMode(NetWorkMode mode);
 	NetWorkMode GetNetWorkMode();
-	bool GetActice();
+	ActiveState GetActice();
 
 	bool ConnectHost(IPDATA hostIP);
 		//ゲッターセッター

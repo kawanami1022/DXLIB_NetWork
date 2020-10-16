@@ -2,7 +2,7 @@
 
 NetWorkState::NetWorkState()
 {
-	active_ = false;
+	active_ = ActiveState::Init;
 	input_.moveDir = 0;
 }
 
@@ -20,7 +20,7 @@ bool NetWorkState::Update()
 	return false;
 }
 
-bool NetWorkState::GetActive(void)
+ActiveState NetWorkState::GetActive(void)
 {
 	return active_;
 }

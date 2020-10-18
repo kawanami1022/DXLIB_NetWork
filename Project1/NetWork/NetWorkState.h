@@ -5,13 +5,10 @@
 #include "../input/keyInput.h"
 
 
-
 struct InputState
 {
 	unsigned int moveDir;
 };
-
-
 
 enum class NetWorkMode
 {

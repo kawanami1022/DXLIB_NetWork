@@ -37,7 +37,7 @@ private:
 
 
 	// •Ï”
-	UpdateMode mode;
+	UpdateMode mode_;
 	std::unordered_map<UpdateMode, std::function<void()>>updateFunc_;
 	 
 

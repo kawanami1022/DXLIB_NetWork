@@ -25,7 +25,7 @@ void TitleScene::Init()
 
 
 	auto ipData = IpNetWork->GetIP();
-	std::cout <<(int)(ipData.d1) << '.' << (int)(ipData.d2) << '.' << (int)(ipData.d3) << '.' << (int)(ipData.d4) << std::endl;
+	std::cout << (int)(ipData.d1) << '.' << (int)(ipData.d2) << '.' << (int)(ipData.d3) << '.' << (int)(ipData.d4) << std::endl;
 
 
 	auto inputNum = 0;
@@ -45,8 +45,8 @@ void TitleScene::Init()
 		}
 	}
 
-	IPDATA hostIp = {0,0,0,0};
-	std::string ip,data; std::stringstream ssIp;
+	IPDATA hostIp = { 0,0,0,0 };
+	std::string ip, data; std::stringstream ssIp;
 	bool succeedFlag;
 	auto GetIpNum = [&]()
 	{
@@ -71,7 +71,7 @@ void TitleScene::Init()
 		hostIp.d3 = GetIpNum();
 		hostIp.d4 = GetIpNum();
 
-		std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) <<"." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) <<"に設定されました!"<< std::endl;
+		std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "に設定されました!" << std::endl;
 		succeedFlag = IpNetWork->ConnectHost(hostIp);
 		if (succeedFlag)
 		{
@@ -91,7 +91,10 @@ void TitleScene::Init()
 	std::cout << "状態は" << static_cast<int>(IpNetWork->GetActice()) << "です\n" << std::endl;
 
 	// 関数初期化
-	updateFunc_[UpdateMode::SetNetWork]= std::bind(this->SetNetWork);
+	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&TitleScene::SetNetWork,this) },
+					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIP,this) },
+					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInit,this) },
+					{ UpdateMode::Play,std::bind(&TitleScene::Play,this) } };
 }
 
 UniqueBase TitleScene::input(UniqueBase nowScene)

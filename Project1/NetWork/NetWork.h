@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <DxLib.h>
+
 #include "NetWorkState.h"
 
 enum class MesType

@@ -1,3 +1,6 @@
+#include "../input/controller.h"
+#include "../input/Pad.h"
+#include "../input/keyInput.h"
 #include "NetWorkState.h"
 
 NetWorkState::NetWorkState()

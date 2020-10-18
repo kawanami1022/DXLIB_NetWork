@@ -22,8 +22,50 @@ void TitleScene::Init()
 	std::cout << Handle << std::endl;
 	GetDrawScreenSize(&screen_size_x, &screen_size_y);
 
+	IpNetWork;
 
+	// ŠÖ”‰Šú‰»
+	mode_ = UpdateMode::SetNetWork;
+	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&TitleScene::SetNetWork,this) },
+					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIP,this) },
+					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInit,this) },
+					{ UpdateMode::Play,std::bind(&TitleScene::Play,this) } };
+}
 
+UniqueBase TitleScene::input(UniqueBase nowScene)
+{
+
+	auto InputMode = IpNetWork->GetInputState();
+	if (InputMode.moveDir & 0x02)
+	{
+		pos_x += 3;
+	}
+	if (InputMode.moveDir & 0x08)
+	{
+		pos_x -= 3;
+	}
+	
+	return nowScene;
+}
+
+UniqueBase TitleScene::UpDate(UniqueBase nowScene)
+{
+	
+	IpNetWork->Update();
+	updateFunc_[mode_]();
+	return nowScene;
+}
+
+void TitleScene::Draw()
+{
+	ClsDrawScreen();
+	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
+	DrawGraph(pos_x, pos_y, Handle, true);
+	ScreenFlip();
+}
+
+void TitleScene::SetNetWork()
+{
 	auto ipData = IpNetWork->GetIP();
 	std::cout << (int)(ipData.d1) << '.' << (int)(ipData.d2) << '.' << (int)(ipData.d3) << '.' << (int)(ipData.d4) << std::endl;
 
@@ -90,49 +132,6 @@ void TitleScene::Init()
 	}
 	std::cout << "ó‘Ô‚Í" << static_cast<int>(IpNetWork->GetActice()) << "‚Å‚·\n" << std::endl;
 
-	// ŠÖ”‰Šú‰»
-	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&TitleScene::SetNetWork,this) },
-					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIP,this) },
-					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInit,this) },
-					{ UpdateMode::Play,std::bind(&TitleScene::Play,this) } };
-}
-
-UniqueBase TitleScene::input(UniqueBase nowScene)
-{
-
-	auto InputMode = IpNetWork->GetInputState();
-	if (InputMode.moveDir & 0x02)
-	{
-		pos_x += 3;
-	}
-	if (InputMode.moveDir & 0x08)
-	{
-		pos_x -= 3;
-	}
-	
-	//controller_.Update();
-	//if (controller_.Hold(InputID::Left)) { pos_x -= 3; }
-	//if (controller_.Hold(InputID::Right)) { pos_x += 3; }
-	return nowScene;
-}
-
-UniqueBase TitleScene::UpDate(UniqueBase nowScene)
-{
-	
-	IpNetWork->Update();
-	return nowScene;
-}
-
-void TitleScene::Draw()
-{
-	ClsDrawScreen();
-	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
-	DrawGraph(pos_x, pos_y, Handle, true);
-	ScreenFlip();
-}
-
-void TitleScene::SetNetWork()
-{
 }
 
 void TitleScene::SetHostIP()

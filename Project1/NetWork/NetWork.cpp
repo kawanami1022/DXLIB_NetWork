@@ -62,4 +62,5 @@ bool NetWork::ConnectHost(IPDATA hostIP)
 NetWork::NetWork()
 {
 	std::cout << "OFFLINE‚ÉÝ’è‚³‚ê‚Ä‚Ü‚·" << std::endl;
+	state_ = std::make_unique<NetWorkState>();
 }

@@ -143,6 +143,7 @@ void TitleScene::StartInit()
 	// ‰æ‘œ“Ç‚İ‚İ
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 	std::cout << Handle << std::endl;
+	mode_ = UpdateMode::Play;
 }
 
 void TitleScene::Play()

@@ -28,6 +28,26 @@ ActiveState NetWorkState::GetActive(void)
 	return active_;
 }
 
+void NetWorkState::UpdateFuncWait()
+{
+}
+
+void NetWorkState::UpdateFuncInit()
+{
+}
+
+void NetWorkState::UpdateFuncStanby()
+{
+}
+
+void NetWorkState::UpdateFuncPlay()
+{
+}
+
+void NetWorkState::UpdateFuncOFFLINE()
+{
+}
+
 bool NetWorkState::ConnectHost(IPDATA hostIP)
 {
 	return false;

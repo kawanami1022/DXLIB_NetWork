@@ -47,12 +47,14 @@ bool HostNetWorkState::CheckNetWork()
 
 bool HostNetWorkState::Update()
 {
-    CheckNetWork();
-    auto DataLength = GetNetWorkDataLength(netHandle);
-    if (DataLength >= sizeof(input_))
+    if (CheckNetWork())
     {
-        NetWorkRecv(netHandle, &input_, sizeof(input_));
-        std::cout << "取得したデータ" << std::setw(5) << input_.moveDir << std::endl;
+        auto DataLength = GetNetWorkDataLength(netHandle);
+        if (DataLength >= sizeof(input_))
+        {
+            NetWorkRecv(netHandle, &input_, sizeof(input_));
+            std::cout << "取得したデータ" << std::setw(5) << input_.moveDir << std::endl;
+        }
     }
     return false;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <unordered_map>
 #include <DxLib.h>
 #include "../input/controller.h"
@@ -55,19 +56,23 @@ public:
 		netHandle = handle;
 	}
 protected:
+
+	// 変数宣言
+	const int portNum_ = 8086;
+	ActiveState active_;
+	int netHandle = 0;		// dxlibが使用するハンドル
+	KeyInput controller_;
+
+	InputState input_;
+	std::unordered_map< ActiveState, std::function<void(void)>> activeFunc_;
+
+
+	// 関数
 	virtual void UpdateFuncWait();	// 接続待機状態(ホスト用)
 	virtual void UpdateFuncInit();	// 初期化中(ゲーム開始準備中、ホストゲスト兼用)
 	virtual void UpdateFuncStanby();	// 初期化情報送信済みの開始待ち
 	virtual void UpdateFuncPlay();	// ゲーム中(ホスト/ゲスト兼用)
 	virtual void UpdateFuncOFFLINE();
 
-
-	const int portNum_ = 8086;
-	ActiveState active_;
-	int netHandle = 0;		// dxlibが使用するハンドル
-	KeyInput controller_;
-
-	// 変数宣言
-	InputState input_;
 };
 

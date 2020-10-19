@@ -1,3 +1,4 @@
+#include <memory>
 #include <iostream>
 
 #include "GuestNetWorkState.h"
@@ -68,4 +69,26 @@ bool GuestNetWorkState::Update()
 
 
     return false;
+}
+
+void GuestNetWorkState::UpdateFuncWait()
+{
+
+    
+}
+
+void GuestNetWorkState::UpdateFuncInit()
+{
+}
+
+void GuestNetWorkState::UpdateFuncStanby()
+{
+}
+
+void GuestNetWorkState::UpdateFuncPlay()
+{
+}
+
+void GuestNetWorkState::UpdateFuncOFFLINE()
+{
 }

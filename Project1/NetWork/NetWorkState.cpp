@@ -7,6 +7,11 @@ NetWorkState::NetWorkState()
 {
 	active_ = ActiveState::Init;
 	input_.moveDir = 0;
+	activeFunc_ = { {ActiveState::Wait,std::bind(&NetWorkState::UpdateFuncWait,this)},
+				{ActiveState::Init,std::bind(&NetWorkState::UpdateFuncInit,this)},
+				{ActiveState::Stanby,std::bind(&NetWorkState::UpdateFuncStanby,this)},
+				{ActiveState::Play,std::bind(&NetWorkState::UpdateFuncPlay,this)},
+				{ActiveState::OFFLINE,std::bind(&NetWorkState::UpdateFuncOFFLINE,this)} };
 }
 
 NetWorkState::~NetWorkState()

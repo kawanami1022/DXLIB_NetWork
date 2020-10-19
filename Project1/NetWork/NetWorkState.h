@@ -6,6 +6,10 @@
 #include "../input/Pad.h"
 #include "../input/keyInput.h"
 
+enum class ActiveState;
+
+using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
+
 
 struct InputState
 {
@@ -37,7 +41,7 @@ public:
 	NetWorkState();
 	virtual ~NetWorkState();
 	virtual bool Update();
-	bool ConnectHost(IPDATA hostIP);
+	ActiveState ConnectHost(IPDATA hostIP);
 	//virtual bool CheckNetWork() = 0;
 
 	//ゲッターセッター
@@ -64,10 +68,11 @@ protected:
 	KeyInput controller_;
 
 	InputState input_;
-	std::unordered_map< ActiveState, std::function<void(void)>> activeFunc_;
+	ActiveFunc activeFunc_;
 
 
 	// 関数
+	virtual void UpdateFuncNon();	
 	virtual void UpdateFuncWait();	// 接続待機状態(ホスト用)
 	virtual void UpdateFuncInit();	// 初期化中(ゲーム開始準備中、ホストゲスト兼用)
 	virtual void UpdateFuncStanby();	// 初期化情報送信済みの開始待ち

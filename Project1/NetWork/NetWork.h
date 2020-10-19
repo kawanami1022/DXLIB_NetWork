@@ -52,7 +52,7 @@ public:
 	NetWorkMode GetNetWorkMode();
 	ActiveState GetActice();
 
-	bool ConnectHost(IPDATA hostIP);
+	ActiveState ConnectHost(IPDATA hostIP);
 		//ゲッターセッター
 	InputState GetInputState()
 	{

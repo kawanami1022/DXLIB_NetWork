@@ -106,7 +106,7 @@ void TitleScene::SetHostIP()
 	std::cout << "---------SetHostIP----------" << std::endl;
 	IPDATA hostIp = { 0,0,0,0 };
 	std::string ip, data; std::stringstream ssIp;
-	bool succeedFlag;
+	ActiveState activeState_;
 	auto GetIpNum = [&]()
 	{
 		std::getline(ssIp, data, '.');
@@ -125,14 +125,16 @@ void TitleScene::SetHostIP()
 	hostIp.d4 = GetIpNum();
 
 	std::cout << "HOST‚ÌIPƒAƒhƒŒƒX	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "‚ÉÝ’è‚³‚ê‚Ü‚µ‚½!" << std::endl;
-	succeedFlag = IpNetWork->ConnectHost(hostIp);
-	if (succeedFlag)
+	activeState_ = IpNetWork->ConnectHost(hostIp);
+	if (activeState_== ActiveState::Stanby)
 	{
 		std::cout << "Ú‘±¬Œ÷!" << std::endl;
+		mode_ = UpdateMode::StartInit;
 	}
 	else
 	{
 		std::cout << "Ú‘±Ž¸”s!" << std::endl;
+		mode_ = UpdateMode::SetHostIP;
 	}
 }
 

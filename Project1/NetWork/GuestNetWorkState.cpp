@@ -37,6 +37,32 @@ bool GuestNetWorkState::CheckNetWork()
 
 bool GuestNetWorkState::Update()
 {
+    activeFunc_[active_]();
+    return false;
+}
+
+void GuestNetWorkState::UpdateFuncNon()
+{
+}
+
+void GuestNetWorkState::UpdateFuncWait()
+{
+    
+}
+
+void GuestNetWorkState::UpdateFuncInit()
+{
+    //ここに初期化情報を入力する
+
+    active_ = ActiveState::Play;
+}
+
+void GuestNetWorkState::UpdateFuncStanby()
+{
+}
+
+void GuestNetWorkState::UpdateFuncPlay()
+{
     controller_.Update();
     input_.moveDir = 0x00;
     if (controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Old)] == 1)
@@ -51,42 +77,18 @@ bool GuestNetWorkState::Update()
         input_.moveDir |= 0x02;
     }
 
-    if (controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Now)]==1&& controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Old)]==1)
+    if (controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Old)] == 1)
     {
         //ビット演算
         input_.moveDir |= 0x04;
-
     }
 
     if (controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Old)] == 1)
     {
         //ビット演算
         input_.moveDir |= 0x08;
-
     }
-
     NetWorkSend(netHandle, &input_, sizeof(input_));
-
-
-    return false;
-}
-
-void GuestNetWorkState::UpdateFuncWait()
-{
-
-    
-}
-
-void GuestNetWorkState::UpdateFuncInit()
-{
-}
-
-void GuestNetWorkState::UpdateFuncStanby()
-{
-}
-
-void GuestNetWorkState::UpdateFuncPlay()
-{
 }
 
 void GuestNetWorkState::UpdateFuncOFFLINE()

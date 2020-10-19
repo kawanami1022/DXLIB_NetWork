@@ -7,7 +7,7 @@ HostNetWorkState::HostNetWorkState()
 {
 
     auto succeed = !PreparationListenNetWork(portNum_);
-    if (succeed) { active_ = ActiveState::Init; }
+    if (succeed) { active_ = ActiveState::Wait; }
     std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
 
     controller_.Setup(0);
@@ -47,6 +47,7 @@ bool HostNetWorkState::CheckNetWork()
 
 bool HostNetWorkState::Update()
 {
+    activeFunc_[active_]();
     if (CheckNetWork())
     {
         auto DataLength = GetNetWorkDataLength(netHandle);
@@ -57,4 +58,28 @@ bool HostNetWorkState::Update()
         }
     }
     return false;
+}
+
+void HostNetWorkState::UpdateFuncNon()
+{
+}
+
+void HostNetWorkState::UpdateFuncWait()
+{
+}
+
+void HostNetWorkState::UpdateFuncInit()
+{
+}
+
+void HostNetWorkState::UpdateFuncStanby()
+{
+}
+
+void HostNetWorkState::UpdateFuncPlay()
+{
+}
+
+void HostNetWorkState::UpdateFuncOFFLINE()
+{
 }

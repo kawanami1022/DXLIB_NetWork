@@ -47,15 +47,16 @@ ActiveState NetWork::GetActice()
 	return state_->GetActive();
 }
 
-bool NetWork::ConnectHost(IPDATA hostIP)
+ActiveState NetWork::ConnectHost(IPDATA hostIP)
 {
+	std::cout << "------------NetWork class-----------" << std::endl;
 	auto handle = ConnectNetWork(hostIP, state_->GetPortNum());
 	
 	if (handle != -1) {
 		state_->SetNetHandle(handle);
-		return true;
+		return state_->GetActive();
 	}
-	return false;
+	return state_->GetActive();
 }
 
 

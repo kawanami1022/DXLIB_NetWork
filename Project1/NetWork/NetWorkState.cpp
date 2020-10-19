@@ -5,9 +5,11 @@
 
 NetWorkState::NetWorkState()
 {
-	active_ = ActiveState::Init;
+	active_ = ActiveState::Non;
 	input_.moveDir = 0;
-	activeFunc_ = { {ActiveState::Wait,std::bind(&NetWorkState::UpdateFuncWait,this)},
+	activeFunc_ = { 
+				{ActiveState::Non,std::bind(&NetWorkState::UpdateFuncNon,this)},
+				{ActiveState::Wait,std::bind(&NetWorkState::UpdateFuncWait,this)},
 				{ActiveState::Init,std::bind(&NetWorkState::UpdateFuncInit,this)},
 				{ActiveState::Stanby,std::bind(&NetWorkState::UpdateFuncStanby,this)},
 				{ActiveState::Play,std::bind(&NetWorkState::UpdateFuncPlay,this)},
@@ -25,12 +27,17 @@ NetWorkMode NetWorkState::GetNetWorkMode()
 
 bool NetWorkState::Update()
 {
+	activeFunc_[active_]();
 	return false;
 }
 
 ActiveState NetWorkState::GetActive(void)
 {
 	return active_;
+}
+
+void NetWorkState::UpdateFuncNon()
+{
 }
 
 void NetWorkState::UpdateFuncWait()
@@ -53,7 +60,7 @@ void NetWorkState::UpdateFuncOFFLINE()
 {
 }
 
-bool NetWorkState::ConnectHost(IPDATA hostIP)
+ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 {
-	return false;
+	return active_;
 }

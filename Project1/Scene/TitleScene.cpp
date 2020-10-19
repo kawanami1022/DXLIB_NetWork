@@ -28,28 +28,22 @@ void TitleScene::Init()
 					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIP,this) },
 					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInit,this) },
 					{ UpdateMode::Play,std::bind(&TitleScene::Play,this) } };
+
+	DrawFunc_ = { { UpdateMode::SetNetWork,std::bind(&TitleScene::SetNetWorkDraw,this) },
+					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIPDraw,this) },
+					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInitDraw,this) },
+					{ UpdateMode::Play,std::bind(&TitleScene::PlayDraw,this) } };
 }
 
 UniqueBase TitleScene::input(UniqueBase nowScene)
 {
 
-	auto InputMode = IpNetWork->GetInputState();
-	if (InputMode.moveDir & 0x02)
-	{
-		pos_x += 3;
-	}
-	if (InputMode.moveDir & 0x08)
-	{
-		pos_x -= 3;
-	}
-	
 	return nowScene;
 }
 
 UniqueBase TitleScene::UpDate(UniqueBase nowScene)
 {
 	
-	IpNetWork->Update();
 	updateFunc_[mode_]();
 	return nowScene;
 }
@@ -57,13 +51,13 @@ UniqueBase TitleScene::UpDate(UniqueBase nowScene)
 void TitleScene::Draw()
 {
 	ClsDrawScreen();
-	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
-	DrawGraph(pos_x, pos_y, Handle, true);
+	DrawFunc_[mode_]();
 	ScreenFlip();
 }
 
 void TitleScene::SetNetWork()
 {
+	std::cout << "---------SetNetWork----------" << std::endl;
 	auto ipData = IpNetWork->GetIP();
 	std::cout << (int)(ipData.d1) << '.' << (int)(ipData.d2) << '.' << (int)(ipData.d3) << '.' << (int)(ipData.d4) << std::endl;
 
@@ -85,55 +79,31 @@ void TitleScene::SetNetWork()
 		}
 	}
 
-	IPDATA hostIp = { 0,0,0,0 };
-	std::string ip, data; std::stringstream ssIp;
-	bool succeedFlag;
-	auto GetIpNum = [&]()
-	{
-		std::getline(ssIp, data, '.');
-		return atoi(data.c_str());
-	};
+	auto NetWorkMode = IpNetWork->GetNetWorkMode();
 
-	switch (IpNetWork->GetNetWorkMode())
+	if (NetWorkMode == NetWorkMode::HOST)
 	{
-	case NetWorkMode::HOST:
 		std::cout << "HOSTに設定されてます" << std::endl;
-		break;
-	case NetWorkMode::GUEST:
-		std::cout << "GUESTに設定されてます" << std::endl;
-		std::cout << "IPアドレスを入力してください" << std::endl;
-		std::cin >> ip;
-		// ipに入力された情報をhostIpに入れる
-		ssIp << ip;
-
-		hostIp.d1 = GetIpNum();
-		hostIp.d2 = GetIpNum();
-		hostIp.d3 = GetIpNum();
-		hostIp.d4 = GetIpNum();
-
-		std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "に設定されました!" << std::endl;
-		succeedFlag = IpNetWork->ConnectHost(hostIp);
-		if (succeedFlag)
-		{
-			std::cout << "接続成功!" << std::endl;
-		}
-		else
-		{
-			std::cout << "接続失敗!" << std::endl;
-		}
-		break;
-	case NetWorkMode::OFFLINE:
-		std::cout << "OFFLINEに設定されてます" << std::endl;
-		break;
-	default:
-		break;
+		mode_ = UpdateMode::StartInit;
 	}
+	else if (NetWorkMode == NetWorkMode::GUEST)
+	{
+		std::cout << "GUESTに設定されてます" << std::endl;
+		mode_ = UpdateMode::SetHostIP;
+	}
+	else if (NetWorkMode == NetWorkMode::OFFLINE)
+	{
+		std::cout << "OFFLINEに設定されてます" << std::endl;
+		mode_ = UpdateMode::StartInit;
+	}
+
 	std::cout << "状態は" << static_cast<int>(IpNetWork->GetActice()) << "です\n" << std::endl;
 
 }
 
 void TitleScene::SetHostIP()
 {
+	std::cout << "---------SetHostIP----------" << std::endl;
 	IPDATA hostIp = { 0,0,0,0 };
 	std::string ip, data; std::stringstream ssIp;
 	bool succeedFlag;
@@ -168,6 +138,8 @@ void TitleScene::SetHostIP()
 
 void TitleScene::StartInit()
 {
+	std::cout << "---------StartInit-----------" << std::endl;
+
 	// 画像読み込み
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 	std::cout << Handle << std::endl;
@@ -175,6 +147,8 @@ void TitleScene::StartInit()
 
 void TitleScene::Play()
 {
+	IpNetWork->Update();
+
 	auto InputMode = IpNetWork->GetInputState();
 	if (InputMode.moveDir & 0x02)
 	{
@@ -185,4 +159,23 @@ void TitleScene::Play()
 		pos_x -= 3;
 	}
 
+}
+
+void TitleScene::SetNetWorkDraw()
+{
+}
+
+void TitleScene::SetHostIPDraw()
+{
+	
+}
+
+void TitleScene::StartInitDraw()
+{
+}
+
+void TitleScene::PlayDraw()
+{
+	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
+	DrawGraph(pos_x, pos_y, Handle, true);
 }

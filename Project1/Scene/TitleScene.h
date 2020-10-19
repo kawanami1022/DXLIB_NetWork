@@ -3,6 +3,9 @@
 #include <array>
 #include <functional>
 #include "BaseScene.h"
+enum class UpdateMode;
+
+using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void()>>;
 
 enum class UpdateMode
 {
@@ -29,16 +32,21 @@ private:
 	UniqueBase UpDate(UniqueBase);
 	void Draw();
 
-
+	//updateFunc_
 	void SetNetWork();
 	void SetHostIP();
 	void StartInit();
 	void Play();
-
+	//DrawFunc_
+	void SetNetWorkDraw();
+	void SetHostIPDraw();
+	void StartInitDraw();
+	void PlayDraw();
 
 	// ïœêî
 	UpdateMode mode_;
-	std::unordered_map<UpdateMode, std::function<void()>>updateFunc_;
+	UpdateMapFunc updateFunc_;
+	UpdateMapFunc DrawFunc_;
 	 
 
 	int screen_size_x=800;

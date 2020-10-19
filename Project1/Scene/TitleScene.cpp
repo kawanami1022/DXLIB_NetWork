@@ -17,9 +17,7 @@ TitleScene::~TitleScene()
 
 void TitleScene::Init()
 {
-	// 画像読み込み
-	Handle = LoadGraph("Image/PURPLE_Puyo.png");
-	std::cout << Handle << std::endl;
+
 	GetDrawScreenSize(&screen_size_x, &screen_size_y);
 
 	IpNetWork;
@@ -136,12 +134,55 @@ void TitleScene::SetNetWork()
 
 void TitleScene::SetHostIP()
 {
+	IPDATA hostIp = { 0,0,0,0 };
+	std::string ip, data; std::stringstream ssIp;
+	bool succeedFlag;
+	auto GetIpNum = [&]()
+	{
+		std::getline(ssIp, data, '.');
+		return atoi(data.c_str());
+	};
+
+	std::cout << "GUESTに設定されてます" << std::endl;
+	std::cout << "IPアドレスを入力してください" << std::endl;
+	std::cin >> ip;
+	// ipに入力された情報をhostIpに入れる
+	ssIp << ip;
+
+	hostIp.d1 = GetIpNum();
+	hostIp.d2 = GetIpNum();
+	hostIp.d3 = GetIpNum();
+	hostIp.d4 = GetIpNum();
+
+	std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "に設定されました!" << std::endl;
+	succeedFlag = IpNetWork->ConnectHost(hostIp);
+	if (succeedFlag)
+	{
+		std::cout << "接続成功!" << std::endl;
+	}
+	else
+	{
+		std::cout << "接続失敗!" << std::endl;
+	}
 }
 
 void TitleScene::StartInit()
 {
+	// 画像読み込み
+	Handle = LoadGraph("Image/PURPLE_Puyo.png");
+	std::cout << Handle << std::endl;
 }
 
 void TitleScene::Play()
 {
+	auto InputMode = IpNetWork->GetInputState();
+	if (InputMode.moveDir & 0x02)
+	{
+		pos_x += 3;
+	}
+	if (InputMode.moveDir & 0x08)
+	{
+		pos_x -= 3;
+	}
+
 }

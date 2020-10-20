@@ -46,6 +46,8 @@ public:
 
 	//ゲッターセッター
 	virtual NetWorkMode GetNetWorkMode();
+
+
 	InputState GetInputState()
 	{
 		return input_;
@@ -53,6 +55,11 @@ public:
 	ActiveState GetActive(void);
 	const int GetPortNum() {
 		return portNum_;
+	}
+
+	void SetNetWorkState(ActiveState activeState)
+	{
+		this->active_ = activeState;
 	}
 
 	void SetNetHandle(int handle)

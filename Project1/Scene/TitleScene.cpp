@@ -126,7 +126,7 @@ void TitleScene::SetHostIP()
 
 	std::cout << "HOST‚ÌIPƒAƒhƒŒƒX	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "‚ÉÝ’è‚³‚ê‚Ü‚µ‚½!" << std::endl;
 	activeState_ = IpNetWork->ConnectHost(hostIp);
-	if (activeState_== ActiveState::Stanby)
+	if (activeState_== ActiveState::Init)
 	{
 		std::cout << "Ú‘±¬Œ÷!" << std::endl;
 		mode_ = UpdateMode::StartInit;

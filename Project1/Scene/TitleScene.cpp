@@ -43,7 +43,7 @@ UniqueBase TitleScene::input(UniqueBase nowScene)
 
 UniqueBase TitleScene::UpDate(UniqueBase nowScene)
 {
-	
+	IpNetWork->Update();
 	updateFunc_[mode_]();
 	return nowScene;
 }
@@ -150,7 +150,6 @@ void TitleScene::StartInit()
 
 void TitleScene::Play()
 {
-	IpNetWork->Update();
 
 	auto InputMode = IpNetWork->GetInputState();
 	if (InputMode.moveDir & 0x02)

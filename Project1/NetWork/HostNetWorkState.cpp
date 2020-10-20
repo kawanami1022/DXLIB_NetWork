@@ -26,7 +26,7 @@ bool HostNetWorkState::CheckNetWork()
 {
     IPDATA ipdata = { 0,0,0,0 };
     //接続状態を取得する
-    auto tmpID = GetNewAcceptNetWork();
+    auto tmpID = GetNetWorkAcceptState(netHandle);
     if(tmpID==-1)
     {
         std::cout << "切断されてます" << std::endl;
@@ -40,23 +40,12 @@ bool HostNetWorkState::CheckNetWork()
             (int)(ipdata.d2) << '.'<< (int)(ipdata.d3) << '.'<< (int)(ipdata.d4) << '.'<<std::endl;
         return true;
     }
-    
-    
     return false;
 }
 
 bool HostNetWorkState::Update()
 {
     activeFunc_[active_]();
-    if (CheckNetWork())
-    {
-        auto DataLength = GetNetWorkDataLength(netHandle);
-        if (DataLength >= sizeof(input_))
-        {
-            NetWorkRecv(netHandle, &input_, sizeof(input_));
-            std::cout << "取得したデータ" << std::setw(5) << input_.moveDir << std::endl;
-        }
-    }
     return false;
 }
 
@@ -66,10 +55,17 @@ void HostNetWorkState::UpdateFuncNon()
 
 void HostNetWorkState::UpdateFuncWait()
 {
+    if (GetNewAcceptNetWork()==1)
+    {
+        std::cout << "接続されてます" << std::endl;
+        active_ = ActiveState::Init;
+    }
 }
 
 void HostNetWorkState::UpdateFuncInit()
 {
+
+    std::cout << "初期化完了 !    Stanby状態に移動" << std::endl;
 }
 
 void HostNetWorkState::UpdateFuncStanby()
@@ -78,6 +74,15 @@ void HostNetWorkState::UpdateFuncStanby()
 
 void HostNetWorkState::UpdateFuncPlay()
 {
+    if (CheckNetWork())
+    {
+        auto DataLength = GetNetWorkDataLength(netHandle);
+        if (DataLength >= sizeof(input_))
+        {
+            NetWorkRecv(netHandle, &input_, sizeof(input_));
+            std::cout << "取得したデータ" << std::setw(5) << input_.moveDir << std::endl;
+        }
+    }
 }
 
 void HostNetWorkState::UpdateFuncOFFLINE()

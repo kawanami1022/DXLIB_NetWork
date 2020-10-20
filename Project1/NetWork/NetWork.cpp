@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <DxLib.h>
 #include "../_debug/_DebugConOut.h"
@@ -49,10 +50,13 @@ ActiveState NetWork::GetActice()
 
 ActiveState NetWork::ConnectHost(IPDATA hostIP)
 {
+	//172.20.39.53
 	std::cout << "------------NetWork class-----------" << std::endl;
 	auto handle = ConnectNetWork(hostIP, state_->GetPortNum());
 	
 	if (handle != -1) {
+		std::cout << "Ú‘±¬Œ÷!" << std::endl;
+		std::cout << handle << std::endl;
 		state_->SetNetHandle(handle);
 		return state_->GetActive();
 	}

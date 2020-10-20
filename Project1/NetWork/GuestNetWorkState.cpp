@@ -52,9 +52,16 @@ void GuestNetWorkState::UpdateFuncWait()
 
 void GuestNetWorkState::UpdateFuncInit()
 {
-    //‚±‚±‚É‰Šú‰»î•ñ‚ð“ü—Í‚·‚é
-
-    active_ = ActiveState::Play;
+    if (GetNetWorkDataLength(netHandle) >= sizeof(input_))
+    {
+        if (NetWorkRecv(netHandle, &input_, sizeof(input_)) == 0)
+        {
+            std::cout << "‰Šú‰»î•ñ‚ðŽóM‚Ü‚µ‚½" << std::endl;
+            //‚±‚±‚É‰Šú‰»î•ñ‚ð“ü—Í‚·‚é
+            active_ = ActiveState::Play;
+        }
+    }
+   
 }
 
 void GuestNetWorkState::UpdateFuncStanby()
@@ -63,6 +70,7 @@ void GuestNetWorkState::UpdateFuncStanby()
 
 void GuestNetWorkState::UpdateFuncPlay()
 {
+
     controller_.Update();
     input_.moveDir = 0x00;
     if (controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Old)] == 1)
@@ -89,6 +97,10 @@ void GuestNetWorkState::UpdateFuncPlay()
         input_.moveDir |= 0x08;
     }
     NetWorkSend(netHandle, &input_, sizeof(input_));
+    if (GetLostNetWork()==0)
+    {
+        active_ = ActiveState::Init;
+    }
 }
 
 void GuestNetWorkState::UpdateFuncOFFLINE()

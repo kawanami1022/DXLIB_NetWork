@@ -1,3 +1,4 @@
+#include <iostream>
 #include <DxLib.h>
 #include "SceneMng.h"
 #include "Scene/BaseScene.h"
@@ -16,7 +17,7 @@ int SceneMng::Run()
 	{
 		return -1;				// エラーが起きたら直ちに終了
 	}
-
+	std::cout << "DXLib初期化" << std::endl;
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);

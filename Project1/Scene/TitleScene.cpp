@@ -155,7 +155,11 @@ void TitleScene::StartInit()
 	}
 
 	tileHandle_ = std::make_unique<int[]>(12);
-	LoadDivGraph("Image/map.png",12,4,3,)
+	LoadDivGraph("Image/map.png", 12, 4, 3, tmxFile_->tileheight_, tmxFile_->tilewidth_, tileHandle_.get());
+	for (int idx = 0; idx < 12; idx++)
+	{
+		std::cout << tileHandle_[idx] << std::endl;
+	}
 	mode_ = UpdateMode::Play;
 }
 
@@ -193,4 +197,12 @@ void TitleScene::PlayDraw()
 
 
 	DrawGraph(pos_x, pos_y, Handle, true);
+
+	for (int y = 0; y < tmxFile_->height_; y++)
+	{
+		for (int x = 0; x < tmxFile_->width_; x++)
+		{
+			DrawGraph(x * tmxFile_->tileheight_, y * tmxFile_->tilewidth_, tileHandle_[tmxFile_->tiledMap_["Character"].titleID_[x][y]], true);
+		}
+	}
 }

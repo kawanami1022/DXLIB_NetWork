@@ -41,8 +41,8 @@ namespace File
 		int width_ = 0;
 		int height_ = 0;
 
-		int tilewidth_ = 0;
-		int tileheight_ = 0;
+		int tilewidth_ = 0;	// tilesize :width
+		int tileheight_ = 0;	// tilesize :height
 
 		bool load_TMX(std::string FilePos);
 	};

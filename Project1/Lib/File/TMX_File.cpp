@@ -39,7 +39,6 @@ void File::Tiled_Map::SetTiles(int y, int width, std::string lineString)
 
 bool File::TMX_File::load_TMX(std::string FilePos)
 {
-	TMX_File tmxFile;
 	std::string lineString;
 	std::stringstream ss;
 	auto filePos = 0;
@@ -71,65 +70,65 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 
 		std::cout << lineString << std::endl;
 
-		if (tmxFile.mode_ == ReadTmxMode::INIT)
+		if (this->mode_ == ReadTmxMode::INIT)
 		{
 			std::getline(FileStream, lineString);
-			if (tmxFile.encoding.length() == 0)
+			if (this->encoding.length() == 0)
 			{
-				tmxFile.encoding = strmanip::ExtractTheStrDblQt(lineString, "encoding");
-				if (tmxFile.encoding.length() != 0)
-					std::cout << tmxFile.encoding << std::endl;
+				this->encoding = strmanip::ExtractTheStrDblQt(lineString, "encoding");
+				if (this->encoding.length() != 0)
+					std::cout << this->encoding << std::endl;
 			}
 
-			if (tmxFile.orthogonal.length() == 0)
+			if (this->orthogonal.length() == 0)
 			{
-				tmxFile.orthogonal = strmanip::ExtractTheStrDblQt(lineString, "orientation");
-				if (tmxFile.orthogonal.length() != 0)
-					std::cout << "orientation:" << tmxFile.orthogonal << std::endl;
+				this->orthogonal = strmanip::ExtractTheStrDblQt(lineString, "orientation");
+				if (this->orthogonal.length() != 0)
+					std::cout << "orientation:" << this->orthogonal << std::endl;
 			}
 
-			if (tmxFile.width_ == 0)
+			if (this->width_ == 0)
 			{
-				tmxFile.width_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "width").data());
-				if (tmxFile.width_ != 0)
-					std::cout << "width:" << tmxFile.width_ << std::endl;
+				this->width_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "width").data());
+				if (this->width_ != 0)
+					std::cout << "width:" << this->width_ << std::endl;
 			}
 
-			if (tmxFile.height_ == 0)
+			if (this->height_ == 0)
 			{
-				tmxFile.height_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "height").data());
-				if (tmxFile.height_ != 0)
-					std::cout << "height:" << tmxFile.height_ << std::endl;
+				this->height_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "height").data());
+				if (this->height_ != 0)
+					std::cout << "height:" << this->height_ << std::endl;
 			}
 
-			if (tmxFile.tilewidth_ == 0)
+			if (this->tilewidth_ == 0)
 			{
-				tmxFile.tilewidth_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "tilewidth").data());
-				if (tmxFile.tilewidth_ != 0)
-					std::cout << "tilewidth:" << tmxFile.tilewidth_ << std::endl;
+				this->tilewidth_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "tilewidth").data());
+				if (this->tilewidth_ != 0)
+					std::cout << "tilewidth:" << this->tilewidth_ << std::endl;
 			}
 
-			if (tmxFile.tileheight_ == 0)
+			if (this->tileheight_ == 0)
 			{
-				tmxFile.tileheight_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "tileheight").data());
-				if (tmxFile.tileheight_ != 0)
-					std::cout << "tileheight:" << tmxFile.tileheight_ << std::endl;
+				this->tileheight_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "tileheight").data());
+				if (this->tileheight_ != 0)
+					std::cout << "tileheight:" << this->tileheight_ << std::endl;
 			}
 
-			if (tmxFile.nextlayerid_ == 0)
+			if (this->nextlayerid_ == 0)
 			{
-				tmxFile.nextlayerid_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "nextlayerid").data());
-				if (tmxFile.nextlayerid_ != 0)
-					std::cout << "nextlayerid:" << tmxFile.nextlayerid_ << std::endl;
+				this->nextlayerid_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "nextlayerid").data());
+				if (this->nextlayerid_ != 0)
+					std::cout << "nextlayerid:" << this->nextlayerid_ << std::endl;
 			}
 
 			if (lineString.find(" </editorsettings>") != std::string::npos)
 			{
-				tmxFile.mode_ = ReadTmxMode::GENERATE;
+				this->mode_ = ReadTmxMode::GENERATE;
 			}
 		}
 
-		if (tmxFile.mode_ == ReadTmxMode::GENERATE)
+		if (this->mode_ == ReadTmxMode::GENERATE)
 		{
 			std::getline(FileStream, lineString);
 
@@ -137,30 +136,30 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 
 			if (lineString.find("layer") != std::string::npos)
 			{
-				tmxFile.name_.push_back(strmanip::ExtractTheStrDblQt(lineString, "name"));
-				str = tmxFile.name_.back();
-				tmxFile.tiledMap_.try_emplace(str, Tiled_Map());
+				this->name_.push_back(strmanip::ExtractTheStrDblQt(lineString, "name"));
+				str = this->name_.back();
+				this->tiledMap_.try_emplace(str, Tiled_Map());
 			}
-			if (tmxFile.name_.size() != 0) { str = tmxFile.name_.back(); }
+			if (this->name_.size() != 0) { str = this->name_.back(); }
 
 			if (str.length() != 0)
 			{
 				if (lineString.find("data encoding") != std::string::npos)
 				{
-					tmxFile.tiledMap_[str].dataEncoding_ = strmanip::ExtractTheStrDblQt(lineString, "data encoding");
-					if (tmxFile.tiledMap_[str].dataEncoding_.length() != 0)
+					this->tiledMap_[str].dataEncoding_ = strmanip::ExtractTheStrDblQt(lineString, "data encoding");
+					if (this->tiledMap_[str].dataEncoding_.length() != 0)
 
-						std::cout << tmxFile.tiledMap_[tmxFile.name_.back()].dataEncoding_ << std::endl;
+						std::cout << this->tiledMap_[this->name_.back()].dataEncoding_ << std::endl;
 					// embed the ID of the tile in this area.
-					if (tmxFile.tiledMap_[tmxFile.name_.back()].dataEncoding_ == "csv")
+					if (this->tiledMap_[this->name_.back()].dataEncoding_ == "csv")
 					{
-						tmxFile.tiledMap_[tmxFile.name_.back()].height_ = tmxFile.height_;
-						tmxFile.tiledMap_[tmxFile.name_.back()].width_ = tmxFile.width_;
-						if (tmxFile.tiledMap_[tmxFile.name_.back()].height_ != 0 &&
-							tmxFile.tiledMap_[tmxFile.name_.back()].width_ != 0)
+						this->tiledMap_[this->name_.back()].height_ = this->height_;
+						this->tiledMap_[this->name_.back()].width_ = this->width_;
+						if (this->tiledMap_[this->name_.back()].height_ != 0 &&
+							this->tiledMap_[this->name_.back()].width_ != 0)
 						{
-							tmxFile.tiledMap_[tmxFile.name_.back()].prepreateTiles();
-							tmxFile.mode_ = ReadTmxMode::INSERT;
+							this->tiledMap_[this->name_.back()].prepreateTiles();
+							this->mode_ = ReadTmxMode::INSERT;
 							continue;
 						}
 						else
@@ -173,16 +172,16 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 			}
 		}
 
-		if (tmxFile.mode_ == ReadTmxMode::INSERT)
+		if (this->mode_ == ReadTmxMode::INSERT)
 		{
 			unsigned int idx = 0;
-			tmxFile.mode_ = ReadTmxMode::GENERATE;
-			while (idx <= tmxFile.tiledMap_[tmxFile.name_.back()].height_-1)
+			this->mode_ = ReadTmxMode::GENERATE;
+			while (idx <= this->tiledMap_[this->name_.back()].height_-1)
 			{
 				//std::cout << "lineString:" << lineString << std::setw(20) << idx << std::endl;
 				std::getline(FileStream, lineString);
-				tmxFile.tiledMap_[tmxFile.name_.back()].SetTiles(idx,
-					tmxFile.tiledMap_[tmxFile.name_.back()].width_, lineString);
+				this->tiledMap_[this->name_.back()].SetTiles(idx,
+					this->tiledMap_[this->name_.back()].width_, lineString);
 
 				idx++;
 			}

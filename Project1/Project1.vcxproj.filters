@@ -54,6 +54,18 @@
     <ClInclude Include="input\Pad.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Lib\File\detail\File.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\File.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\File\TMX_File.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\strmanip\strmanip.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -93,6 +105,15 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="input\Pad.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\File.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\File\TMX_File.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\strmanip\strmanip.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

@@ -150,6 +150,10 @@
     <ClInclude Include="input\InputID.h" />
     <ClInclude Include="input\keyInput.h" />
     <ClInclude Include="input\Pad.h" />
+    <ClInclude Include="Lib\File\detail\File.h" />
+    <ClInclude Include="Lib\File\File.h" />
+    <ClInclude Include="Lib\File\TMX_File.h" />
+    <ClInclude Include="Lib\strmanip\strmanip.h" />
     <ClInclude Include="NetWork\GuestNetWorkState.h" />
     <ClInclude Include="NetWork\HostNetWorkState.h" />
     <ClInclude Include="NetWork\NetWorkState.h" />
@@ -164,6 +168,9 @@
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\keyInput.cpp" />
     <ClCompile Include="input\Pad.cpp" />
+    <ClCompile Include="Lib\File\File.cpp" />
+    <ClCompile Include="Lib\File\TMX_File.cpp" />
+    <ClCompile Include="Lib\strmanip\strmanip.cpp" />
     <ClCompile Include="NetWork\GuestNetWorkState.cpp" />
     <ClCompile Include="NetWork\HostNetWorkState.cpp" />
     <ClCompile Include="NetWork\NetWorkState.cpp" />

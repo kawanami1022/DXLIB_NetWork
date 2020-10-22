@@ -35,6 +35,7 @@ namespace File
 
 		std::vector<std::string> name_;
 		std::unordered_map<std::string, Tiled_Map> tiledMap_;
+		std::unique_ptr<int> tileHandle_;
 		unsigned int nextlayerid_ = 0;
 
 		int width_ = 0;

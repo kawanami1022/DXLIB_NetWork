@@ -4,6 +4,7 @@
 #include <string>
 #include <DxLib.h>
 #include "../_debug/_DebugDispOut.h"
+#include "../Lib/File/TMX_File.h"
 #include "TitleScene.h"
 #include "../NetWork/NetWork.h"
 TitleScene::TitleScene():BaseScene()
@@ -144,7 +145,17 @@ void TitleScene::StartInit()
 
 	// âÊëúì«Ç›çûÇ›
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
+
 	std::cout << Handle << std::endl;
+
+	tmxFile_ = std::make_unique<File::TMX_File>();
+	if (!tmxFile_->load_TMX("map.tmx"))
+	{
+		std::cout << "ì«Ç›éÊÇËÇ…é∏îs!" << std::endl;
+	}
+
+	tileHandle_ = std::make_unique<int[]>(12);
+	LoadDivGraph("Image/map.png",12,4,3,)
 	mode_ = UpdateMode::Play;
 }
 
@@ -179,5 +190,7 @@ void TitleScene::StartInitDraw()
 void TitleScene::PlayDraw()
 {
 	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
+
+
 	DrawGraph(pos_x, pos_y, Handle, true);
 }

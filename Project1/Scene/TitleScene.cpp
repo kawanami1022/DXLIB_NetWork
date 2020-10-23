@@ -131,7 +131,7 @@ void TitleScene::SetHostIP()
 	{
 		std::cout << "Ú‘±¬Œ÷!" << std::endl;
 		mode_ = UpdateMode::StartInit;
-		IpNetWork->ReservMessageData();
+		
 	}
 	else
 	{
@@ -143,6 +143,9 @@ void TitleScene::SetHostIP()
 void TitleScene::StartInit()
 {
 	std::cout << "---------StartInit-----------" << std::endl;
+	
+
+
 
 	// ‰æ‘œ“Ç‚Ýž‚Ý
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
@@ -164,6 +167,17 @@ void TitleScene::StartInit()
 	{
 		std::cout << tileHandle_[idx] << std::endl;
 	}
+
+	//auto NetWorkMode = IpNetWork->GetNetWorkMode();
+
+	//if (NetWorkMode == NetWorkMode::HOST)
+	//{
+	//	IpNetWork->SendMessageData();
+
+	//}else if (NetWorkMode == NetWorkMode::GUEST)
+	//{
+	//	IpNetWork->ReservMessageData();
+	//}
 	mode_ = UpdateMode::Play;
 }
 

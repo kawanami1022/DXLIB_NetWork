@@ -6,6 +6,7 @@
 #include "NetWork.h"
 #include "HostNetWorkState.h"
 #include "GuestNetWorkState.h"
+#include <sstream>
 
 NetWork* NetWork::hInstance = nullptr;
 
@@ -71,6 +72,23 @@ ActiveState NetWork::ConnectHost(IPDATA hostIP)
 void NetWork::SendMessageData()
 {
 	NetWorkSend(state_->GetNetWorkHandle(), &mesData_, sizeof(mesData_));
+	std::string lineData_;
+
+	std::fstream File("map.tmx");
+	if (!File.is_open())
+	{
+		std::cout << "ファイルが開けませんでした" << std::endl;
+	}
+	while (!File.eof())
+	{
+		std::getline(File, lineData_);
+		for (int idx = 0; idx < lineData_.length(); idx++)
+		{
+			NetWorkSend(state_->GetNetWorkHandle(), &lineData_.data()[idx], sizeof(char));
+			std::cout << "[" << lineData_.data()[idx] << "]";
+		}
+		std::cout << std::endl;
+	}
 }
 
 void NetWork::ReservMessageData()
@@ -96,6 +114,15 @@ NetWork::NetWork()
 
 void NetWork::STANBY()
 {
+	auto mode_ = state_->GetNetWorkMode();
+	if (mode_ == NetWorkMode::HOST)
+	{
+		IpNetWork->SendMessageData();
+
+	}else if (mode_ == NetWorkMode::GUEST)
+	{
+		IpNetWork->ReservMessageData();
+	}
 }
 
 void NetWork::GAME_START()

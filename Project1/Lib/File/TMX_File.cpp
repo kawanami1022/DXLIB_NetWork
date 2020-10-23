@@ -68,7 +68,7 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 	while (Escape())
 	{
 
-		std::cout << lineString << std::endl;
+		//std::cout << lineString << std::endl;
 
 		if (this->mode_ == ReadTmxMode::INIT)
 		{
@@ -76,50 +76,50 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 			if (this->encoding.length() == 0)
 			{
 				this->encoding = strmanip::ExtractTheStrDblQt(lineString, "encoding");
-				if (this->encoding.length() != 0)
-					std::cout << this->encoding << std::endl;
+				//if (this->encoding.length() != 0)
+				//	std::cout << this->encoding << std::endl;
 			}
 
 			if (this->orthogonal.length() == 0)
 			{
 				this->orthogonal = strmanip::ExtractTheStrDblQt(lineString, "orientation");
-				if (this->orthogonal.length() != 0)
-					std::cout << "orientation:" << this->orthogonal << std::endl;
+				//if (this->orthogonal.length() != 0)
+				//	std::cout << "orientation:" << this->orthogonal << std::endl;
 			}
 
 			if (this->width_ == 0)
 			{
 				this->width_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "width").data());
-				if (this->width_ != 0)
-					std::cout << "width:" << this->width_ << std::endl;
+				//if (this->width_ != 0)
+				//	std::cout << "width:" << this->width_ << std::endl;
 			}
 
 			if (this->height_ == 0)
 			{
 				this->height_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "height").data());
-				if (this->height_ != 0)
-					std::cout << "height:" << this->height_ << std::endl;
+				//if (this->height_ != 0)
+				//	std::cout << "height:" << this->height_ << std::endl;
 			}
 
 			if (this->tilewidth_ == 0)
 			{
 				this->tilewidth_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "tilewidth").data());
-				if (this->tilewidth_ != 0)
-					std::cout << "tilewidth:" << this->tilewidth_ << std::endl;
+				//if (this->tilewidth_ != 0)
+				//	std::cout << "tilewidth:" << this->tilewidth_ << std::endl;
 			}
 
 			if (this->tileheight_ == 0)
 			{
 				this->tileheight_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "tileheight").data());
-				if (this->tileheight_ != 0)
-					std::cout << "tileheight:" << this->tileheight_ << std::endl;
+				//if (this->tileheight_ != 0)
+				//	std::cout << "tileheight:" << this->tileheight_ << std::endl;
 			}
 
 			if (this->nextlayerid_ == 0)
 			{
 				this->nextlayerid_ = atoi(strmanip::ExtractTheStrDblQt(lineString, "nextlayerid").data());
-				if (this->nextlayerid_ != 0)
-					std::cout << "nextlayerid:" << this->nextlayerid_ << std::endl;
+				//if (this->nextlayerid_ != 0)
+				//	std::cout << "nextlayerid:" << this->nextlayerid_ << std::endl;
 			}
 
 			if (lineString.find(" </editorsettings>") != std::string::npos)
@@ -192,7 +192,7 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 			{
 
 				std::getline(FileStream, lineString);
-				std::cout << lineString << std::setw(20) << std::endl;
+				//std::cout << lineString << std::setw(20) << std::endl;
 			}
 		}
 	}

@@ -74,12 +74,12 @@ void HostNetWorkState::UpdateFuncInit()
 
 void HostNetWorkState::UpdateFuncStanby()
 {
-    MesDate data = { MesType::TMX_SIZE,{static_cast<int>(std::filesystem::file_size("map.tmx")) ,0} };
+    //MesDate data = { MesType::TMX_SIZE,{static_cast<int>(std::filesystem::file_size("map.tmx")) ,0} };
 
-    NetWorkSend(netHandle, &data, sizeof(MesDate));
+    //NetWorkSend(netHandle, &data, sizeof(MesDate));
 
-    std::cout << "MessageData‚ð‘—‚è‚Ü‚µ‚½!" << std::endl;
-    std::cout << data.data[0] <<"byte"<< std::endl;
+    //std::cout << "MessageData‚ð‘—‚è‚Ü‚µ‚½!" << std::endl;
+    //std::cout << data.data[0] <<"byte"<< std::endl;
     active_ = ActiveState::Play;
 }
 

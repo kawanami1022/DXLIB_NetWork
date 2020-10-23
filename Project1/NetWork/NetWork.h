@@ -13,6 +13,7 @@ enum class MesType
 	STANBY,				// 初期化情報送信完了
 	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
 	TMX_SIZE,
+	TMX_DATA,
 	POS
 };
 
@@ -22,7 +23,7 @@ struct MesDate
 	int data[2];
 };
 
-using RevBox = std::vector<int>;
+using RevBox = std::vector<char>;
 
 
 class NetWork

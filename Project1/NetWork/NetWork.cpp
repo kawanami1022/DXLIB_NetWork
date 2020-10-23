@@ -1,4 +1,5 @@
 #include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <DxLib.h>
 #include "../_debug/_DebugConOut.h"
@@ -17,6 +18,7 @@ IPDATA NetWork::GetIP()
 
 void NetWork::Update()
 {
+	
 	state_->Update();
 }
 
@@ -43,7 +45,7 @@ NetWorkMode NetWork::GetNetWorkMode()
 	return state_->GetNetWorkMode();
 }
 
-ActiveState NetWork::GetActice()
+ActiveState NetWork::GetActive()
 {
 	return state_->GetActive();
 }
@@ -66,9 +68,45 @@ ActiveState NetWork::ConnectHost(IPDATA hostIP)
 	return state_->GetActive();
 }
 
+void NetWork::SendMessageData()
+{
+	NetWorkSend(state_->GetNetWorkHandle(), &mesData_, sizeof(mesData_));
+}
+
+void NetWork::ReservMessageData()
+{
+	NetWorkRecv(state_->GetNetWorkHandle(), &mesData_, sizeof(mesData_));
+	std::cout << "fileSize:" << mesData_.data[0] << std::endl;
+}
 
 NetWork::NetWork()
 {
+	mesData_.type = MesType::TMX_SIZE;
+	mesData_.data[0] = 0;
+	mesData_.data[1] = 0;
+
+	updateMesType_ =
+	{ {MesType::TMX_SIZE ,std::bind(&NetWork::TMX_SIZE,this)},
+		{MesType::GAME_START ,std::bind(&NetWork::GAME_START,this)},
+		{MesType::STANBY ,std::bind(&NetWork::STANBY,this)} };
+
 	std::cout << "OFFLINEに設定されてます" << std::endl;
 	state_ = std::make_unique<NetWorkState>();
+}
+
+void NetWork::STANBY()
+{
+}
+
+void NetWork::GAME_START()
+{
+}
+
+void NetWork::TMX_SIZE()
+{
+	// ファイルサイズを取得する
+	fileSize_ = static_cast<int>(std::filesystem::file_size("map.tmx"));
+	std::cout << "fileSize:" << fileSize_ << std::endl;
+	mesData_.type = MesType::STANBY;
+	mesData_.data[0] = fileSize_;
 }

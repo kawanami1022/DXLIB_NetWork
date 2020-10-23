@@ -50,7 +50,7 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 	if (!opened)
 	{
 		std::cout << "tmx file open failed!" << std::endl;
-		return 0;
+		return false;
 	}
 	else {
 		std::cout << "tmx file open succeed!" << std::endl;
@@ -132,13 +132,15 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 		{
 			std::getline(FileStream, lineString);
 
-			std::string str;
+			std::string str= strmanip::ExtractTheStrDblQt(lineString, "name");
 
 			if (lineString.find("layer") != std::string::npos)
 			{
-				this->name_.push_back(strmanip::ExtractTheStrDblQt(lineString, "name"));
-				str = this->name_.back();
-				this->tiledMap_.try_emplace(str, Tiled_Map());
+				if (str.length() != 0)
+				{
+					this->name_.push_back(str);
+					this->tiledMap_.try_emplace(str, Tiled_Map());
+				}
 			}
 			if (this->name_.size() != 0) { str = this->name_.back(); }
 

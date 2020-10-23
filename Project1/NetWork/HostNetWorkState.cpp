@@ -1,6 +1,8 @@
+#include <filesystem>
 #include <DxLib.h>
 #include <iostream>
 #include <iomanip>
+#include "NetWork.h"
 #include "HostNetWorkState.h"
 
 HostNetWorkState::HostNetWorkState()
@@ -55,7 +57,7 @@ void HostNetWorkState::UpdateFuncNon()
 
 void HostNetWorkState::UpdateFuncWait()
 {
-    if (GetNewAcceptNetWork()==1)
+    if ((netHandle = GetNewAcceptNetWork())!=-1)
     {
         std::cout << "Ú‘±‚³‚ê‚Ä‚Ü‚·" << std::endl;
         active_ = ActiveState::Init;
@@ -66,10 +68,19 @@ void HostNetWorkState::UpdateFuncInit()
 {
 
     std::cout << "‰Šú‰»Š®—¹ !    Stanbyó‘Ô‚ÉˆÚ“®" << std::endl;
+
+    active_ = ActiveState::Stanby;
 }
 
 void HostNetWorkState::UpdateFuncStanby()
 {
+    MesDate data = { MesType::TMX_SIZE,{static_cast<int>(std::filesystem::file_size("map.tmx")) ,0} };
+
+    NetWorkSend(netHandle, &data, sizeof(MesDate));
+
+    std::cout << "MessageData‚ð‘—‚è‚Ü‚µ‚½!" << std::endl;
+    std::cout << data.data[0] <<"byte"<< std::endl;
+    active_ = ActiveState::Play;
 }
 
 void HostNetWorkState::UpdateFuncPlay()

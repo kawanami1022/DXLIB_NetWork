@@ -98,7 +98,7 @@ void TitleScene::SetNetWork()
 		mode_ = UpdateMode::StartInit;
 	}
 
-	std::cout << "ó‘Ô‚Í" << static_cast<int>(IpNetWork->GetActice()) << "‚Å‚·\n" << std::endl;
+	std::cout << "ó‘Ô‚Í" << static_cast<int>(IpNetWork->GetActive()) << "‚Å‚·\n" << std::endl;
 
 }
 
@@ -131,6 +131,7 @@ void TitleScene::SetHostIP()
 	{
 		std::cout << "Ú‘±¬Œ÷!" << std::endl;
 		mode_ = UpdateMode::StartInit;
+		IpNetWork->ReservMessageData();
 	}
 	else
 	{
@@ -154,9 +155,12 @@ void TitleScene::StartInit()
 		std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
 	}
 
-	tileHandle_ = std::make_unique<int[]>(12);
-	LoadDivGraph("Image/map.png", 12, 4, 3, tmxFile_->tileheight_, tmxFile_->tilewidth_, tileHandle_.get());
-	for (int idx = 0; idx < 12; idx++)
+	tileHandle_ = std::make_unique<int[]>(12+1);
+	tileHandle_[0] = -1;
+	LoadDivGraph("Image/map.png", 12, 4, 3, tmxFile_->tileheight_, tmxFile_->tilewidth_, &tileHandle_[1]);
+
+
+	for (int idx = 0; idx < 13; idx++)
 	{
 		std::cout << tileHandle_[idx] << std::endl;
 	}
@@ -202,7 +206,11 @@ void TitleScene::PlayDraw()
 	{
 		for (int x = 0; x < tmxFile_->width_; x++)
 		{
-			DrawGraph(x * tmxFile_->tileheight_, y * tmxFile_->tilewidth_, tileHandle_[tmxFile_->tiledMap_["Character"].titleID_[x][y]], true);
+			for (auto Name : tmxFile_->name_)
+			{
+
+			DrawGraph(x * tmxFile_->tileheight_, y * tmxFile_->tilewidth_, tileHandle_[tmxFile_->tiledMap_[Name].titleID_[x][y]], true);
+			}
 		}
 	}
 }

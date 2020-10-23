@@ -56,6 +56,10 @@ public:
 	const int GetPortNum() {
 		return portNum_;
 	}
+	int GetNetWorkHandle()
+	{
+		return netHandle;
+	}
 
 	void SetNetWorkState(ActiveState activeState)
 	{

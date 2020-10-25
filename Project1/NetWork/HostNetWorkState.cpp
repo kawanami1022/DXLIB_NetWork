@@ -93,9 +93,11 @@ void HostNetWorkState::UpdateFuncPlay()
             NetWorkRecv(netHandle, &input_, sizeof(input_));
             std::cout << "Žæ“¾‚µ‚½ƒf[ƒ^" << std::setw(5) << input_.moveDir << std::endl;
         }
+        ReservMessageData();
     }
 }
 
 void HostNetWorkState::UpdateFuncOFFLINE()
 {
+
 }

@@ -9,7 +9,22 @@
 enum class ActiveState;
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
+using RevBox = std::vector<char>;
 
+enum class MesType
+{
+	STANBY,				// 初期化情報送信完了
+	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
+	TMX_SIZE,
+	TMX_DATA,
+	POS
+};
+
+struct MesDate
+{
+	MesType type;
+	int data[2];
+};
 
 struct InputState
 {
@@ -43,6 +58,8 @@ public:
 	virtual bool Update();
 	ActiveState ConnectHost(IPDATA hostIP);
 	//virtual bool CheckNetWork() = 0;
+	void SendMessageData();
+	void ReservMessageData();
 
 	//ゲッターセッター
 	virtual NetWorkMode GetNetWorkMode();
@@ -80,7 +97,12 @@ protected:
 
 	InputState input_;
 	ActiveFunc activeFunc_;
+	
+	int fileSize_;
+	RevBox revdata_;
+	MesDate mesData_;
 
+	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 
 	// 関数
 	virtual void UpdateFuncNon();	
@@ -90,5 +112,8 @@ protected:
 	virtual void UpdateFuncPlay();	// ゲーム中(ホスト/ゲスト兼用)
 	virtual void UpdateFuncOFFLINE();
 
+	void STANBY();
+	void GAME_START();
+	void TMX_SIZE();
 };
 

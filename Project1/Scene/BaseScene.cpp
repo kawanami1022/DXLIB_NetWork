@@ -1,0 +1,11 @@
+#include <DxLib.h>
+#include "BaseScene.h"
+
+BaseScene::BaseScene()
+{
+}
+
+BaseScene::~BaseScene()
+{
+}
+

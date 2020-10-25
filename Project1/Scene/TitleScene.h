@@ -1,0 +1,69 @@
+#pragma once
+#include <unordered_map>
+#include <array>
+#include <functional>
+#include "BaseScene.h"
+enum class UpdateMode;
+
+namespace File {
+	enum class ReadTmxMode;
+	struct Tiled_Map;
+	class TMX_File;
+}
+
+using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void()>>;
+
+enum class UpdateMode
+{
+	SetNetWork,			// ホスト/ゲスト/オフラインの選択
+	SetHostIP,			// ゲスト選択時のIPアドレス設定
+	StartInit,			// スタート前の初期化
+	Play,				// ゲーム中
+	Max
+};
+
+
+class TitleScene :
+	public BaseScene
+{
+public:
+	TitleScene();
+	~TitleScene();
+
+	void Init();
+
+private:
+
+	UniqueBase input(UniqueBase);
+	UniqueBase UpDate(UniqueBase);
+	void Draw();
+
+	//updateFunc_
+	void SetNetWork();
+	void SetHostIP();
+	void StartInit();
+	void Play();
+	//DrawFunc_
+	void SetNetWorkDraw();
+	void SetHostIPDraw();
+	void StartInitDraw();
+	void PlayDraw();
+
+	// 変数
+	UpdateMode mode_;
+	UpdateMapFunc updateFunc_;
+	UpdateMapFunc DrawFunc_;
+	
+
+	std::shared_ptr< File::TMX_File> tmxFile_;
+	std::unique_ptr<int[]> tileHandle_;
+
+	int screen_size_x=800;
+	int screen_size_y=600;
+
+	int pos_x=300;
+	int pos_y=300;
+	int Handle;
+
+};
+

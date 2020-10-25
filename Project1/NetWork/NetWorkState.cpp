@@ -119,14 +119,14 @@ void NetWorkState::ReservMessageData()
 	NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
 	std::cout << "fileSize:" << mesData_.data[0] << std::endl;
 	std::string lineData_;
-	char chrdata;
+	auto Size = GetNetWorkSendDataLength(netHandle);
 
-	
-	
-	NetWorkRecv(netHandle, &chrdata, sizeof(char));
-	for (int idx = 0; idx < static_cast<int>(lineData_.length()), idx++;)
+
+
+	NetWorkRecv(netHandle, &revdata_, sizeof(RevBox));
+	for (auto data : revdata_)
 	{
-		std::cout << "[" << lineData_.data()[idx] << "]";
+		std::cout << "[" << data << "]";
 		std::cout << std::endl;
 	}
 }

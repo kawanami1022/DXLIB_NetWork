@@ -94,23 +94,34 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 
 void NetWorkState::SendMessageData()
 {
+	auto num = 0;
+	auto file = 0;
 	NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
 	std::string lineData_;
-
 	std::fstream File("map.tmx");
 	if (!File.is_open())
 	{
 		std::cout << "ファイルが開けませんでした" << std::endl;
+		return;
 	}
+	File.seekp(0, std::ios::end);
+	int data_size = File.tellg();
+	mesData_.type = MesType::TMX_SIZE;
+	file = std::filesystem::file_size("map.tmx");
+	MesDate data{ MesType::TMX_SIZE ,{data_size,0} };
+	NetWorkSend(netHandle, &data, sizeof(data));
+
+	mesData_.type = MesType::INIT;
 	while (!File.eof())
 	{
 		std::getline(File, lineData_);
 		for (int idx = 0; idx < lineData_.length(); idx++)
 		{
-			std::cout << "[" << lineData_.data()[idx] << "]";
-			revdata_.push_back(lineData_.data()[idx]);
+			mesData_.data[1] = lineData_.data()[idx];
+			std::cout << num << ":" << mesData_.data[1];
+			NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
+			num++;
 		}
-		NetWorkSend(netHandle ,&revdata_, sizeof(RevBox));
 		std::cout << std::endl;
 	}
 }

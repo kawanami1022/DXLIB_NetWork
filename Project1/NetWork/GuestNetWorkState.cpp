@@ -23,7 +23,6 @@ ActiveState GuestNetWorkState::ConnectHost(IPDATA hostIP)
 {
     // ConnectNetWork‚ª¬Œ÷‚µ‚Ä‚¢‚½‚çtrue‚É‚·‚é
     netHandle = ConnectNetWork(hostIP);
-    SendMessageData();
     active_ = ActiveState::Init;
     if(netHandle!=-1)
     active_ = ActiveState::Stanby;

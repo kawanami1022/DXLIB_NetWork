@@ -36,7 +36,6 @@ bool HostNetWorkState::CheckNetWork()
     }
     else {
         std::cout << "接続されてます" << std::endl;
-        netHandle = tmpID;
         GetNetWorkIP(netHandle, &ipdata);
         std::cout << "接続先IPアドレス" <<std::setw(15)<< (int)(ipdata.d1)<<'.'<<
             (int)(ipdata.d2) << '.'<< (int)(ipdata.d3) << '.'<< (int)(ipdata.d4) << '.'<<std::endl;
@@ -80,11 +79,7 @@ void HostNetWorkState::UpdateFuncStanby()
 
     //std::cout << "MessageDataを送りました!" << std::endl;
     //std::cout << data.data[0] <<"byte"<< std::endl;
-    active_ = ActiveState::Play;
-}
 
-void HostNetWorkState::UpdateFuncPlay()
-{
     if (CheckNetWork())
     {
         auto DataLength = GetNetWorkDataLength(netHandle);
@@ -93,8 +88,14 @@ void HostNetWorkState::UpdateFuncPlay()
             NetWorkRecv(netHandle, &input_, sizeof(input_));
             std::cout << "取得したデータ" << std::setw(5) << input_.moveDir << std::endl;
         }
-        ReservMessageData();
+        SendMessageData();
     }
+    active_ = ActiveState::Play;
+}
+
+void HostNetWorkState::UpdateFuncPlay()
+{
+
 }
 
 void HostNetWorkState::UpdateFuncOFFLINE()

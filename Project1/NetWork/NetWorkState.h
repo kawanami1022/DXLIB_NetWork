@@ -24,7 +24,7 @@ enum class MesType
 struct MesDate
 {
 	MesType type;
-	char data[2];
+	int data[2];
 };
 
 struct InputState

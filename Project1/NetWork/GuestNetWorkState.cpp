@@ -52,6 +52,7 @@ void GuestNetWorkState::UpdateFuncWait()
 
 void GuestNetWorkState::UpdateFuncInit()
 {
+    ReservMessageData();
     if (GetNetWorkDataLength(netHandle) >= sizeof(input_))
     {
         if (NetWorkRecv(netHandle, &input_, sizeof(input_)) == 0)

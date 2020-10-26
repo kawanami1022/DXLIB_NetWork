@@ -118,7 +118,7 @@ void NetWorkState::SendMessageData()
 		for (int idx = 0; idx < lineData_.length(); idx++)
 		{
 			mesData_.data[1] = lineData_.data()[idx];
-			std::cout << num << ":" << mesData_.data[1];
+			std::cout << num << ":" << static_cast<char>(mesData_.data[1]);
 			NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
 			num++;
 		}
@@ -128,12 +128,14 @@ void NetWorkState::SendMessageData()
 
 void NetWorkState::ReservMessageData()
 {
+	mesData_.type = MesType::TMX_SIZE;
 	NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
 	std::cout << "fileSize:" << mesData_.data[0] << std::endl;
 	std::string lineData_;
+
+	revdata_.resize(mesData_.data[0]);
+
 	auto Size = GetNetWorkSendDataLength(netHandle);
-
-
 
 	NetWorkRecv(netHandle, &revdata_, sizeof(RevBox));
 	for (auto data : revdata_)

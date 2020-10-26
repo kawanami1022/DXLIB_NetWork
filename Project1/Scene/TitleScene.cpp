@@ -222,8 +222,8 @@ void TitleScene::PlayDraw()
 		{
 			for (auto Name : tmxFile_->name_)
 			{
-
-			DrawGraph(x * tmxFile_->tileheight_, y * tmxFile_->tilewidth_, tileHandle_[tmxFile_->tiledMap_[Name].titleID_[x][y]], true);
+				DrawExtendGraph(x * 32, y * 32, x * 32 + 32, y * 32 + 32, tileHandle_[tmxFile_->tiledMap_[Name].titleID_[x][y]], true);
+			//DrawGraph(x * tmxFile_->tileheight_, y * tmxFile_->tilewidth_, tileHandle_[tmxFile_->tiledMap_[Name].titleID_[x][y]], true);
 			}
 		}
 	}

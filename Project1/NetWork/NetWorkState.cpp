@@ -107,9 +107,10 @@ void NetWorkState::SendMessageData()
 		std::getline(File, lineData_);
 		for (int idx = 0; idx < lineData_.length(); idx++)
 		{
-			NetWorkSend(netHandle ,&lineData_.data()[idx], sizeof(char));
 			std::cout << "[" << lineData_.data()[idx] << "]";
+			revdata_.push_back(lineData_.data()[idx]);
 		}
+		NetWorkSend(netHandle ,&revdata_, sizeof(RevBox));
 		std::cout << std::endl;
 	}
 }

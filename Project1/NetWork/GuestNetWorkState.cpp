@@ -5,7 +5,7 @@
 
 GuestNetWorkState::GuestNetWorkState()
 {
-    active_ = ActiveState::Init;
+    active_ = ActiveState::Non;
     input_.moveDir = 0;
     controller_.Setup(0);
 }
@@ -25,7 +25,7 @@ ActiveState GuestNetWorkState::ConnectHost(IPDATA hostIP)
     netHandle = ConnectNetWork(hostIP);
     active_ = ActiveState::Init;
     if(netHandle!=-1)
-    active_ = ActiveState::Stanby;
+    active_ = ActiveState::Non;
 
     return active_;
 }
@@ -52,6 +52,12 @@ void GuestNetWorkState::UpdateFuncWait()
 
 void GuestNetWorkState::UpdateFuncInit()
 {
+
+   
+}
+
+void GuestNetWorkState::UpdateFuncStanby()
+{
     ReservMessageData();
     if (GetNetWorkDataLength(netHandle) >= sizeof(input_))
     {
@@ -62,11 +68,6 @@ void GuestNetWorkState::UpdateFuncInit()
             active_ = ActiveState::Play;
         }
     }
-   
-}
-
-void GuestNetWorkState::UpdateFuncStanby()
-{
 }
 
 void GuestNetWorkState::UpdateFuncPlay()

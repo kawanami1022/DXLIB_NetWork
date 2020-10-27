@@ -11,6 +11,8 @@ namespace File {
 	class TMX_File;
 }
 
+class Timer;
+
 using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void()>>;
 
 enum class UpdateMode
@@ -57,6 +59,7 @@ private:
 
 	std::shared_ptr< File::TMX_File> tmxFile_;
 	std::unique_ptr<int[]> tileHandle_;
+
 
 	int screen_size_x=800;
 	int screen_size_y=600;

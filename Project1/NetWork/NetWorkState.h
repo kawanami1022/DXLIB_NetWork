@@ -6,11 +6,11 @@
 #include "../input/Pad.h"
 #include "../input/keyInput.h"
 
+class Timer;
 enum class ActiveState;
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
-
 enum class MesType
 {
 	INIT,
@@ -24,7 +24,7 @@ enum class MesType
 struct MesDate
 {
 	MesType type;
-	int data[2];
+	unsigned int data[2];
 };
 
 struct InputState
@@ -104,6 +104,8 @@ protected:
 	MesDate mesData_;
 
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
+	std::unique_ptr<Timer> timer_;
+
 
 	// ä÷êî
 	virtual void UpdateFuncNon();	

@@ -7,6 +7,7 @@
 #include "../Lib/File/TMX_File.h"
 #include "TitleScene.h"
 #include "../NetWork/NetWork.h"
+#include "../Time/Time.h"
 TitleScene::TitleScene():BaseScene()
 {
 	Init();
@@ -34,6 +35,7 @@ void TitleScene::Init()
 					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIPDraw,this) },
 					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInitDraw,this) },
 					{ UpdateMode::Play,std::bind(&TitleScene::PlayDraw,this) } };
+
 }
 
 UniqueBase TitleScene::input(UniqueBase nowScene)

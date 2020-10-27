@@ -2,14 +2,22 @@
 #include <filesystem>
 #include <iostream>
 #include <iomanip>
+#include <bitset>
 #include "../input/controller.h"
 #include "../input/Pad.h"
 #include "../input/keyInput.h"
 #include "../Lib/File/TMX_File.h"
+#include "../Time/Time.h"
 #include "NetWorkState.h"
+
 
 NetWorkState::NetWorkState()
 {
+	//unsigned int a = UINT_MAX;
+	//std::cout << std::bitset<8*4>(a) << std::endl;
+	//a = a >> sizeof(char)*8;
+	//std::cout << std::bitset<8*4>(a) << std::endl;
+
 	mesData_.type = MesType::TMX_SIZE;
 	active_ = ActiveState::Non;
 	input_.moveDir = 0;
@@ -27,6 +35,7 @@ NetWorkState::NetWorkState()
 		{MesType::STANBY ,std::bind(&NetWorkState::STANBY,this)} };
 	mesData_.data[0] = static_cast<int>(std::filesystem::file_size("map.tmx"));
 	std::cout << "File Size:" << mesData_.data[0] << std::endl;
+	timer_ = std::make_unique<Timer>();
 }
 
 NetWorkState::~NetWorkState()
@@ -94,41 +103,62 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 
 void NetWorkState::SendMessageData()
 {
+
 	auto num = 0;
-	auto file = 0;
-	NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
 	std::string lineData_;
-	std::fstream File("map.tmx");
+	std::ifstream File("map.tmx", std::ios::binary);
 	if (!File.is_open())
 	{
 		std::cout << "ファイルが開けませんでした" << std::endl;
 		return;
 	}
-	File.seekp(0, std::ios::end);
-	int data_size = File.tellg();
+
+	std::cout << "これからデータを送信します" << std::endl;
+;
 	mesData_.type = MesType::TMX_SIZE;
-	file = std::filesystem::file_size("map.tmx");
-	MesDate data{ MesType::TMX_SIZE ,{data_size,0} };
-	NetWorkSend(netHandle, &data, sizeof(data));
+	mesData_.data[0] = std::filesystem::file_size("map.tmx");
+	std::cout << "送信するファイルサイズ" << mesData_.data[0] << std::endl;
+	NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
 
 	mesData_.type = MesType::INIT;
+	mesData_.data[0] = 0;
 	while (!File.eof())
 	{
 		std::getline(File, lineData_);
 		for (int idx = 0; idx < lineData_.length(); idx++)
 		{
 			mesData_.data[1] = lineData_.data()[idx];
-			std::cout << num << ":" << mesData_.data[1];
+			std::cout << num << ":" << static_cast<char>(mesData_.data[1]);
 			NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
-			num++;
+			mesData_.data[0]++;
+			if (mesData_.data[1] == '\r')
+			{
+				mesData_.data[1] = 0x0A;
+				mesData_.data[0]++;
+				NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
+			}
+			if (File.eof())
+			{
+				std::cout <<"終端のデータ:"<< mesData_.data[1] << std::endl;
+				break;
+			}
+
+		}
+		if (File.eof())
+		{
+			std::cout << "終端のデータ:" << mesData_.data[1] << std::endl;
+			break;
 		}
 		std::cout << std::endl;
 	}
+	std::cout <<"計測時間:"<< timer_->IntervalMesurement() << std::endl;
 }
 
 void NetWorkState::ReservMessageData()
 {
 	std::string lineData_;
+
+	timer_->StartMesurement();
 
 	mesData_.type = MesType::TMX_SIZE;
 	NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
@@ -141,9 +171,11 @@ void NetWorkState::ReservMessageData()
 	while (GetNetWorkDataLength(netHandle) > 0)
 	{
 		NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
+
 		revdata_.push_back(static_cast<char>(mesData_.data[1]));
 		std::cout << "[" << revdata_.back() << "]";
 		if(revdata_.back() =='\n')	std::cout << std::endl;
 	}
 	std::cout << "取得したデータサイズ:" <<"          "<< sizeof(revdata_)<< "byte"<<std::endl;
+	std::cout << "計測時間:" << timer_->IntervalMesurement() << std::endl;
 }

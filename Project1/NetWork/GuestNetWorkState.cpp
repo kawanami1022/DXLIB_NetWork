@@ -23,10 +23,14 @@ ActiveState GuestNetWorkState::ConnectHost(IPDATA hostIP)
 {
     // ConnectNetWork‚ª¬Œ÷‚µ‚Ä‚¢‚½‚çtrue‚É‚·‚é
     netHandle = ConnectNetWork(hostIP);
-    active_ = ActiveState::Init;
-    if(netHandle!=-1)
-    active_ = ActiveState::Non;
 
+    active_ = ActiveState::Init;
+    if (netHandle != -1)
+    {
+        // Ú‘±‚³‚ê‚Ä‚Ü‚¹‚ñ
+        active_ = ActiveState::Non;
+    }
+    std::cout << netHandle << std::endl;
     return active_;
 }
 

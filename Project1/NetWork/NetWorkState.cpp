@@ -118,7 +118,7 @@ void NetWorkState::SendMessageData()
 		for (int idx = 0; idx < lineData_.length(); idx++)
 		{
 			mesData_.data[1] = lineData_.data()[idx];
-			std::cout << num << ":" << static_cast<char>(mesData_.data[1]);
+			std::cout << num << ":" << mesData_.data[1];
 			NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
 			num++;
 		}
@@ -129,20 +129,21 @@ void NetWorkState::SendMessageData()
 void NetWorkState::ReservMessageData()
 {
 	std::string lineData_;
-	char chrdata;
 
 	mesData_.type = MesType::TMX_SIZE;
 	NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
 	std::cout << "fileSize:" << mesData_.data[0] << std::endl;
 	revdata_.resize(mesData_.data[0]);
 
+	mesData_.type = MesType::INIT;
 	auto Size = GetNetWorkSendDataLength(netHandle);
 
-	for (auto data : revdata_)
+	while (GetNetWorkDataLength(netHandle) > 0)
 	{
-		NetWorkRecv(netHandle, &chrdata, sizeof(char));
-		revdata_.push_back(chrdata);
-		std::cout << "[" << data << "]";
-		std::cout << std::endl;
+		NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
+		revdata_.push_back(static_cast<char>(mesData_.data[1]));
+		std::cout << "[" << revdata_.back() << "]";
+		if(revdata_.back() =='\n')	std::cout << std::endl;
 	}
+	std::cout << "取得したデータサイズ:" <<"          "<< sizeof(revdata_)<< "byte"<<std::endl;
 }

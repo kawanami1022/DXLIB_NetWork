@@ -8,8 +8,8 @@
 HostNetWorkState::HostNetWorkState()
 {
 
-    auto succeed = !PreparationListenNetWork(portNum_);
-    if (succeed) { active_ = ActiveState::Wait; }
+    auto succeed = PreparationListenNetWork(portNum_);
+    if (succeed==0) { active_ = ActiveState::Wait; }
     std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
 
     controller_.Setup(0);
@@ -73,13 +73,6 @@ void HostNetWorkState::UpdateFuncInit()
 
 void HostNetWorkState::UpdateFuncStanby()
 {
-    //MesDate data = { MesType::TMX_SIZE,{static_cast<int>(std::filesystem::file_size("map.tmx")) ,0} };
-
-    //NetWorkSend(netHandle, &data, sizeof(MesDate));
-
-    //std::cout << "MessageData‚ð‘—‚è‚Ü‚µ‚½!" << std::endl;
-    //std::cout << data.data[0] <<"byte"<< std::endl;
-
     if (CheckNetWork())
     {
         auto DataLength = GetNetWorkDataLength(netHandle);
@@ -89,8 +82,8 @@ void HostNetWorkState::UpdateFuncStanby()
             std::cout << "Žæ“¾‚µ‚½ƒf[ƒ^" << std::setw(5) << input_.moveDir << std::endl;
         }
         SendMessageData();
+        active_ = ActiveState::Play;
     }
-    active_ = ActiveState::Play;
 }
 
 void HostNetWorkState::UpdateFuncPlay()

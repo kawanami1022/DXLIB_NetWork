@@ -13,15 +13,6 @@
 
 NetWorkState::NetWorkState()
 {
-	unsigned int a =0x00000000;
-	std::cout << std::bitset<8*4>(a) << std::endl;
-	a += 0x0A;
-	a <<= sizeof(char)*8;
-	std::cout << std::bitset<8 * 4>(a) << std::endl;
-	a <<= sizeof(char) * 8;
-	std::cout << std::bitset<8 * 4>(a) << std::endl;
-
-
 	mesData_.type = MesType::TMX_SIZE;
 	active_ = ActiveState::Non;
 	input_.moveDir = 0;

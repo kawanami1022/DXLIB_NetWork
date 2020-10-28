@@ -1,5 +1,8 @@
 #pragma once
 #include "NetWorkState.h"
+
+class TMX_File;
+
 class HostNetWorkState :
 	public NetWorkState
 {
@@ -9,7 +12,7 @@ public:
 	NetWorkMode GetNetWorkMode();
 	bool CheckNetWork();
 	bool Update();
-
+protected:
 private:
 	// ä÷êî
 	void UpdateFuncNon();

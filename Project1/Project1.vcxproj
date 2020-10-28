@@ -158,6 +158,7 @@
     <ClInclude Include="NetWork\HostNetWorkState.h" />
     <ClInclude Include="NetWork\NetWorkState.h" />
     <ClInclude Include="NetWork\NetWork.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="SceneMng.h" />
     <ClInclude Include="Scene\TitleScene.h" />

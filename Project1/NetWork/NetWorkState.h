@@ -1,10 +1,18 @@
 #pragma once
+#include <memory>
 #include <functional>
 #include <unordered_map>
 #include <DxLib.h>
 #include "../input/controller.h"
 #include "../input/Pad.h"
 #include "../input/keyInput.h"
+
+namespace File {
+	enum class ReadTmxMode;
+	struct Tiled_Map;
+	class TMX_File;
+}
+
 
 class Timer;
 enum class ActiveState;
@@ -26,6 +34,7 @@ struct MesDate
 	MesType type;
 	unsigned int data[2];
 };
+
 
 struct InputState
 {
@@ -88,6 +97,12 @@ public:
 	{
 		netHandle = handle;
 	}
+
+	void SetTMXData(std::shared_ptr<File::TMX_File> tmxdata)
+	{
+		tmxFile_ = tmxdata;
+	}
+
 protected:
 
 	// •Ï”éŒ¾
@@ -105,7 +120,7 @@ protected:
 
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;
-
+	std::shared_ptr<File::TMX_File> tmxFile_=nullptr;
 
 	// ŠÖ”
 	virtual void UpdateFuncNon();	

@@ -31,6 +31,8 @@ NetWorkState::NetWorkState()
 	mesData_.data[0] = static_cast<int>(std::filesystem::file_size("map.tmx"));
 	std::cout << "File Size:" << mesData_.data[0] << std::endl;
 	timer_ = std::make_unique<Timer>();
+	
+
 }
 
 NetWorkState::~NetWorkState()

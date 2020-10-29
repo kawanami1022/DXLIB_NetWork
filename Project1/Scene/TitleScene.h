@@ -12,7 +12,6 @@ namespace File {
 }
 
 class Timer;
-
 using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void()>>;
 
 enum class UpdateMode

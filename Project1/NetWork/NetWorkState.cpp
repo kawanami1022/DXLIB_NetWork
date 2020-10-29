@@ -1,3 +1,4 @@
+#include <cstring>
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -13,7 +14,6 @@
 
 NetWorkState::NetWorkState()
 {
-	mesData_.type = MesType::TMX_SIZE;
 	active_ = ActiveState::Non;
 	input_.moveDir = 0;
 	activeFunc_ = { 
@@ -28,8 +28,6 @@ NetWorkState::NetWorkState()
 	{ {MesType::TMX_SIZE ,std::bind(&NetWorkState::TMX_SIZE,this)},
 		{MesType::GAME_START ,std::bind(&NetWorkState::GAME_START,this)},
 		{MesType::STANBY ,std::bind(&NetWorkState::STANBY,this)} };
-	mesData_.data[0] = static_cast<int>(std::filesystem::file_size("map.tmx"));
-	std::cout << "File Size:" << mesData_.data[0] << std::endl;
 	timer_ = std::make_unique<Timer>();
 	
 
@@ -89,8 +87,6 @@ void NetWorkState::GAME_START()
 
 void NetWorkState::TMX_SIZE()
 {
-	mesData_.data[0] = static_cast<int>(std::filesystem::file_size("map.tmx"));
-	std::cout << "File Size:" << mesData_.data[0] << std::endl;
 }
 
 ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
@@ -100,85 +96,81 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 
 void NetWorkState::SendMessageData()
 {
-
-	auto num = 0;
-	std::string lineData_;
-	std::ifstream File("map.tmx", std::ios::binary);
-	if (!File.is_open())
+	std::vector<int> mapId;
+	if (tmxFile_==nullptr)
 	{
-		std::cout << "ファイルが開けませんでした" << std::endl;
+		std::cout << "tmxdataが読み込めません" << std::endl;
 		return;
 	}
+	std::memset(&mesData_, 0, sizeof(MesData));
+	mesData_.type = MesType::TMX_SIZE;
+	mesData_.idata[0] = 200;
+	NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+
 
 	std::cout << "これからデータを送信します" << std::endl;
-;
-	mesData_.type = MesType::TMX_SIZE;
-	auto fileSize = std::filesystem::file_size("map.tmx");
-	mesData_.data[0] = fileSize;
-	std::cout << "送信するファイルサイズ" << mesData_.data[0] << std::endl;
-	NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
-
-	mesData_.type = MesType::INIT;
-	mesData_.data[0] = 0;
-
-
-	while (!File.eof())
+	;	auto sendId = 0;
+	for (auto LAYERNAME : tmxFile_->name_)
 	{
-		std::getline(File, lineData_);
-		for (auto str:lineData_)
+		auto idx = 0;
+		mesData_.type = MesType::INIT;
+		while (idx < tmxFile_->tiledMap_[LAYERNAME].titleData_.size())
 		{
-			mesData_.data[1] <<= 8;
-			mesData_.data[1] = str;
-			mesData_.data[0]++;
-			std::cout << num << ":" << static_cast<char>(mesData_.data[1]);
-
-			if (mesData_.data[1] == '\r')
+			std::memset(&mesData_, 0, sizeof(MesData));
+			uniondata_.lData = 0;
+			mesData_.type = MesType::INIT;
+			mesData_.sdata = sendId;
+			for (int id = 0; id < 16; id++)
 			{
-				mesData_.data[1] <<= 8;
-				mesData_.data[1] += 0x0A;
-				mesData_.data[0]++;
-			}
-			if ((mesData_.data[0] % 4) == 0)
-			{
-				NetWorkSend(netHandle, &mesData_, sizeof(mesData_));
-			}
+				uniondata_.lData |= tmxFile_->tiledMap_[LAYERNAME].titleData_[idx++];
 
-			if (mesData_.data[0] >= fileSize) { break; }
+				if (id < 16 - 1)uniondata_.lData <<= 4;
+				if (idx >= tmxFile_->tiledMap_[LAYERNAME].titleData_.size()) { break; }
+			}
+			std::cout << std::setw(15) << "longdata:"<<std::setfill('0') << std::right << std::setw(16) << std::hex << uniondata_.lData << std::endl;
+			mesData_.idata[0] = uniondata_.iData[0];
+			mesData_.idata[1] = uniondata_.iData[1];
+
+			std::cout << std::setw(15) <<"送信用data:"<< std::setfill('0') << std::right << std::setw(8) << std::hex << mesData_.idata[1] <<
+				std::setfill('0') << std::right << std::setw(8) << std::hex << mesData_.idata[0] << std::endl;
+			NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+			sendId++;
 		}
-		if (mesData_.data[0] >= fileSize) { break; }
-		std::cout << std::endl;
 	}
+
 	std::cout <<"計測時間:"<< timer_->IntervalMesurement() << std::endl;
 }
 
 void NetWorkState::ReservMessageData()
 {
 	std::string lineData_;
-
-	timer_->StartMesurement();
-
-	mesData_.type = MesType::TMX_SIZE;
-	NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
-	std::cout << "fileSize:" << mesData_.data[0] << std::endl;
-	revdata_.resize(mesData_.data[0]);
-
-	mesData_.type = MesType::INIT;
-
-	// ネットワークバッファのデータサイズが0になったら終了
-	while (GetNetWorkDataLength(netHandle) >= 0)
+	std::vector<int> mapData;
+	auto id = 0;
+	while (GetNetWorkDataLength(netHandle) <= 0)
 	{
-		NetWorkRecv(netHandle, &mesData_, sizeof(mesData_));
 
-		for (int idx = 0; idx < 4; idx++)
+		NetWorkRecv(netHandle, &mesData_, sizeof(MesData));
+		if (mesData_.type == MesType::TMX_SIZE)
 		{
-			auto revData = mesData_.data[0] & 0x00ffffff;
-			revData >>= 8 * 3;
-			mesData_.data[0] <<= 8 * 1;
-			revdata_.push_back(static_cast<char>(revData));
-			std::cout << "[" << revdata_.back() << "]";
+			mapData.resize(tmxFile_->height_ * tmxFile_->width_ * (tmxFile_->nextlayerid_ - 1));
+			id = 0;
+			std::memset(&mapData, 0, sizeof(mapData));
 		}
-		if(revdata_.back() =='\n')	std::cout << std::endl;
+
+
+		if (mesData_.type == MesType::INIT)
+		{
+			uniondata_.iData[0] = mesData_.idata[0];
+			uniondata_.iData[1] = mesData_.idata[1];
+			for (int i = 0; i < 8; i++)
+			{
+				auto idx = uniondata_.cData[i];
+
+				mapData[id] = idx & 0x0f;
+				id++;
+				mapData[id] = idx & 0xf0;
+				id++;
+			}
+		}
 	}
-	std::cout << "取得したデータサイズ:" <<"          "<< sizeof(revdata_)<< "byte"<<std::endl;
-	std::cout << "計測時間:" << timer_->IntervalMesurement() << std::endl;
 }

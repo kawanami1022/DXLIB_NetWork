@@ -53,11 +53,14 @@ public:
 	{
 		return state_->GetInputState();
 	}
-
+	std::shared_ptr<NetWorkState> GetNetWorkState()
+	{
+		return state_;
+	}
 
 
 private:
-	std::unique_ptr<NetWorkState> state_;
+	std::shared_ptr<NetWorkState> state_;
 
 	static NetWork* hInstance;
 	NetWork();

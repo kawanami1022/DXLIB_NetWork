@@ -19,7 +19,7 @@ enum class ActiveState;
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
-enum class MesType
+enum class MesType:char
 {
 	INIT,
 	STANBY,				// ‰Šú‰»î•ñ‘—MŠ®—¹
@@ -29,12 +29,20 @@ enum class MesType
 	POS
 };
 
-struct MesDate
+struct MesData
 {
 	MesType type;
-	unsigned int data[2];
+	unsigned short sdata;
+	unsigned char cdata = 0;
+	uint32_t idata[2];
 };
 
+union unionData
+{
+	char cData[8];
+	int iData[2];
+	long long lData;
+};
 
 struct InputState
 {
@@ -116,11 +124,13 @@ protected:
 	
 	int fileSize_;
 	RevBox revdata_;
-	MesDate mesData_;
+	MesData mesData_;
+	unionData uniondata_;
+
 
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;
-	std::shared_ptr<File::TMX_File> tmxFile_=nullptr;
+	std::shared_ptr<File::TMX_File> tmxFile_ = nullptr;
 
 	// ŠÖ”
 	virtual void UpdateFuncNon();	

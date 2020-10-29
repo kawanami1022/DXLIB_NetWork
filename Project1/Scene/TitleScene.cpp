@@ -132,6 +132,7 @@ void TitleScene::SetHostIP()
 	if (activeState_== ActiveState::Init)
 	{
 		std::cout << "Ú‘±¬Œ÷!" << std::endl;
+		
 		mode_ = UpdateMode::StartInit;
 		
 	}
@@ -159,7 +160,7 @@ void TitleScene::StartInit()
 	{
 		std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
 	}
-
+	IpNetWork->GetNetWorkState()->SetTMXData(tmxFile_);
 	tileHandle_ = std::make_unique<int[]>(12+1);
 	tileHandle_[0] = -1;
 	LoadDivGraph("Image/map.png", 12, 4, 3, tmxFile_->tileheight_, tmxFile_->tilewidth_, &tileHandle_[1]);

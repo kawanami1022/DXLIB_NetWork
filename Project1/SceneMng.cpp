@@ -9,22 +9,25 @@ SceneMng* SceneMng::hInstance = nullptr;
 int SceneMng::Run()
 {
 
+	SetDoubleStartValidFlag(TRUE);
 	ChangeWindowMode(true);
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
-
 	SetDrawScreen(DX_SCREEN_BACK);
+
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
 	{
 		return -1;				// エラーが起きたら直ちに終了
 	}
 	std::cout << "DXLib初期化" << std::endl;
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。
-	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 	nowScene = std::make_unique<TitleScene>();
 
 	// 描画先画面を裏画面にセット
 	SetDrawScreen(DX_SCREEN_BACK);
+	
+
 	// ループ
 	while (ProcessMessage() == 0)
 	{

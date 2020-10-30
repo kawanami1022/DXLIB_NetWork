@@ -166,11 +166,28 @@ void NetWorkState::ReservMessageData()
 			{
 				auto idx = uniondata_.cData[i];
 
-				mapData[id] = idx & 0x0f;
+				mapData[id] = (idx & 0xf0) >> 4;
 				id++;
-				mapData[id] = idx & 0xf0;
+				mapData[id] = idx & 0x0f;
 				id++;
 			}
 		}
 	}
+
+	for (int layer = 0; layer < tmxFile_->nextlayerid_ - 1; layer++)
+	{
+		for (int y = 0; y < tmxFile_->height_; y++)
+		{
+			for (int x = 0; x < tmxFile_->width_; x++)
+			{
+				int id = x + y * tmxFile_->width_ + layer * tmxFile_->width_ * tmxFile_->height_;
+				std::cout << mapData[id];
+				std::cout << ":" << id << std::endl;
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+	}
+
+
 }

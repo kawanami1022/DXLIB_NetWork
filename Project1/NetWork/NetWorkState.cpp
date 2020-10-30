@@ -97,6 +97,11 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 void NetWorkState::SendMessageData()
 {
 	std::vector<int> mapId;
+
+	std::vector<MesData> LogMesData;
+	std::vector<int> LogMapData;
+	unionData logUnion;
+
 	if (tmxFile_==nullptr)
 	{
 		std::cout << "tmxdata‚ª“Ç‚Ýž‚ß‚Ü‚¹‚ñ" << std::endl;
@@ -113,12 +118,12 @@ void NetWorkState::SendMessageData()
 	for (auto LAYERNAME : tmxFile_->name_)
 	{
 		auto idx = 0;
-		mesData_.type = MesType::INIT;
+		mesData_.type = MesType::TMX_DATA;
 		while (idx < tmxFile_->tiledMap_[LAYERNAME].titleData_.size())
 		{
 			std::memset(&mesData_, 0, sizeof(MesData));
 			uniondata_.lData = 0;
-			mesData_.type = MesType::INIT;
+			mesData_.type = MesType::TMX_DATA;
 			mesData_.sdata = sendId;
 			for (int id = 0; id < 16; id++)
 			{
@@ -134,8 +139,45 @@ void NetWorkState::SendMessageData()
 			std::cout << std::setw(15) <<"‘—M—pdata:"<< std::setfill('0') << std::right << std::setw(8) << std::hex << mesData_.idata[1] <<
 				std::setfill('0') << std::right << std::setw(8) << std::hex << mesData_.idata[0] << std::endl;
 			NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+			LogMesData.push_back(mesData_);
 			sendId++;
 		}
+	}
+
+	for (auto LOG_MES_DATA : LogMesData)
+	{;
+		if (LOG_MES_DATA.type == MesType::TMX_DATA)
+		{
+			logUnion.iData[0] = LOG_MES_DATA.idata[0];
+			logUnion.iData[1] = LOG_MES_DATA.idata[1];
+			for (int i = 0; i < 16; i++)
+			{
+				auto id = logUnion.lData & 0xf000000000000000;
+				logUnion.lData <<= 4;
+				id >>= 15 * 4;
+				LogMapData.push_back(id);
+			}
+		}
+	}
+
+
+
+	for (int layer = 0; layer < tmxFile_->nextlayerid_ - 1; layer++)
+	{
+		for (int y = 0; y < tmxFile_->height_; y++)
+		{
+			for (int x = 0; x < tmxFile_->width_; x++)
+			{
+				int id = x + y * tmxFile_->width_ + layer * (tmxFile_->width_) * (tmxFile_->height_);
+				//std::cout << LogMapData[id];
+				std::cout <<std::hex<< LogMapData[id];
+				std::cout << " ";
+			}
+
+
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
 	}
 
 	std::cout <<"Œv‘ªŽžŠÔ:"<< timer_->IntervalMesurement() << std::endl;
@@ -158,7 +200,7 @@ void NetWorkState::ReservMessageData()
 		}
 
 
-		if (mesData_.type == MesType::INIT)
+		if (mesData_.type == MesType::TMX_DATA)
 		{
 			uniondata_.iData[0] = mesData_.idata[0];
 			uniondata_.iData[1] = mesData_.idata[1];

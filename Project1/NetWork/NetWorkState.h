@@ -21,11 +21,10 @@ using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
 enum class MesType:char
 {
-	INIT,
 	STANBY,				// 初期化情報送信完了
+	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
 	TMX_SIZE,
 	TMX_DATA,
-	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
 	POS
 };
 

@@ -68,6 +68,10 @@ ActiveState NetWork::ConnectHost(IPDATA hostIP)
 	return state_->GetActive();
 }
 
+void NetWork::RunUpdate(void)
+{
+}
+
 
 NetWork::NetWork()
 {

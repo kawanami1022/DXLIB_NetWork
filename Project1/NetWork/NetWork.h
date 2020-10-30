@@ -1,4 +1,5 @@
 #pragma once
+#include <thread>
 #include <vector>
 #include <unordered_map>
 #include <functional>
@@ -47,6 +48,8 @@ public:
 	NetWorkMode GetNetWorkMode();
 	ActiveState GetActive();
 	ActiveState ConnectHost(IPDATA hostIP);
+
+	void RunUpdate(void);
 
 		//ゲッターセッター
 	InputState GetInputState()

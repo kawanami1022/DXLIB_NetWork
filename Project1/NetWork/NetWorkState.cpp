@@ -96,8 +96,11 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 
 void NetWorkState::SendMessageData()
 {
-	std::vector<int> mapId;
+	std::vector<int> mapId;	// tmxFile's tiledmap 
 
+	
+
+	// debug display's variables
 	std::vector<MesData> LogMesData;
 	std::vector<int> LogMapData;
 	unionData logUnion;
@@ -112,39 +115,57 @@ void NetWorkState::SendMessageData()
 	mesData_.idata[0] = 200;
 	NetWorkSend(netHandle, &mesData_, sizeof(MesData));
 
-
 	std::cout << "これからデータを送信します" << std::endl;
-	;	auto sendId = 0;
-	for (auto LAYERNAME : tmxFile_->name_)
+
+	// substruction's mapId
+	for (auto Name : tmxFile_->name_)
 	{
-		auto idx = 0;
-		mesData_.type = MesType::TMX_DATA;
-		while (idx < tmxFile_->tiledMap_[LAYERNAME].titleData_.size())
+		for (int y = 0; y < tmxFile_->height_; y++)
 		{
-			std::memset(&mesData_, 0, sizeof(MesData));
-			uniondata_.lData = 0;
-			mesData_.type = MesType::TMX_DATA;
-			mesData_.sdata = sendId;
-			for (int id = 0; id < 16; id++)
+			for (int x = 0; x < tmxFile_->width_; x++)
 			{
-				uniondata_.lData |= tmxFile_->tiledMap_[LAYERNAME].titleData_[idx++];
-
-				if (id < 16 - 1)uniondata_.lData <<= 4;
-				if (idx >= tmxFile_->tiledMap_[LAYERNAME].titleData_.size()) { break; }
+				mapId.push_back(tmxFile_->tiledMap_[Name].titleID_[x][y]);
 			}
-			std::cout << std::setw(15) << "longdata:"<<std::setfill('0') << std::right << std::setw(16) << std::hex << uniondata_.lData << std::endl;
-			mesData_.idata[0] = uniondata_.iData[0];
-			mesData_.idata[1] = uniondata_.iData[1];
-
-			std::cout << std::setw(15) <<"送信用data:"<< std::setfill('0') << std::right << std::setw(8) << std::hex << mesData_.idata[1] <<
-				std::setfill('0') << std::right << std::setw(8) << std::hex << mesData_.idata[0] << std::endl;
-			NetWorkSend(netHandle, &mesData_, sizeof(MesData));
-			LogMesData.push_back(mesData_);
-			sendId++;
 		}
 	}
+	auto sendId = 0;
 
-	for (auto LOG_MES_DATA : LogMesData)
+	auto idx = 0;
+	while (idx <= mapId.size())
+	{
+		std::memset(&mesData_, 0, sizeof(MesData));
+
+		mesData_.type = MesType::TMX_DATA;
+		for (int id = 0; id < 16; id++)
+		{
+			if (idx >= mapId.size())
+			{
+				NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+				LogMesData.push_back(mesData_);
+				break;
+			}
+			uniondata_.lData |= mapId[idx];
+			if (id < 16 - 1)uniondata_.lData <<= 4;
+			idx++;
+		}
+		if (idx >= mapId.size()) { break; }
+		mesData_.idata[0] = uniondata_.iData[0];
+		mesData_.idata[1] = uniondata_.iData[1];
+
+		logUnion.lData = uniondata_.lData;
+		for (int i = 0; i < 16; i++)
+		{
+			auto id = logUnion.lData & 0xf000000000000000;
+			logUnion.lData <<= 4;
+			id >>= 15 * 4;
+		}
+		NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+		LogMesData.push_back(mesData_);
+	}
+
+	std::cout << std::endl;
+
+	for (const auto LOG_MES_DATA : LogMesData)
 	{;
 		if (LOG_MES_DATA.type == MesType::TMX_DATA)
 		{
@@ -160,8 +181,6 @@ void NetWorkState::SendMessageData()
 		}
 	}
 
-
-
 	for (int layer = 0; layer < tmxFile_->nextlayerid_ - 1; layer++)
 	{
 		for (int y = 0; y < tmxFile_->height_; y++)
@@ -169,12 +188,9 @@ void NetWorkState::SendMessageData()
 			for (int x = 0; x < tmxFile_->width_; x++)
 			{
 				int id = x + y * tmxFile_->width_ + layer * (tmxFile_->width_) * (tmxFile_->height_);
-				//std::cout << LogMapData[id];
-				std::cout <<std::hex<< LogMapData[id];
-				std::cout << " ";
+				//std::cout << id;
+				std::cout << std::hex << LogMapData[id];
 			}
-
-
 			std::cout << std::endl;
 		}
 		std::cout << std::endl;

@@ -11,6 +11,7 @@ HostNetWorkState::HostNetWorkState()
     auto succeed = PreparationListenNetWork(portNum_);
     if (succeed==0) { active_ = ActiveState::Wait; }
     std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
+  
 
     controller_.Setup(0);
 }
@@ -73,6 +74,8 @@ void HostNetWorkState::UpdateFuncInit()
 
 void HostNetWorkState::UpdateFuncStanby()
 {
+    std::thread func(&HostNetWorkState::SendMessageData,this);
+
     if (CheckNetWork())
     {
         auto DataLength = GetNetWorkDataLength(netHandle);
@@ -81,7 +84,7 @@ void HostNetWorkState::UpdateFuncStanby()
             NetWorkRecv(netHandle, &input_, sizeof(input_));
             std::cout << "Žæ“¾‚µ‚½ƒf[ƒ^" << std::setw(5) << input_.moveDir << std::endl;
         }
-        SendMessageData();
+        func.join();
         active_ = ActiveState::Play;
     }
 }

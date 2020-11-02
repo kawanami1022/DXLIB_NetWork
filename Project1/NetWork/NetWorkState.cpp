@@ -29,7 +29,6 @@ NetWorkState::NetWorkState()
 		{MesType::GAME_START ,std::bind(&NetWorkState::GAME_START,this)},
 		{MesType::STANBY ,std::bind(&NetWorkState::STANBY,this)} };
 	timer_ = std::make_unique<Timer>();
-	
 
 }
 
@@ -116,7 +115,7 @@ void NetWorkState::SendMessageData()
 	NetWorkSend(netHandle, &mesData_, sizeof(MesData));
 
 	std::cout << "これからデータを送信します" << std::endl;
-
+	timer_->StartMesurement();
 	// substruction's mapId
 	for (auto Name : tmxFile_->name_)
 	{
@@ -162,7 +161,7 @@ void NetWorkState::SendMessageData()
 		NetWorkSend(netHandle, &mesData_, sizeof(MesData));
 		LogMesData.push_back(mesData_);
 	}
-
+	std::cout << "計測時間:" << timer_->IntervalMesurement() << std::endl;
 	std::cout << std::endl;
 
 	for (const auto LOG_MES_DATA : LogMesData)
@@ -196,7 +195,7 @@ void NetWorkState::SendMessageData()
 		std::cout << std::endl;
 	}
 
-	std::cout <<"計測時間:"<< timer_->IntervalMesurement() << std::endl;
+	
 }
 
 void NetWorkState::ReservMessageData()

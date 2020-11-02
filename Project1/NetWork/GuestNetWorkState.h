@@ -11,7 +11,6 @@ public:
 	bool CheckNetWork();
 	bool Update();
 	//ゲッターセッター
-
 private:
 
 	// 関数

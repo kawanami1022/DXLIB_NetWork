@@ -2,6 +2,7 @@
 #include <memory>
 #include <functional>
 #include <unordered_map>
+#include <thread>
 #include <DxLib.h>
 #include "../input/controller.h"
 #include "../input/Pad.h"

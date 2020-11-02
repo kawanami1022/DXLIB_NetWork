@@ -62,7 +62,8 @@ void GuestNetWorkState::UpdateFuncInit()
 
 void GuestNetWorkState::UpdateFuncStanby()
 {
-    ReservMessageData();
+    std::thread func(&GuestNetWorkState::ReservMessageData,this);
+    func.join();
     if (GetNetWorkDataLength(netHandle) >= sizeof(input_))
     {
         if (NetWorkRecv(netHandle, &input_, sizeof(input_)) == 0)

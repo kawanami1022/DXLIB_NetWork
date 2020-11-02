@@ -5,19 +5,19 @@
 #include <DxLib.h>
 #include "../_debug/_DebugDispOut.h"
 #include "../Lib/File/TMX_File.h"
-#include "TitleScene.h"
+#include "LoginScene.h"
 #include "../NetWork/NetWork.h"
 #include "../Time/Time.h"
-TitleScene::TitleScene():BaseScene()
+LoginScene::LoginScene():BaseScene()
 {
 	Init();
 }
 
-TitleScene::~TitleScene()
+LoginScene::~LoginScene()
 {
 }
 
-void TitleScene::Init()
+void LoginScene::Init()
 {
 
 	GetDrawScreenSize(&screen_size_x, &screen_size_y);
@@ -26,39 +26,45 @@ void TitleScene::Init()
 
 	// ŠÖ”‰Šú‰»
 	mode_ = UpdateMode::SetNetWork;
-	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&TitleScene::SetNetWork,this) },
-					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIP,this) },
-					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInit,this) },
-					{ UpdateMode::Play,std::bind(&TitleScene::Play,this) } };
+	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&LoginScene::SetNetWork,this) },
+					{ UpdateMode::SetHostIP,std::bind(&LoginScene::SetHostIP,this) },
+					{ UpdateMode::StartInit,std::bind(&LoginScene::StartInit,this) },
+					{ UpdateMode::Play,std::bind(&LoginScene::Play,this) } };
 
-	DrawFunc_ = { { UpdateMode::SetNetWork,std::bind(&TitleScene::SetNetWorkDraw,this) },
-					{ UpdateMode::SetHostIP,std::bind(&TitleScene::SetHostIPDraw,this) },
-					{ UpdateMode::StartInit,std::bind(&TitleScene::StartInitDraw,this) },
-					{ UpdateMode::Play,std::bind(&TitleScene::PlayDraw,this) } };
+	DrawFunc_ = { { UpdateMode::SetNetWork,std::bind(&LoginScene::SetNetWorkDraw,this) },
+					{ UpdateMode::SetHostIP,std::bind(&LoginScene::SetHostIPDraw,this) },
+					{ UpdateMode::StartInit,std::bind(&LoginScene::StartInitDraw,this) },
+					{ UpdateMode::Play,std::bind(&LoginScene::PlayDraw,this) } };
 
 }
 
-UniqueBase TitleScene::input(UniqueBase nowScene)
+UniqueBase LoginScene::input(UniqueBase nowScene)
 {
 
 	return nowScene;
 }
 
-UniqueBase TitleScene::UpDate(UniqueBase nowScene)
+UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 {
 	IpNetWork->Update();
 	updateFunc_[mode_]();
 	return nowScene;
 }
 
-void TitleScene::Draw()
+void LoginScene::Draw()
 {
 	ClsDrawScreen();
 	DrawFunc_[mode_]();
 	ScreenFlip();
 }
 
-void TitleScene::SetNetWork()
+void LoginScene::DrawOwnScreen()
+{
+	SetDrawScreen(screenSrcID_);
+	ClsDrawScreen();
+}
+
+void LoginScene::SetNetWork()
 {
 	std::cout << "---------SetNetWork----------" << std::endl;
 	auto ipData = IpNetWork->GetIP();
@@ -104,7 +110,7 @@ void TitleScene::SetNetWork()
 
 }
 
-void TitleScene::SetHostIP()
+void LoginScene::SetHostIP()
 {
 	std::cout << "---------SetHostIP----------" << std::endl;
 	IPDATA hostIp = { 0,0,0,0 };
@@ -143,13 +149,10 @@ void TitleScene::SetHostIP()
 	}
 }
 
-void TitleScene::StartInit()
+void LoginScene::StartInit()
 {
 	std::cout << "---------StartInit-----------" << std::endl;
 	
-
-
-
 	// ‰æ‘œ“Ç‚Ýž‚Ý
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 
@@ -184,7 +187,7 @@ void TitleScene::StartInit()
 	mode_ = UpdateMode::Play;
 }
 
-void TitleScene::Play()
+void LoginScene::Play()
 {
 
 	auto InputMode = IpNetWork->GetInputState();
@@ -199,20 +202,20 @@ void TitleScene::Play()
 
 }
 
-void TitleScene::SetNetWorkDraw()
+void LoginScene::SetNetWorkDraw()
 {
 }
 
-void TitleScene::SetHostIPDraw()
+void LoginScene::SetHostIPDraw()
 {
 	
 }
 
-void TitleScene::StartInitDraw()
+void LoginScene::StartInitDraw()
 {
 }
 
-void TitleScene::PlayDraw()
+void LoginScene::PlayDraw()
 {
 	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
 

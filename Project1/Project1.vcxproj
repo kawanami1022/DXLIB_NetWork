@@ -150,6 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="input\controller.h" />
     <ClInclude Include="input\InputID.h" />
     <ClInclude Include="input\keyInput.h" />
@@ -165,12 +166,13 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="SceneMng.h" />
-    <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="Scene\LoginScene.h" />
     <ClInclude Include="Time\Time.h" />
     <ClInclude Include="_debug\_DebugConOut.h" />
     <ClInclude Include="_debug\_DebugDispOut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\keyInput.cpp" />
     <ClCompile Include="input\Pad.cpp" />
@@ -184,7 +186,7 @@
     <ClCompile Include="Scene\BaseScene.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneMng.cpp" />
-    <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="Scene\LoginScene.cpp" />
     <ClCompile Include="Time\Time.cpp" />
     <ClCompile Include="_debug\_DebugConOut.cpp" />
     <ClCompile Include="_debug\_DebugDispOut.cpp" />

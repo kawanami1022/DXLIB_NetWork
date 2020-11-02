@@ -24,12 +24,12 @@ enum class UpdateMode
 };
 
 
-class TitleScene :
+class LoginScene :
 	public BaseScene
 {
 public:
-	TitleScene();
-	~TitleScene();
+	LoginScene();
+	~LoginScene();
 
 	void Init();
 
@@ -38,7 +38,7 @@ private:
 	UniqueBase input(UniqueBase);
 	UniqueBase UpDate(UniqueBase);
 	void Draw();
-
+	void DrawOwnScreen();
 	//updateFunc_
 	void SetNetWork();
 	void SetHostIP();

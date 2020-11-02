@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include "SceneMng.h"
 #include "Scene/BaseScene.h"
-#include "Scene/TitleScene.h"
+#include "Scene/LoginScene.h"
 
 SceneMng* SceneMng::hInstance = nullptr;
 
@@ -18,11 +18,12 @@ int SceneMng::Run()
 	{
 		return -1;				// エラーが起きたら直ちに終了
 	}
+
 	std::cout << "DXLib初期化" << std::endl;
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。
-	nowScene = std::make_unique<TitleScene>();
+	nowScene = std::make_unique<LoginScene>();
 
 	// 描画先画面を裏画面にセット
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -33,21 +34,26 @@ int SceneMng::Run()
 	{
 		nowScene = nowScene->input(std::move(nowScene));
 		nowScene = nowScene->UpDate(std::move(nowScene));
-		nowScene->Draw();
+		ScenManagerDraw();
 	}
 
 	DxLib_End();				// ＤＸライブラリ使用の終了処理
 	return 0;
 }
 
+void SceneMng::ScenManagerDraw()
+{
+	nowScene->Draw();
+}
+
 SceneMng::SceneMng()
 {
 	SetChainCount_ = 0;
-	
 }
 
 SceneMng::~SceneMng()
 {
+
 }
 
 

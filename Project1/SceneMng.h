@@ -14,6 +14,7 @@ class SceneMng
 private:
 	SceneMng();
 	~SceneMng();
+	
 	static SceneMng *hInstance;
 	int SetChainCount_;
 	UniqueBase nowScene;
@@ -37,6 +38,8 @@ public:
 		hInstance = nullptr;
 	}
 	int Run();
+
+	void ScenManagerDraw();
 
 };
 

@@ -150,6 +150,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Lib\Constraint\cast.h" />
+    <ClInclude Include="Lib\Constraint\constraint.h" />
+    <ClInclude Include="Lib\Math\math.h" />
+    <ClInclude Include="Scene\CrossOver.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="input\controller.h" />
     <ClInclude Include="input\InputID.h" />
@@ -168,10 +172,14 @@
     <ClInclude Include="SceneMng.h" />
     <ClInclude Include="Scene\LoginScene.h" />
     <ClInclude Include="Time\Time.h" />
+    <ClInclude Include="Scene\Transion.h" />
+    <ClInclude Include="Lib\Vector2\Vector2.h" />
     <ClInclude Include="_debug\_DebugConOut.h" />
     <ClInclude Include="_debug\_DebugDispOut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Lib\Math\math.cpp" />
+    <ClCompile Include="Scene\CrossOver.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\keyInput.cpp" />
@@ -188,6 +196,8 @@
     <ClCompile Include="SceneMng.cpp" />
     <ClCompile Include="Scene\LoginScene.cpp" />
     <ClCompile Include="Time\Time.cpp" />
+    <ClCompile Include="Scene\Transion.cpp" />
+    <ClCompile Include="Lib\Vector2\Vector2.cpp" />
     <ClCompile Include="_debug\_DebugConOut.cpp" />
     <ClCompile Include="_debug\_DebugDispOut.cpp" />
   </ItemGroup>

@@ -161,7 +161,7 @@ void NetWorkState::SendMessageData()
 		NetWorkSend(netHandle, &mesData_, sizeof(MesData));
 		LogMesData.push_back(mesData_);
 	}
-	std::cout << "Œv‘ªŽžŠÔ:" << timer_->IntervalMesurement() << std::endl;
+	std::cout << "Œv‘ªŽžŠÔ:" << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
 
 	for (const auto LOG_MES_DATA : LogMesData)

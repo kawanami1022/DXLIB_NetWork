@@ -65,7 +65,10 @@ private:
 
 	int pos_x=300;
 	int pos_y=300;
+	
+
 	int Handle;
+	int CirlcleHandle_ = 0;
 
 };
 

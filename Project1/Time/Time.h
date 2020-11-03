@@ -1,18 +1,19 @@
 #pragma once
 #include <chrono>
-#include <ctime>
+
+using ClockPoint = std::chrono::system_clock::time_point;
 
 class Timer
 {
 public:
-	long double IntervalMesurement();
-	void StartMesurement();
-	long double GetInterval(){
+	std::chrono::milliseconds IntervalMesurement();
+	void StartMesurement();							// Get system_clock::time_point
+	std::chrono::milliseconds GetInterval(){
 		return interval_;
 	}
 private:
-	long double interval_; 
-	std::time_t	start_;
-	std::time_t end_;
+	std::chrono::milliseconds interval_;
+	ClockPoint start_;
+	ClockPoint end_;
 };
 

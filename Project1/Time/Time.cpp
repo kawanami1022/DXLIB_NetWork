@@ -1,12 +1,13 @@
 #include "Time.h"
 
-long double Timer::IntervalMesurement()
+std::chrono::milliseconds Timer::IntervalMesurement()
 {
-	end_ = std::time(nullptr);
-	return std::difftime(end_, start_);
+	end_ = std::chrono::system_clock::now();
+	interval_ = std::chrono::duration_cast<std::chrono::milliseconds>(end_ - start_);
+	return interval_;
 }
 
 void Timer::StartMesurement()
 {
-	start_ = std::time(nullptr);
+	start_ = std::chrono::system_clock::now();
 }

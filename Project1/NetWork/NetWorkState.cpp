@@ -112,8 +112,6 @@ void NetWorkState::SendMessageData()
 	std::memset(&mesData_, 0, sizeof(MesHeader));
 
 
-	std::cout << "これからデータを送信します" << std::endl;
-	timer_->StartMesurement();
 	// substruction's mapId
 	for (auto Name : tmxFile_->name_)
 	{
@@ -125,6 +123,9 @@ void NetWorkState::SendMessageData()
 			}
 		}
 	}
+
+	std::cout << "これからデータを送信します" << std::endl;
+	timer_->StartMesurement();
 	mesData_.type = MesType::TMX_SIZE;
 	mesData_.idata[0] = static_cast<int>(mapId.size());
 	NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));

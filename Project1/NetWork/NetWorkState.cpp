@@ -131,19 +131,19 @@ void NetWorkState::SendMessageData()
 	auto sendId = 0;
 
 	auto idx = 0;
-	std::memset(&mesData_, 0, sizeof(MesHeader));
 	while (idx <= mapId.size())
 	{
 
+		std::memset(&mesData_.idata, 0, sizeof(MesHeader));
 		mesData_.type = MesType::TMX_DATA;
 		for (int id = 0; id < 16; id++)
 		{
 			if (idx >= mapId.size())
 			{
-				mesData_.sdata++;
 				std::cout << std::hex << mesData_.idata[0] << std::setw(8) << std::hex << mesData_.idata[1] << std::setw(8) << ":" << mesData_.sdata << std::endl;
 				NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
 				LogMesData.push_back(mesData_);
+				mesData_.sdata++;
 				break;
 			}
 			uniondata_.lData |= mapId[idx];
@@ -161,12 +161,12 @@ void NetWorkState::SendMessageData()
 			logUnion.lData <<= 4;
 			id >>= 15 * 4;
 		}
-		mesData_.sdata++;
 		std::cout << std::hex << mesData_.idata[0] << std::setw(8) << std::hex << mesData_.idata[1] <<std::setw(8)<<":"<<std::dec<< mesData_.sdata << std::endl;
 		NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
+		mesData_.sdata++;
 		LogMesData.push_back(mesData_);
 	}
-	std::cout << "Œv‘ªŽžŠÔ:" << timer_->IntervalMesurement().count() << std::endl;
+	std::cout << "Œv‘ªŽžŠÔ:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
 
 	for (const auto LOG_MES_DATA : LogMesData)

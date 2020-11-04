@@ -9,12 +9,6 @@
 #include "NetWorkState.h"
 #define IpNetWork	NetWork::Gethinstance()
 
-
-
-
-
-
-
 class NetWork
 {
 public:

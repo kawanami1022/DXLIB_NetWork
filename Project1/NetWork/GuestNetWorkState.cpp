@@ -8,6 +8,7 @@ GuestNetWorkState::GuestNetWorkState()
     active_ = ActiveState::Non;
     input_.moveDir = 0;
     controller_.Setup(0);
+    mesData_.sdata = 0;
 }
 
 GuestNetWorkState::~GuestNetWorkState()

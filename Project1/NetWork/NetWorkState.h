@@ -20,6 +20,7 @@ enum class ActiveState;
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
+
 enum class MesType:char
 {
 	STANBY,				// ‰Šú‰»î•ñ‘—MŠ®—¹
@@ -29,13 +30,22 @@ enum class MesType:char
 	POS
 };
 
-struct MesData
+struct MesHeader
 {
 	MesType type;
 	unsigned short sdata;
 	unsigned char cdata = 0;
 	uint32_t idata[2];
 };
+
+//struct MesHeader
+//{
+//	MesType type;
+//	unsigned short sdata;
+//	unsigned char cdata = 0;
+//	unsigned int length;
+//};
+
 
 union unionData
 {
@@ -124,7 +134,7 @@ protected:
 	
 	int fileSize_;
 	RevBox revdata_;
-	MesData mesData_;
+	MesHeader mesData_;
 	unionData uniondata_;
 
 

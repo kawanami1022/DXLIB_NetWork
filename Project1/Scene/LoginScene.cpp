@@ -6,8 +6,9 @@
 #include <DxLib.h>
 #include "../_debug/_DebugDispOut.h"
 #include "../Lib/File/TMX_File.h"
-
 #include "LoginScene.h"
+#include "GameScene.h"
+#include "CrossOver.h"
 #include "../NetWork/NetWork.h"
 #include "../Time/Time.h"
 
@@ -55,12 +56,17 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 		
 	IpNetWork->Update();
 	updateFunc_[mode_]();
+	if (CheckHitKey(KEY_INPUT_SPACE))
+	{
+		auto nextScene = std::make_unique<GameScene>();
+		nowScene = std::make_unique<CrossOver>(std::move(nowScene), std::move(nextScene));
+	}
 	return nowScene;
 }
 
 void LoginScene::Draw()
 {
-
+	DrawOwnScreen();
 	
 }
 

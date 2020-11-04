@@ -1,21 +1,26 @@
+#include <DxLib.h>
 #include "GameScene.h"
 
-UniqueBase GameScene::input(UniqueBase)
+UniqueBase GameScene::input(UniqueBase nowScene)
 {
-	return UniqueBase();
+	return nowScene;
 }
 
-UniqueBase GameScene::UpDate(UniqueBase)
+UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
-	return UniqueBase();
+	return nowScene;
 }
 
 void GameScene::Draw()
 {
+	DrawOwnScreen();
 }
 
 void GameScene::DrawOwnScreen()
 {
+	SetDrawScreen(screenSrcID_);
+	ClsDrawScreen();
+
 }
 
 bool GameScene::Init()

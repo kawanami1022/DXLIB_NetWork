@@ -29,7 +29,7 @@ NetWorkState::NetWorkState()
 		{MesType::GAME_START ,std::bind(&NetWorkState::GAME_START,this)},
 		{MesType::STANBY ,std::bind(&NetWorkState::STANBY,this)} };
 	timer_ = std::make_unique<Timer>();
-
+	mesData_.sdata = 0;
 }
 
 NetWorkState::~NetWorkState()
@@ -100,7 +100,7 @@ void NetWorkState::SendMessageData()
 	
 
 	// debug display's variables
-	std::vector<MesData> LogMesData;
+	std::vector<MesHeader> LogMesData;
 	std::vector<int> LogMapData;
 	unionData logUnion;
 
@@ -109,10 +109,8 @@ void NetWorkState::SendMessageData()
 		std::cout << "tmxdataが読み込めません" << std::endl;
 		return;
 	}
-	std::memset(&mesData_, 0, sizeof(MesData));
-	mesData_.type = MesType::TMX_SIZE;
-	mesData_.idata[0] = 200;
-	NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+	std::memset(&mesData_, 0, sizeof(MesHeader));
+
 
 	std::cout << "これからデータを送信します" << std::endl;
 	timer_->StartMesurement();
@@ -127,19 +125,24 @@ void NetWorkState::SendMessageData()
 			}
 		}
 	}
+	mesData_.type = MesType::TMX_SIZE;
+	mesData_.idata[0] = static_cast<int>(mapId.size());
+	NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
 	auto sendId = 0;
 
 	auto idx = 0;
+	std::memset(&mesData_, 0, sizeof(MesHeader));
 	while (idx <= mapId.size())
 	{
-		std::memset(&mesData_, 0, sizeof(MesData));
 
 		mesData_.type = MesType::TMX_DATA;
 		for (int id = 0; id < 16; id++)
 		{
 			if (idx >= mapId.size())
 			{
-				NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+				mesData_.sdata++;
+				std::cout << std::hex << mesData_.idata[0] << std::setw(8) << std::hex << mesData_.idata[1] << std::setw(8) << ":" << mesData_.sdata << std::endl;
+				NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
 				LogMesData.push_back(mesData_);
 				break;
 			}
@@ -158,7 +161,9 @@ void NetWorkState::SendMessageData()
 			logUnion.lData <<= 4;
 			id >>= 15 * 4;
 		}
-		NetWorkSend(netHandle, &mesData_, sizeof(MesData));
+		mesData_.sdata++;
+		std::cout << std::hex << mesData_.idata[0] << std::setw(8) << std::hex << mesData_.idata[1] <<std::setw(8)<<":"<<std::dec<< mesData_.sdata << std::endl;
+		NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
 		LogMesData.push_back(mesData_);
 	}
 	std::cout << "計測時間:" << timer_->IntervalMesurement().count() << std::endl;
@@ -206,7 +211,7 @@ void NetWorkState::ReservMessageData()
 	while (GetNetWorkDataLength(netHandle) <= 0)
 	{
 
-		NetWorkRecv(netHandle, &mesData_, sizeof(MesData));
+		NetWorkRecv(netHandle, &mesData_, sizeof(MesHeader));
 		if (mesData_.type == MesType::TMX_SIZE)
 		{
 			mapData.resize(tmxFile_->height_ * tmxFile_->width_ * (tmxFile_->nextlayerid_ - 1));

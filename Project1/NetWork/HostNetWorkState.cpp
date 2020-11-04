@@ -12,7 +12,7 @@ HostNetWorkState::HostNetWorkState()
     if (succeed==0) { active_ = ActiveState::Wait; }
     std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
   
-
+    mesData_.sdata = 0;
     controller_.Setup(0);
 }
 

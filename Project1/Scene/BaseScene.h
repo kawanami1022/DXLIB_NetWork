@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 #include <memory>
-
+#include "../Lib/Vector2/Vector2.h"
 class BaseScene;
 
 using UniqueBase = std::unique_ptr<BaseScene>;

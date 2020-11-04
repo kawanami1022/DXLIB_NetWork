@@ -43,7 +43,10 @@ int SceneMng::Run()
 
 void SceneMng::ScenManagerDraw()
 {
+	ClsDrawScreen();
 	nowScene->Draw();
+	ScreenFlip();
+
 }
 
 SceneMng::SceneMng()

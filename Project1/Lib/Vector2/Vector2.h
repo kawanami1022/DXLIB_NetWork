@@ -5,7 +5,8 @@
 #pragma once
 #include <array>
 #include <cmath>
-
+template<class T>
+class Vector2Tmp;
 
 template<class T>
 class Vector2Tmp
@@ -67,4 +68,5 @@ using Vector2f = Vector2Tmp<float>;
 using Vector2d = Vector2Tmp<double>;
 using Vector2s = Vector2Tmp<short>;
 
-typedef Vector2 Position2;
+using Position2=Vector2;
+

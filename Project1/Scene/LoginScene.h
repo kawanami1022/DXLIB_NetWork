@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <array>
 #include <functional>
+
 #include "BaseScene.h"
 enum class UpdateMode;
 
@@ -65,7 +66,7 @@ private:
 
 	int pos_x=300;
 	int pos_y=300;
-	
+	Vector2Tmp<int> circlePos_;
 
 	int Handle;
 	int CirlcleHandle_ = 0;

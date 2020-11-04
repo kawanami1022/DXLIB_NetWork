@@ -2,12 +2,15 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <random>
 #include <DxLib.h>
 #include "../_debug/_DebugDispOut.h"
 #include "../Lib/File/TMX_File.h"
+
 #include "LoginScene.h"
 #include "../NetWork/NetWork.h"
 #include "../Time/Time.h"
+
 LoginScene::LoginScene():BaseScene()
 {
 	Init();
@@ -35,6 +38,7 @@ void LoginScene::Init()
 					{ UpdateMode::SetHostIP,std::bind(&LoginScene::SetHostIPDraw,this) },
 					{ UpdateMode::StartInit,std::bind(&LoginScene::StartInitDraw,this) },
 					{ UpdateMode::Play,std::bind(&LoginScene::PlayDraw,this) } };
+	circlePos_ = Vector2(0, 0);
 	CirlcleHandle_ = LoadGraph("Image/Circle.png", true);
 
 }
@@ -47,6 +51,8 @@ UniqueBase LoginScene::input(UniqueBase nowScene)
 
 UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 {
+
+		
 	IpNetWork->Update();
 	updateFunc_[mode_]();
 	return nowScene;
@@ -54,15 +60,15 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 
 void LoginScene::Draw()
 {
-	ClsDrawScreen();
-	DrawFunc_[mode_]();
-	ScreenFlip();
+
+	
 }
 
 void LoginScene::DrawOwnScreen()
 {
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
+	DrawFunc_[mode_]();
 }
 
 void LoginScene::SetNetWork()
@@ -175,16 +181,6 @@ void LoginScene::StartInit()
 		std::cout << tileHandle_[idx] << std::endl;
 	}
 
-	//auto NetWorkMode = IpNetWork->GetNetWorkMode();
-
-	//if (NetWorkMode == NetWorkMode::HOST)
-	//{
-	//	IpNetWork->SendMessageData();
-
-	//}else if (NetWorkMode == NetWorkMode::GUEST)
-	//{
-	//	IpNetWork->ReservMessageData();
-	//}
 	mode_ = UpdateMode::Play;
 }
 
@@ -200,6 +196,17 @@ void LoginScene::Play()
 	{
 		pos_x -= 3;
 	}
+
+	if (circlePos_.y >= screen_size_y)
+	{
+		std::random_device seed_gen;
+		std::mt19937 engine(seed_gen());
+		std::uniform_int_distribution<int> distribution(0, screen_size_x);
+		auto tmp_pos_x = distribution(engine);
+		circlePos_.x = tmp_pos_x;
+		circlePos_.y = 0;
+	}
+	circlePos_.y += 5;
 
 }
 
@@ -233,4 +240,6 @@ void LoginScene::PlayDraw()
 			}
 		}
 	}
+
+	DrawRotaGraph(circlePos_.x, circlePos_.y, 1, 0, CirlcleHandle_, true);
 }

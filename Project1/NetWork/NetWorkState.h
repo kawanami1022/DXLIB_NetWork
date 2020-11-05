@@ -43,7 +43,7 @@ struct MesHeader
 //	MesType type;
 //	unsigned short sdata;
 //	unsigned char cdata = 0;
-//	unsigned int length;
+//	unsigned int length;			// 
 //};
 
 

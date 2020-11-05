@@ -141,7 +141,6 @@ void NetWorkState::SendMessageData()
 		{
 			if (idx >= mapId.size())
 			{
-				std::cout << std::hex << mesData_.idata[0] << std::setw(8) << std::hex << mesData_.idata[1] << std::setw(8) << ":" << mesData_.sdata << std::endl;
 				NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
 				LogMesData.push_back(mesData_);
 				mesData_.sdata++;
@@ -162,7 +161,6 @@ void NetWorkState::SendMessageData()
 			logUnion.lData <<= 4;
 			id >>= 15 * 4;
 		}
-		std::cout << std::hex << mesData_.idata[0] << std::setw(8) << std::hex << mesData_.idata[1] <<std::setw(8)<<":"<<std::dec<< mesData_.sdata << std::endl;
 		NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
 		mesData_.sdata++;
 		LogMesData.push_back(mesData_);

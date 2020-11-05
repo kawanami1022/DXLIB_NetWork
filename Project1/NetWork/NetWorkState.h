@@ -8,6 +8,9 @@
 #include "../input/Pad.h"
 #include "../input/keyInput.h"
 
+constexpr	auto MTU = 1454;
+
+
 namespace File {
 	enum class ReadTmxMode;
 	struct Tiled_Map;
@@ -17,9 +20,12 @@ namespace File {
 
 class Timer;
 enum class ActiveState;
+union unionData;
+
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
+using MesPacket = std::vector<unionData>;
 
 enum class MesType:char
 {
@@ -33,26 +39,30 @@ enum class MesType:char
 struct MesHeader
 {
 	MesType type;
-	unsigned short sdata;
 	unsigned char cdata = 0;
-	uint32_t idata[2];
+	unsigned short sdata;
+	MesPacket length_;
+};
+
+union unionData
+{
+	char cdata[4];
+	int idata;
 };
 
 //struct MesHeader
 //{
 //	MesType type;
-//	unsigned short sdata;
 //	unsigned char cdata = 0;
+//	unsigned short id;
 //	unsigned int length;
 //};
 
-
-union unionData
-{
-	char cData[8];
-	int iData[2];
-	long long lData;
-};
+//union unionData
+//{
+//	char cData[4];
+//	int iData;
+//};
 
 struct InputState
 {

@@ -96,13 +96,9 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 void NetWorkState::SendMessageData()
 {
 	std::vector<int> mapId;	// tmxFile's tiledmap 
-	MesPacket ldataPacket;
-	unionData packetUnion;
-
+	MesPacket dataPacket;
+	short sendNum = 0;
 	// debug display's variables
-	std::vector<MesHeader> LogMesData;
-	std::vector<int> LogMapData;
-	unionData logUnion;
 
 	if (tmxFile_==nullptr)
 	{
@@ -110,7 +106,6 @@ void NetWorkState::SendMessageData()
 		return;
 	}
 	std::memset(&mesData_, 0, sizeof(MesHeader));
-
 
 	// substruction's mapId
 	for (auto Name : tmxFile_->name_)
@@ -125,102 +120,42 @@ void NetWorkState::SendMessageData()
 	}
 
 
-	auto idx = 0;
-	for (auto MAP_ID : mapId)
+	auto mapdata = 0;
+	//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
+	unionHeader headerdata{ MesType::TMX_SIZE,0,0,1 };
+	dataPacket.push_back(headerdata.data_[0]);
+	headerdata.mesdata_={ MesType::TMX_DATA,0,0,dataPacket.size() * sizeof(int) };
+	dataPacket.push_back(headerdata.data_[0]);
+
+	while (mapId.size() > 0)
 	{
-		packetUnion.idata |= MAP_ID;
-
-		if (((idx % 8 == 0) && idx != 0))
+		for (unsigned int i = 0; i < 8; i++)
 		{
-			ldataPacket.push_back(packetUnion);
-			packetUnion.idata = 0;
+			mapdata |= mapId.front();
+			mapId.erase(mapId.begin());
+			if(i!=(8-1))mapdata <<= 4;
+			if (!(mapId.size() > 0))
+			{
+				break;
+			}
 		}
-		else if (idx >= mapId.size()-1)
-		{
-			// 左端にシフト演算
-			std::cout << std::hex << packetUnion.idata << std::endl;
-			packetUnion.idata <<= 4 * (8 - idx % 8);
-			ldataPacket.push_back(packetUnion);
-			std::cout << std::hex << packetUnion.idata<<std::endl;
-		}
-		else {
-			packetUnion.idata <<= 4;
-		}
-
-		idx++;
+		dataPacket.push_back(mapdata);
 	}
 
-	std::cout << std::endl;
-
-	for (auto LDATAPACKET : ldataPacket)
-	{
-		std::cout <<std::setw(8)<< std::hex << LDATAPACKET.idata << std::endl;
-	}
-
-	std::cout << std::endl;
-
-	auto sendDataSize = ldataPacket.size() * sizeof(unionData) + sizeof(short) + sizeof(char) + sizeof(char);
-
-	std::cout << "ldataPacket:" << sendDataSize << std::endl;
-	idx = 0;
 
 	std::cout << "これからデータを送信します" << std::endl;
 	timer_->StartMesurement();
-
-	auto SendData = [&]() {
-		mesData_.type = MesType::TMX_SIZE;
-		mesData_.sdata = sendDataSize;
-		std::cout << "送信データ量:" << std::dec << sendDataSize << std::endl;
-		NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
-	};
-
-
-	while (ldataPacket.size() >0)
-	{
-		auto packetSize = ldataPacket.size();
-		std::memset(&mesData_, 0, sizeof(mesData_));
-		sendDataSize = packetSize * sizeof(unionData);
-		if (sendDataSize < MTU)
-		{
-			SendData();
-		}
-		else
-		{
-			sendDataSize = ((ldataPacket.size() % MTU - 1) * sizeof(unionData));
-			SendData();
-		}
-
-		packetSize = sendDataSize / sizeof(unionData);
-		mesData_.type = MesType::TMX_DATA;
-		mesData_.length_.resize( ldataPacket.size());
-		std::memset(&mesData_, 0, sizeof(mesData_));
-		for (int ID = 0; ID < packetSize; ID++)
-		{
-			mesData_.length_[ID]=ldataPacket[ID];
-		}
-		for (int ID = 0; ID < packetSize; ID++)
-		{
-			ldataPacket.erase(ldataPacket.begin());
-		}
-
-		NetWorkSend(netHandle, &mesData_, sizeof(MesHeader));
-		std::cout << "ldataPacket: " << std::dec << ldataPacket.size() << std::endl;
-	}
+	
+	// int型のマップデータ格納変数が0になるまで処理する
+	
+	std::cout << "データサイズ:" << sizeof(int)*dataPacket.size() << std::endl;
+	NetWorkSend(netHandle, &dataPacket, sizeof(dataPacket));
 
 	std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
 	mapId.clear();
 	
 	// debug display
-	//	int id = MESDATA_LENGTH.idata & 0xf0000000;
-	for (auto Name : tmxFile_->name_)
-	{
-		for (int idx = 0; idx < tmxFile_->height_ * tmxFile_->width_; idx++)
-		{
-			tmxFile_->tiledMap_[Name].titleData_[idx];
-		}
-	}
-	
 
 }
 

@@ -37,7 +37,6 @@ namespace File
 		std::unordered_map<std::string, Tiled_Map> tiledMap_;
 		std::unique_ptr<int> tileHandle_;
 		unsigned int nextlayerid_ = 0;
-
 		int width_ = 0;
 		int height_ = 0;
 

@@ -20,12 +20,13 @@ namespace File {
 
 class Timer;
 enum class ActiveState;
+struct MesHeader;
 union unionData;
-
+union unionHeader;
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
-using MesPacket = std::vector<unionData>;
+using MesPacket = std::vector<int>;
 
 enum class MesType:char
 {
@@ -41,7 +42,7 @@ struct MesHeader
 	MesType type;
 	unsigned char cdata = 0;
 	unsigned short sdata;
-	MesPacket length_;
+	unsigned int length_;
 };
 
 union unionData
@@ -50,19 +51,11 @@ union unionData
 	int idata;
 };
 
-//struct MesHeader
-//{
-//	MesType type;
-//	unsigned char cdata = 0;
-//	unsigned short id;
-//	unsigned int length;
-//};
-
-//union unionData
-//{
-//	char cData[4];
-//	int iData;
-//};
+union unionHeader
+{
+	MesHeader mesdata_;
+	unsigned int data_[2];
+};
 
 struct InputState
 {

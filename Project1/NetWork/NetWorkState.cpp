@@ -212,11 +212,16 @@ void NetWorkState::SendMessageData()
 	mapId.clear();
 	
 	// debug display
-	for (auto MESDATA_LENGTH : mesData_.length_)
+	//	int id = MESDATA_LENGTH.idata & 0xf0000000;
+	for (auto Name : tmxFile_->name_)
 	{
-		int id = MESDATA_LENGTH.idata & 0xf0000000;
-		mapId.push_back(id);
+		for (int idx = 0; idx < tmxFile_->height_ * tmxFile_->width_; idx++)
+		{
+			tmxFile_->tiledMap_[Name].titleData_[idx];
+		}
 	}
+	
+
 }
 
 void NetWorkState::ReservMessageData()

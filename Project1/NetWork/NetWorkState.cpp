@@ -96,11 +96,10 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 void NetWorkState::SendMessageData()
 {
 	std::vector<int> mapId;	// tmxFile's tiledmap 
-	MesPacket dataPacket;
 	short sendNum = 0;
 	// debug display's variables
 
-	if (tmxFile_==nullptr)
+	if (tmxFile_ == nullptr)
 	{
 		std::cout << "tmxdataが読み込めません" << std::endl;
 		return;
@@ -124,7 +123,7 @@ void NetWorkState::SendMessageData()
 	//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
 	unionHeader headerdata{ MesType::TMX_SIZE,0,0,1 };
 	dataPacket.push_back(headerdata.data_[0]);
-	headerdata.mesdata_={ MesType::TMX_DATA,0,0,dataPacket.size() * sizeof(int) };
+	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,dataPacket.size() * sizeof(int) };
 	dataPacket.push_back(headerdata.data_[0]);
 
 	while (mapId.size() > 0)
@@ -133,7 +132,7 @@ void NetWorkState::SendMessageData()
 		{
 			mapdata |= mapId.front();
 			mapId.erase(mapId.begin());
-			if(i!=(8-1))mapdata <<= 4;
+			if (i != (8 - 1))mapdata <<= 4;
 			if (!(mapId.size() > 0))
 			{
 				break;
@@ -145,11 +144,9 @@ void NetWorkState::SendMessageData()
 
 	std::cout << "これからデータを送信します" << std::endl;
 	timer_->StartMesurement();
-	
+
 	// int型のマップデータ格納変数が0になるまで処理する
-	
-	std::cout << "データサイズ:" << sizeof(int)*dataPacket.size() << std::endl;
-	NetWorkSend(netHandle, &dataPacket, sizeof(dataPacket));
+	NetWorkSend(netHandle, &dataPacket, sizeof(MesPacket)*dataPacket.size());
 
 	std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
@@ -163,49 +160,33 @@ void NetWorkState::ReservMessageData()
 {
 	std::string lineData_;
 	std::vector<int> mapData;
+	unionHeader headerdata{MesType::STANBY};
 	auto id = 0;
-	while (GetNetWorkDataLength(netHandle) <= 0)
+	dataPacket.reserve((mapData.size() / 8 + 1 + 2));	//
+	if (GetNetWorkDataLength(netHandle) > 0)
 	{
-
-		NetWorkRecv(netHandle, &mesData_, sizeof(MesHeader));
-		if (mesData_.type == MesType::TMX_SIZE)
-		{
-			mapData.resize(tmxFile_->height_ * tmxFile_->width_ * (tmxFile_->nextlayerid_ - 1));
-			id = 0;
-			std::memset(&mapData, 0, sizeof(mapData));
-		}
-
-
-		if (mesData_.type == MesType::TMX_DATA)
-		{
-			//uniondata_.iData[0] = mesData_.length_[0];
-			//uniondata_.iData[1] = mesData_.length_[1];
-			for (int i = 0; i < 8; i++)
-			{
-				auto idx = uniondata_.cdata[i];
-
-				mapData[id] = (idx & 0xf0) >> 4;
-				id++;
-				mapData[id] = idx & 0x0f;
-				id++;
-			}
-		}
+		NetWorkRecv(netHandle, &dataPacket, sizeof(int) * dataPacket.size());
+	}
+	else
+	{
+		std::cout << "データが読み込めませんでした!" << std::endl;
+		return;
 	}
 
-	for (int layer = 0; layer < tmxFile_->nextlayerid_ - 1; layer++)
+	
+	if (dataPacket.size() > 2)
 	{
-		for (int y = 0; y < tmxFile_->height_; y++)
-		{
-			for (int x = 0; x < tmxFile_->width_; x++)
-			{
-				int id = x + y * tmxFile_->width_ + layer * tmxFile_->width_ * tmxFile_->height_;
-				std::cout << mapData[id];
-				std::cout << ":" << id << std::endl;
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
+		headerdata.data_[0] = dataPacket[1];
+	}
+	else
+	{
+		return;
 	}
 
+	if (headerdata.mesdata_.type == MesType::TMX_DATA)
+	{
+		dataPacket.erase(dataPacket.begin(), dataPacket.begin() + 1);
+		mapData.resize(headerdata.mesdata_.length_ / sizeof(int));
+	}
 
 }

@@ -140,6 +140,8 @@ protected:
 	MesHeader mesData_;
 	unionData uniondata_;
 
+	MesPacket dataPacket;
+
 
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;

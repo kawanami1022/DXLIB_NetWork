@@ -123,7 +123,7 @@ void NetWorkState::SendMessageData()
 	//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
 	unionHeader headerdata{ MesType::TMX_SIZE,0,0,1 };
 	dataPacket.push_back(headerdata.data_[0]);
-	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,dataPacket.size() * sizeof(int) };
+	headerdata.mesdata_ = { MesType::TMX_DATA,0,static_cast<unsigned short>(dataPacket.size() * sizeof(int)),0 };
 	dataPacket.push_back(headerdata.data_[0]);
 
 	while (mapId.size() > 0)
@@ -141,15 +141,21 @@ void NetWorkState::SendMessageData()
 		dataPacket.push_back(mapdata);
 	}
 
-
 	std::cout << "これからデータを送信します" << std::endl;
 	timer_->StartMesurement();
 
 	// int型のマップデータ格納変数が0になるまで処理する
-	NetWorkSend(netHandle, &dataPacket, sizeof(MesPacket)*dataPacket.size());
+	auto flag=NetWorkSend(netHandle, &dataPacket, sizeof(MesPacket)*dataPacket.size());
 
+	std::cout <<flag<< std::endl;
 	std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
+
+	for (auto DATAPACKET : dataPacket)
+	{
+		std::cout << std::hex << DATAPACKET << std::endl;
+	}
+
 	mapId.clear();
 	
 	// debug display
@@ -158,35 +164,31 @@ void NetWorkState::SendMessageData()
 
 void NetWorkState::ReservMessageData()
 {
-	std::string lineData_;
-	std::vector<int> mapData;
-	unionHeader headerdata{MesType::STANBY};
-	auto id = 0;
-	dataPacket.reserve((mapData.size() / 8 + 1 + 2));	//
-	if (GetNetWorkDataLength(netHandle) > 0)
-	{
-		NetWorkRecv(netHandle, &dataPacket, sizeof(int) * dataPacket.size());
-	}
-	else
-	{
-		std::cout << "データが読み込めませんでした!" << std::endl;
-		return;
-	}
-
 	
-	if (dataPacket.size() > 2)
+	std::string lineData_;
+	unionHeader headerdata{MesType::STANBY};
+	auto id = 0; 
+	auto dataLength = GetNetWorkDataLength(netHandle);
+	if(dataLength<=0)
 	{
-		headerdata.data_[0] = dataPacket[1];
-	}
-	else
-	{
+		std::cout << "headerデータが読み込めませんでした!" << std::endl;
 		return;
 	}
-
-	if (headerdata.mesdata_.type == MesType::TMX_DATA)
+	while (GetNetWorkDataLength(netHandle) > 0)
 	{
-		dataPacket.erase(dataPacket.begin(), dataPacket.begin() + 1);
-		mapData.resize(headerdata.mesdata_.length_ / sizeof(int));
+		auto data = 0;
+		NetWorkRecv(netHandle, &data, sizeof(int));
+		dataPacket.push_back(data);
+		std::cout <<"データ:"<< std::hex<< dataPacket.back() << std::endl;
 	}
+
+	for (auto DATAPACKET : dataPacket)
+	{
+		std::cout << DATAPACKET << std::endl;
+	}
+
+		
+
+
 
 }

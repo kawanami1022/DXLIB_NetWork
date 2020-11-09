@@ -48,17 +48,19 @@ bool GuestNetWorkState::Update()
 
 void GuestNetWorkState::UpdateFuncNon()
 {
+    std::cout << "NON" << std::endl;
 }
 
 void GuestNetWorkState::UpdateFuncWait()
 {
-    
+    std::cout << "Wait" << std::endl;
 }
 
 void GuestNetWorkState::UpdateFuncInit()
 {
 
-   
+    std::cout << "Init" << std::endl;
+    active_ = ActiveState::Stanby;
 }
 
 void GuestNetWorkState::UpdateFuncStanby()

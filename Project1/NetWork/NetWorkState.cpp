@@ -29,7 +29,7 @@ NetWorkState::NetWorkState()
 		{MesType::GAME_START ,std::bind(&NetWorkState::GAME_START,this)},
 		{MesType::STANBY ,std::bind(&NetWorkState::STANBY,this)} };
 	timer_ = std::make_unique<Timer>();
-	mesData_.sdata = 0;
+	mesData_.sendID = 0;
 }
 
 NetWorkState::~NetWorkState()
@@ -121,9 +121,9 @@ void NetWorkState::SendMessageData()
 
 	auto mapdata = 0;
 	//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
-	unionHeader headerdata{ MesType::TMX_SIZE,0,0,1 };
+	Header headerdata{ MesType::TMX_SIZE,0,0,1 };
 	dataPacket.push_back(headerdata.data_[0]);
-	headerdata.mesdata_ = { MesType::TMX_DATA,0,static_cast<unsigned short>(dataPacket.size() * sizeof(int)),0 };
+	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,static_cast<unsigned short>(dataPacket.size() * sizeof(int)) };
 	dataPacket.push_back(headerdata.data_[0]);
 
 	while (mapId.size() > 0)
@@ -145,7 +145,7 @@ void NetWorkState::SendMessageData()
 	timer_->StartMesurement();
 
 	// int型のマップデータ格納変数が0になるまで処理する
-	auto flag=NetWorkSend(netHandle, &dataPacket, sizeof(MesPacket)*dataPacket.size());
+	auto flag=NetWorkSend(netHandle, dataPacket.data(), sizeof(MesPacket)*dataPacket.size());
 
 	std::cout <<flag<< std::endl;
 	std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
@@ -157,7 +157,7 @@ void NetWorkState::SendMessageData()
 	}
 
 	mapId.clear();
-	
+	active_ = ActiveState::Play;
 	// debug display
 
 }
@@ -166,7 +166,7 @@ void NetWorkState::ReservMessageData()
 {
 	
 	std::string lineData_;
-	unionHeader headerdata{MesType::STANBY};
+	Header headerdata{MesType::STANBY};
 	auto id = 0; 
 	auto dataLength = GetNetWorkDataLength(netHandle);
 	if(dataLength<=0)
@@ -174,13 +174,21 @@ void NetWorkState::ReservMessageData()
 		std::cout << "headerデータが読み込めませんでした!" << std::endl;
 		return;
 	}
-	while (GetNetWorkDataLength(netHandle) > 0)
+
+	int revdata = 0;
+	NetWorkRecv(netHandle, &revdata, sizeof(int));
+	headerdata.data_[0] = revdata;
+	NetWorkRecv(netHandle, &revdata, sizeof(int));
+	headerdata.data_[0] = revdata;
+	if (headerdata.mesdata_.type == MesType::TMX_DATA)
 	{
-		auto data = 0;
-		NetWorkRecv(netHandle, &data, sizeof(int));
-		dataPacket.push_back(data);
-		std::cout <<"データ:"<< std::hex<< dataPacket.back() << std::endl;
+		dataPacket.reserve(headerdata.mesdata_.length_);
+		dataPacket.resize(headerdata.mesdata_.length_);
 	}
+
+	
+	NetWorkRecv(netHandle, dataPacket.data(), sizeof(int)*dataPacket.size());
+	std::cout <<"データ:"<< std::hex<< dataPacket.back() << std::endl;
 
 	for (auto DATAPACKET : dataPacket)
 	{
@@ -188,7 +196,7 @@ void NetWorkState::ReservMessageData()
 	}
 
 		
-
+	active_ = ActiveState::Play;
 
 
 }

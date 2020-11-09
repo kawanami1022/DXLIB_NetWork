@@ -9,6 +9,8 @@
 #include "../input/keyInput.h"
 
 constexpr	auto MTU = 1454;
+constexpr auto MESHEADER_INT = 3 * sizeof(int);
+
 
 
 namespace File {
@@ -22,14 +24,15 @@ class Timer;
 enum class ActiveState;
 struct MesHeader;
 union unionData;
-union unionHeader;
+union Header;
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
 using MesPacket = std::vector<int>;
 
-enum class MesType:char
+enum class MesType :char
 {
+	NON = 100,
 	STANBY,				// 初期化情報送信完了
 	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
 	TMX_SIZE,
@@ -40,9 +43,9 @@ enum class MesType:char
 struct MesHeader
 {
 	MesType type;
-	unsigned char cdata = 0;
-	unsigned short sdata;
-	unsigned int length_;
+	unsigned char next = 0;	// データ送信が分割の場合に次がある場合0:ない1
+	unsigned short sendID;	// 分割送信時のナンバリング
+	unsigned int length_;		// 分割かどうかにかかわらず、単一パケットのデータ長(intの数)
 };
 
 union unionData
@@ -51,7 +54,7 @@ union unionData
 	int idata;
 };
 
-union unionHeader
+union Header
 {
 	MesHeader mesdata_;
 	unsigned int data_[2];

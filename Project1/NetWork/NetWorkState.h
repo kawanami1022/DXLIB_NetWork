@@ -9,16 +9,13 @@
 #include "../input/keyInput.h"
 
 constexpr	auto MTU = 1454;
-constexpr auto MESHEADER_INT = 3 * sizeof(int);
-
-
+constexpr auto MESHEADER_INT = 3;
 
 namespace File {
 	enum class ReadTmxMode;
 	struct Tiled_Map;
 	class TMX_File;
 }
-
 
 class Timer;
 enum class ActiveState;
@@ -50,7 +47,7 @@ struct MesHeader
 
 union unionData
 {
-	char cdata[4];
+	char cdata[4];	// 横のマス数[0]:縦のマス数[1]:レイヤー数[2]:リザーブ数[3]
 	int idata;
 };
 
@@ -144,8 +141,7 @@ protected:
 	unionData uniondata_;
 
 	MesPacket dataPacket;
-
-
+	
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;
 	std::shared_ptr<File::TMX_File> tmxFile_ = nullptr;

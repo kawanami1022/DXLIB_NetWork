@@ -1,7 +1,7 @@
 #include <sstream>
 #include <string>
 #include "strmanip.h"
-// Extract The String
+
 std::string strmanip::ExtractTheStrDblQt(std::string lineString, std::string stringId)
 {
 	std::string extStr;
@@ -15,7 +15,6 @@ std::string strmanip::ExtractTheStrDblQt(std::string lineString, std::string str
 	if (chrPos != std::string::npos)
 	{
 		chrPos += static_cast<int>(stringId.length());
-		//std::cout << chrPos << std::endl;
 		auto idx = 0;		//double quotation  counter
 		while (chrPos < lineString.length())
 		{

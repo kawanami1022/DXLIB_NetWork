@@ -120,12 +120,6 @@ void NetWorkState::SendMessageData()
 
 
 	auto mapdata = 0;
-	//dataPacket‚Ì“Y‚¦Žš[0]:TMXSIZE	[1]:TMXDATA‚ð‘—‚é
-	Header headerdata{ MesType::TMX_SIZE,0,0,1 };
-	dataPacket.push_back(headerdata.data_[0]);
-	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,static_cast<unsigned short>(dataPacket.size() * sizeof(int)) };
-	dataPacket.push_back(headerdata.data_[0]);
-
 	while (mapId.size() > 0)
 	{
 		for (unsigned int i = 0; i < 8; i++)
@@ -140,6 +134,13 @@ void NetWorkState::SendMessageData()
 		}
 		dataPacket.push_back(mapdata);
 	}
+
+	//dataPacket‚Ì“Y‚¦Žš[0]:TMXSIZE	[1]:TMXDATA‚ð‘—‚é
+	Header headerdata{ MesType::TMX_SIZE,0,0,1 };
+	dataPacket.insert(dataPacket.begin(), headerdata.data_[0]);
+	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,dataPacket.size()-1 };
+	dataPacket.insert(dataPacket.begin()+1, headerdata.data_[0]);
+	dataPacket.insert(dataPacket.begin()+2, headerdata.data_[1]);
 
 	std::cout << "‚±‚ê‚©‚çƒf[ƒ^‚ð‘—M‚µ‚Ü‚·" << std::endl;
 	timer_->StartMesurement();
@@ -180,6 +181,8 @@ void NetWorkState::ReservMessageData()
 	headerdata.data_[0] = revdata;
 	NetWorkRecv(netHandle, &revdata, sizeof(int));
 	headerdata.data_[0] = revdata;
+	NetWorkRecv(netHandle, &revdata, sizeof(int));
+	headerdata.data_[1] = revdata;
 	if (headerdata.mesdata_.type == MesType::TMX_DATA)
 	{
 		dataPacket.reserve(headerdata.mesdata_.length_);

@@ -166,7 +166,7 @@ void NetWorkState::SendMessageData()
 	int sendLength = 0;
 	do {
 		// 送信用のデータの長さを求める
-		sendLength = dataSize - MESHEADER_INT < dataPacket.size() ? 
+		sendLength = (dataSize - MESHEADER_INT < dataPacket.size()) ? 
 			dataSize - MESHEADER_INT : dataPacket.size() - MESHEADER_INT;
 		
 		// 次のデータが存在するのか確かめる
@@ -175,7 +175,7 @@ void NetWorkState::SendMessageData()
 
 		// int型のマップデータ格納変数が0になるまで処理する
 		auto flag = NetWorkSend(netHandle, dataPacket.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
-		dataPacket.erase(dataPacket.begin() + MESHEADER_INT, dataPacket.begin() + MESHEADER_INT + sendLength);
+		dataPacket.erase(dataPacket.begin() + MESHEADER_INT, dataPacket.begin() + MESHEADER_INT + sendLength-1);
 		headerdata.mesdata_.sendID++;
 
 	} while (dataPacket.size() > MESHEADER_INT);
@@ -185,8 +185,6 @@ void NetWorkState::SendMessageData()
 	std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
 
-
-
 	mapId.clear();
 	active_ = ActiveState::Play;
 	// debug display
@@ -195,7 +193,7 @@ void NetWorkState::SendMessageData()
 
 void NetWorkState::ReservMessageData()
 {
-	
+	std::vector<int> mapId;	// tmxFile's tiledmap 
 	std::string lineData_;
 	Header headerdata{MesType::STANBY};
 	auto id = 0; 
@@ -216,11 +214,10 @@ void NetWorkState::ReservMessageData()
 		NetWorkRecv(netHandle, &recvdata, sizeof(int));
 		headerdata.data_[0] = recvdata;
 		if (headerdata.mesdata_.type == MesType::TMX_DATA)
-		{	NetWorkRecv(netHandle, &recvdata, sizeof(int));
-			headerdata.data_[1] = recvdata;
-			dataPacket.resize(dataSize += headerdata.mesdata_.length_);}
-
-
+		{
+			NetWorkRecv(netHandle, &headerdata.mesdata_.length_, sizeof(int));
+			tmpPacketData.resize(headerdata.mesdata_.length_);
+		}
 		NetWorkRecv(netHandle, tmpPacketData.data(), headerdata.mesdata_.length_ * sizeof(int));
 		dataPacket.insert(dataPacket.end(), tmpPacketData.begin(), tmpPacketData.end());
 
@@ -232,5 +229,31 @@ void NetWorkState::ReservMessageData()
 	{
 		std::cout << std::hex << DATAPACKET << std::endl;
 	}
+
+	id = 0;
+	for (auto DATAPACKET : dataPacket)
+	{
+		for (int idx = 0; idx < 8; idx++)
+		{
+			id = (DATAPACKET & 0xf0000000) >> (4 * 7);
+			DATAPACKET <<= 4;
+		}
+	}
+
+
+
+	for (int y = 0; y < tmxFile_->height_; y++)
+	{
+		for (int x = 0; x < tmxFile_->width_; x++)
+		{
+			for (auto Name : tmxFile_->name_)
+			{
+				//DrawExtendGraph(x * 32, y * 32, x * 32 + 32, y * 32 + 32, tileHandle_[tmxFile_->tiledMap_[Name].titleID_[x][y]], true);
+			}
+		}
+	}
+
 	active_ = ActiveState::Play;
 }
+
+

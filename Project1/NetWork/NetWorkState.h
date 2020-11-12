@@ -124,6 +124,11 @@ public:
 		tmxFile_ = tmxdata;
 	}
 
+	std::shared_ptr<File::TMX_File> GetTMxData()
+	{
+		return std::move(tmxFile_);
+	}
+
 protected:
 
 	// •Ï”éŒ¾

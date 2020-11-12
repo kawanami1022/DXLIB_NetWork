@@ -7,8 +7,11 @@ public:
 	UniqueBase input(UniqueBase);
 	UniqueBase UpDate(UniqueBase);
 	void Draw();
-	void DrawOwnScreen();
+	//void DrawOwnScreen();
+	GameScene();
+	~GameScene();
 private:
 	bool Init();
+
 };
 

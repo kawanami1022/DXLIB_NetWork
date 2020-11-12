@@ -4,13 +4,9 @@
 #include <functional>
 
 #include "BaseScene.h"
+
 enum class UpdateMode;
 
-namespace File {
-	enum class ReadTmxMode;
-	struct Tiled_Map;
-	class TMX_File;
-}
 
 class Timer;
 using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void()>>;
@@ -39,7 +35,7 @@ private:
 	UniqueBase input(UniqueBase);
 	UniqueBase UpDate(UniqueBase);
 	void Draw();
-	void DrawOwnScreen();
+	//void DrawOwnScreen();
 	//updateFunc_
 	void SetNetWork();
 	void SetHostIP();
@@ -56,11 +52,6 @@ private:
 	UpdateMapFunc updateFunc_;
 	UpdateMapFunc DrawFunc_;
 	
-
-	std::shared_ptr< File::TMX_File> tmxFile_;
-	std::unique_ptr<int[]> tileHandle_;
-
-
 	int screen_size_x=800;
 	int screen_size_y=600;
 

@@ -9,7 +9,7 @@
 #include "LoginScene.h"
 #include "GameScene.h"
 #include "CrossOver.h"
-#include "../NetWork/NetWork.h"
+
 #include "../Time/Time.h"
 
 LoginScene::LoginScene():BaseScene()
@@ -19,6 +19,7 @@ LoginScene::LoginScene():BaseScene()
 
 LoginScene::~LoginScene()
 {
+	DeleteGraph(CirlcleHandle_);
 }
 
 void LoginScene::Init()
@@ -61,21 +62,17 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 		auto nextScene = std::make_unique<GameScene>();
 		nowScene = std::make_unique<CrossOver>(std::move(nowScene), std::move(nextScene));
 	}
+	Draw();
 	return nowScene;
 }
 
 void LoginScene::Draw()
 {
-	DrawOwnScreen();
-	
-}
-
-void LoginScene::DrawOwnScreen()
-{
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
 	DrawFunc_[mode_]();
 }
+
 
 void LoginScene::SetNetWork()
 {
@@ -177,15 +174,6 @@ void LoginScene::StartInit()
 		std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
 	}
 	IpNetWork->GetNetWorkState()->SetTMXData(tmxFile_);
-	tileHandle_ = std::make_unique<int[]>(12+1);
-	tileHandle_[0] = -1;
-	LoadDivGraph("Image/map.png", 12, 4, 3, tmxFile_->tileheight_, tmxFile_->tilewidth_, &tileHandle_[1]);
-
-
-	for (int idx = 0; idx < 13; idx++)
-	{
-		std::cout << tileHandle_[idx] << std::endl;
-	}
 
 	mode_ = UpdateMode::Play;
 }
@@ -232,20 +220,5 @@ void LoginScene::StartInitDraw()
 void LoginScene::PlayDraw()
 {
 	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
-
-
 	DrawGraph(pos_x, pos_y, Handle, true);
-
-	for (int y = 0; y < tmxFile_->height_; y++)
-	{
-		for (int x = 0; x < tmxFile_->width_; x++)
-		{
-			for (auto Name : tmxFile_->name_)
-			{
-				DrawExtendGraph(x * 32, y * 32, x * 32 + 32, y * 32 + 32, tileHandle_[tmxFile_->tiledMap_[Name].titleID_[x][y]], true);
-			}
-		}
-	}
-
-	DrawRotaGraph(circlePos_.x, circlePos_.y, 1, 0, CirlcleHandle_, true);
 }

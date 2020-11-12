@@ -27,21 +27,24 @@ UniqueBase CrossOver::UpDate(UniqueBase nowScene)
     if (brightParam_ >= BRIGHT_MAX)
     {
         nowScene = std::move(nextScene_);
+        return  std::move(nowScene);
     }
-    return nowScene;
+    Draw();
+    
+    return  std::move(nowScene);
 }
 
 void CrossOver::Draw()
 {
-    DrawOwnScreen();
-}
-
-void CrossOver::DrawOwnScreen()
-{
-    SetDrawScreen(screenSrcID_);
     ClsDrawScreen();
     SetDrawBlendMode(DX_BLENDMODE_ALPHA, brightParam_);
-    nextScene_->DrawOwnScreen();
+    nextScene_->Draw();
     SetDrawBlendMode(DX_BLENDMODE_ALPHA, BRIGHT_MAX - brightParam_);
+    oldScene_->Draw();
+    SetDrawBlendMode(DX_BLENDMODE_ALPHA, BRIGHT_MAX);
+    SetDrawScreen(screenSrcID_);
+
     oldScene_->DrawOwnScreen();
+    nextScene_->DrawOwnScreen();
 }
+

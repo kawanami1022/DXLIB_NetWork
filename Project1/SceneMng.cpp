@@ -26,7 +26,7 @@ int SceneMng::Run()
 	nowScene = std::make_unique<LoginScene>();
 
 	// 描画先画面を裏画面にセット
-	SetDrawScreen(DX_SCREEN_BACK);
+	
 	
 
 	// ループ
@@ -43,8 +43,10 @@ int SceneMng::Run()
 
 void SceneMng::ScenManagerDraw()
 {
+	SetDrawScreen(DX_SCREEN_BACK);
 	ClsDrawScreen();
-	nowScene->Draw();
+	
+	nowScene->DrawOwnScreen();
 	ScreenFlip();
 
 }

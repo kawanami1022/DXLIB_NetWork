@@ -175,7 +175,7 @@ void NetWorkState::SendMessageData()
 
 		// int型のマップデータ格納変数が0になるまで処理する
 		auto flag = NetWorkSend(netHandle, dataPacket.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
-		dataPacket.erase(dataPacket.begin() + MESHEADER_INT, dataPacket.begin() + MESHEADER_INT + sendLength-1);
+		dataPacket.erase(dataPacket.begin() + MESHEADER_INT, dataPacket.begin() + MESHEADER_INT + sendLength);
 		headerdata.mesdata_.sendID++;
 
 	} while (dataPacket.size() > MESHEADER_INT);
@@ -221,7 +221,7 @@ void NetWorkState::ReservMessageData()
 		NetWorkRecv(netHandle, tmpPacketData.data(), headerdata.mesdata_.length_ * sizeof(int));
 		dataPacket.insert(dataPacket.end(), tmpPacketData.begin(), tmpPacketData.end());
 
-	} while (headerdata.mesdata_.next == 1);
+	} while (GetNetWorkDataLength(netHandle) <= 0 &&headerdata.mesdata_.next == 1);
 	
 	std::cout << "データを受け取りました" << std::endl;
 
@@ -236,21 +236,36 @@ void NetWorkState::ReservMessageData()
 		for (int idx = 0; idx < 8; idx++)
 		{
 			id = (DATAPACKET & 0xf0000000) >> (4 * 7);
+			mapId.push_back(id);
 			DATAPACKET <<= 4;
 		}
 	}
 
 
-
-	for (int y = 0; y < tmxFile_->height_; y++)
+	int idx = 0;
+	for (auto Name : tmxFile_->name_)
 	{
-		for (int x = 0; x < tmxFile_->width_; x++)
+		for (int y = 0; y < tmxFile_->height_; y++)
 		{
-			for (auto Name : tmxFile_->name_)
+			for (int x = 0; x < tmxFile_->width_; x++)
 			{
-				//DrawExtendGraph(x * 32, y * 32, x * 32 + 32, y * 32 + 32, tileHandle_[tmxFile_->tiledMap_[Name].titleID_[x][y]], true);
+				tmxFile_->tiledMap_[Name].titleID_[x][y] = mapId[x + y * tmxFile_->width_ + idx * tmxFile_->height_ * tmxFile_->width_];
 			}
 		}
+		idx++;
+	}
+
+	for (auto Name : tmxFile_->name_)
+	{
+		for (int y = 0; y < tmxFile_->height_; y++)
+		{
+			for (int x = 0; x < tmxFile_->width_; x++)
+			{
+				std::cout << tmxFile_->tiledMap_[Name].titleID_[x][y];
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
 	}
 
 	active_ = ActiveState::Play;

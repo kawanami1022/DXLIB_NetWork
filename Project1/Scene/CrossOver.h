@@ -13,7 +13,6 @@ public:
 	UniqueBase input(UniqueBase);
 	UniqueBase UpDate(UniqueBase);
 	void Draw();
-	void DrawOwnScreen();
 
 private:
 	unsigned int brightParam_=0;

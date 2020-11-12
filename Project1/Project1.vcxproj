@@ -150,9 +150,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Actor\Actor.h" />
     <ClInclude Include="Lib\Constraint\cast.h" />
     <ClInclude Include="Lib\Constraint\constraint.h" />
     <ClInclude Include="Lib\Math\math.h" />
+    <ClInclude Include="Actor\map\map.h" />
     <ClInclude Include="Scene\CrossOver.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="input\controller.h" />
@@ -178,7 +180,9 @@
     <ClInclude Include="_debug\_DebugDispOut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\Actor.cpp" />
     <ClCompile Include="Lib\Math\math.cpp" />
+    <ClCompile Include="Actor\map\map.cpp" />
     <ClCompile Include="Scene\CrossOver.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="input\controller.cpp" />

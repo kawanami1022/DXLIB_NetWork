@@ -3,7 +3,7 @@
 
 BaseScene::BaseScene()
 {
-	screenSrcID_ = MakeScreen(800, 600);
+	screenSrcID_ = MakeScreen(800, 600,true);
 }
 
 BaseScene::~BaseScene()

@@ -62,14 +62,16 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 		auto nextScene = std::make_unique<GameScene>();
 		nowScene = std::make_unique<CrossOver>(std::move(nowScene), std::move(nextScene));
 	}
+	
 	Draw();
 	return nowScene;
 }
 
 void LoginScene::Draw()
 {
+	
 	SetDrawScreen(screenSrcID_);
-	ClsDrawScreen();
+	//ClsDrawScreen();
 	DrawFunc_[mode_]();
 }
 

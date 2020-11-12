@@ -10,6 +10,7 @@ UniqueBase GameScene::input(UniqueBase nowScene)
 
 UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
+	SetDrawScreen(screenSrcID_);
 	Draw();
 	return nowScene;
 }
@@ -18,7 +19,7 @@ void GameScene::Draw()
 {
 
 	SetDrawScreen(screenSrcID_);
-	ClsDrawScreen();
+	//ClsDrawScreen();
 	for (int y = 0; y < tmxFile_->height_; y++)
 	{
 		for (int x = 0; x < tmxFile_->width_; x++)

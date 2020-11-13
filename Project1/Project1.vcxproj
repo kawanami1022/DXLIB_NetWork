@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
+    <ClInclude Include="Actor\Character\Character.h" />
     <ClInclude Include="Lib\Constraint\cast.h" />
     <ClInclude Include="Lib\Constraint\constraint.h" />
     <ClInclude Include="Lib\Math\math.h" />
@@ -169,7 +170,6 @@
     <ClInclude Include="NetWork\HostNetWorkState.h" />
     <ClInclude Include="NetWork\NetWorkState.h" />
     <ClInclude Include="NetWork\NetWork.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="SceneMng.h" />
     <ClInclude Include="Scene\LoginScene.h" />
@@ -181,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor\Actor.cpp" />
+    <ClCompile Include="Actor\Character\Character.cpp" />
     <ClCompile Include="Lib\Math\math.cpp" />
     <ClCompile Include="Actor\map\map.cpp" />
     <ClCompile Include="Scene\CrossOver.cpp" />

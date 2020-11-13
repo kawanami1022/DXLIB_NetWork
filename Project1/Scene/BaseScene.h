@@ -31,7 +31,7 @@ protected:
 	// “ü—ÍŒn
 	// ‰æ‘œ
 	std::shared_ptr< File::TMX_File> tmxFile_;
-	std::unique_ptr<int[]> tileHandle_;
+	
 private:
 };
 

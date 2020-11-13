@@ -1,5 +1,10 @@
 #pragma once
+#include <vector>
+#include <memory>
 #include "BaseScene.h"
+class Map;
+class Character;
+
 class GameScene :
 	public BaseScene
 {
@@ -11,7 +16,9 @@ public:
 	GameScene();
 	~GameScene();
 private:
+	// •Ï”–¼
+	std::unique_ptr<Map> map_;
+	std::vector<std::unique_ptr<Character>> character_;
 	bool Init();
-
 };
 

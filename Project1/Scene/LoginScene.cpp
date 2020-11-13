@@ -164,7 +164,6 @@ void LoginScene::SetHostIP()
 void LoginScene::StartInit()
 {
 	std::cout << "---------StartInit-----------" << std::endl;
-	
 	// ‰æ‘œ“Ç‚Ýž‚Ý
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 

@@ -10,7 +10,7 @@ Character::Character()
 
 Character::Character(Position2 pos)
 {
-	pos_=pos;
+	pos_=pos+32/2;
 	Init();
 }
 
@@ -19,10 +19,16 @@ Character::~Character()
 
 }
 
+void Character::Update()
+{
+
+}
+
+
 void Character::Draw()
 {
 	animcnt_++;
-	DrawGraph(0, 0, HandleData_[animcnt_/20%4][static_cast<int>(MoveDir::Down)], true);
+	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(MoveDir::Down)], true);
 }
 
 bool Character::Init()

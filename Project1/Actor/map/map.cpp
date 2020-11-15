@@ -1,7 +1,9 @@
 #include <DxLib.h>
 #include "../../NetWork/NetWork.h"
-#include "map.h"
 #include "../../Lib/File/TMX_File.h"
+#include "../../Lib/Vector2/Vector2.h"
+#include "../Character/Character.h"
+#include "map.h"
 
 
 
@@ -32,3 +34,52 @@ void Map::Draw()
 		}
 	}
 }
+
+MAP_ID Map::GetMapId(Position2 actorPos)
+{
+	actorPos /= 32;
+	if (tmxFile_->tiledMap_["map"].titleID_[actorPos.x][actorPos.y]==0)
+	{
+		return MAP_ID::NON;
+	}
+	return MAP_ID::BLOCK;
+}
+
+std::vector<std::shared_ptr<Character>> Map::SponePlayer()
+{
+	Position2 sponePos;
+	Position2 Tile = Position2(0, 0);
+	std::vector<std::shared_ptr<Character>> characterTmp;
+	for (int x=0;x< tmxFile_->width_;x++)
+	{
+		for (int y = 0; y < tmxFile_->height_; y++)
+		{
+			Tile = { x,y };
+			if (SponePlayerFlag(Tile))
+			{
+				characterTmp.push_back(std::make_unique<Character>(Position2(Tile * 32)));
+			}
+		}
+	}
+
+	return characterTmp;
+}
+
+bool Map::SponePlayerFlag(Position2 tilePos)
+{
+	if (tmxFile_->tiledMap_["character"].titleID_[tilePos.x][tilePos.y] == 4)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool Map::IsTurnRight(Position2 actorPos)
+{
+	if (GetMapId(actorPos) == MAP_ID::BLOCK)
+	{
+		return true;
+	}
+	return false;
+}
+

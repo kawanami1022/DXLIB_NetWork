@@ -25,9 +25,12 @@ public:
 	Character();
 	Character(Position2);
 	~Character();
+	void Update();
 	void Draw();
 protected:
+	Vector2Tmp<float> speed = { 1.f,1.f };
 	std::vector<int> HandleId_;
+
 	std::vector<int*> HandleData_;
 private:
 	int animcnt_ = 0;

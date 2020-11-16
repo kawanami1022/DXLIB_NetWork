@@ -5,6 +5,8 @@
 constexpr auto CHAR_WIDTH = 32;
 constexpr auto CHAR_HEIGHT = 32;
 
+class Map;
+
 enum class AnimState
 {
 	Idel,
@@ -16,8 +18,8 @@ enum class MoveDir
 {
 	Down,
 	Left,
-	Right,
 	Up,
+	Right,
 	Deth,
 	Max,
 };
@@ -32,11 +34,16 @@ public:
 	void Draw();
 
 	void Move();
+	void SetMap(std::weak_ptr<Map> map)
+	{
+		map_ = map;
+	}
 
 protected:
 	Vector2Tmp<float> speed = { 1.f,1.f };
 	std::vector<int> HandleId_;
 	std::vector<int*> HandleData_;
+	std::weak_ptr<Map> map_;
 	MoveDir moveDir_ = MoveDir::Right;
 	Position2 posUL_;
 	Position2 posDR_;

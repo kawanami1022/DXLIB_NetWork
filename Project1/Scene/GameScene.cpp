@@ -19,8 +19,8 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
 	updateFunc_[netWorkMode]();
 
-
 	SetDrawScreen(screenSrcID_);
+	ClsDrawScreen();
 	Draw();
 	return nowScene;
 }

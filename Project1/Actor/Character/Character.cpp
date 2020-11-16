@@ -1,7 +1,11 @@
+#include <functional>
+#include <array>
 #include <iostream>
 #include <iomanip>
 #include <DxLib.h>
+#include "../map/map.h"
 #include "Character.h"
+
 Character::Character()
 {
 	Init();
@@ -33,6 +37,12 @@ void Character::Draw()
 
 void Character::Move()
 {
+	// ˆÚ“®•ûŒü‚ðŒˆ‚ß‚é
+	std::unordered_map<MoveDir, Position2> tmpPos = { {MoveDir::Down,Position2(pos_.x,posDR_.y)},
+																				{MoveDir::Left,Position2(posUL_.x,pos_.y)},
+																				{MoveDir::Up,Position2(pos_.x,posUL_.y)},
+																				{MoveDir::Right,Position2(posDR_.x,pos_.y)} };
+
 	if (moveDir_ == MoveDir::Down) {
 		pos_.y += static_cast<int>(speed.y);
 	}

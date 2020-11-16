@@ -23,41 +23,58 @@ Character::~Character()
 
 }
 
-void Character::Update()
+void Character::Update(std::shared_ptr<Map> map)
 {
-	Move();
+	Move(std::move(map));
 }
 
 
 void Character::Draw()
 {
 	animcnt_++;
-	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(MoveDir::Down)], true);
+	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(moveDir_)], true);
 }
 
-void Character::Move()
+void Character::Move(std::shared_ptr<Map>&&  map)
 {
+	
+
 	// ˆÚ“®•ûŒü‚ðŒˆ‚ß‚é
-	std::unordered_map<MoveDir, Position2> tmpPos = { {MoveDir::Down,Position2(pos_.x,posDR_.y)},
-																				{MoveDir::Left,Position2(posUL_.x,pos_.y)},
-																				{MoveDir::Up,Position2(pos_.x,posUL_.y)},
-																				{MoveDir::Right,Position2(posDR_.x,pos_.y)} };
+	std::unordered_map<MoveDir, std::pair<Position2,Position2>> tmpPos = 
+	{ {MoveDir::Down,std::make_pair<Position2,Position2>(Position2(pos_.x,posDR_.y),(Position2(pos_.x,pos_.y)))},
+	{MoveDir::Left,std::make_pair<Position2,Position2>(Position2(posUL_.x,pos_.y),(Position2(pos_.x,pos_.y)))},
+	{MoveDir::Up,std::make_pair<Position2,Position2>(Position2(pos_.x,posUL_.y),(Position2(pos_.x,pos_.y)))},
+	{MoveDir::Right,std::make_pair<Position2,Position2>(Position2(posDR_.x,pos_.y),(Position2(pos_.x,pos_.y)))}};
+
+	//auto moveFunc = [&](MoveDir dir, std::pair<Position2, Position2> pos) {
+	//	pos.first.y = pos.first.y + static_cast<int>(speed.y);
+	//	pos.second.y = pos.first.y + static_cast<int>(speed.y);
+	//};
 
 	if (moveDir_ == MoveDir::Down) {
-		pos_.y += static_cast<int>(speed.y);
+		tmpPos[moveDir_].first.y += static_cast<int>(speed.y);
+		tmpPos[moveDir_].second.y += static_cast<int>(speed.y);
 	}
 	else if (moveDir_ == MoveDir::Left)
 	{
-		pos_.x -= static_cast<int>(speed.x);
+		tmpPos[moveDir_].first.x -= static_cast<int>(speed.x);
+		tmpPos[moveDir_].second.x -= static_cast<int>(speed.x);
 	}
 	else if (moveDir_ == MoveDir::Right)
 	{
-		pos_.x += static_cast<int>(speed.x);
+		tmpPos[moveDir_].first.x += static_cast<int>(speed.x);
+		tmpPos[moveDir_].second.x += static_cast<int>(speed.x);
 	}
 	else if (moveDir_ == MoveDir::Up)
 	{
-		pos_.y -= static_cast<int>(speed.y);
+		tmpPos[moveDir_].first.y -= static_cast<int>(speed.y);
+		tmpPos[moveDir_].second.y -= static_cast<int>(speed.y);
 	}
+	if (map->IsTurnRight(tmpPos[moveDir_].first))
+	{
+		moveDir_ = static_cast<MoveDir>((static_cast<int>(moveDir_) + 1) % (static_cast<int>(MoveDir::Deth)));
+	}
+	else { pos_ = tmpPos[moveDir_].second; };
 	posUL_ = pos_ - Position2(CHAR_WIDTH / 2, CHAR_HEIGHT / 2);
 	posDR_ = pos_ + Position2(CHAR_WIDTH / 2, CHAR_HEIGHT / 2);
 }

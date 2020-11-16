@@ -18,25 +18,34 @@ enum class MoveDir
 {
 	Down,
 	Left,
-	Up,
 	Right,
+	Up,
 	Deth,
 	Max,
 };
 
 class Character :public Actor
-{
+{	
+
 public:
 	Character();
 	Character(Position2);
 	~Character();
-	void Update();
+	void Update(std::shared_ptr<Map> map);
 	void Draw();
 
-	void Move();
-	void SetMap(std::weak_ptr<Map> map)
+	void Move(std::shared_ptr<Map>&& map);
+
+	// Getter Setter
+	void SetMap(std::weak_ptr<Map>&& map)
 	{
 		map_ = map;
+
+	}
+	void SetPos(Position2 pos)
+	{
+		pos_ = pos;
+		AdjustPos();
 	}
 
 protected:
@@ -50,6 +59,12 @@ protected:
 private:
 	int animcnt_ = 0;
 	bool Init();
-	
+
+	// à íuí≤êÆ
+	void AdjustPos()
+	{
+		posUL_ = pos_ - Position2(CHAR_WIDTH / 2, CHAR_HEIGHT / 2);
+		posDR_ = pos_ + Position2(CHAR_WIDTH / 2, CHAR_HEIGHT / 2);
+	}
 };
 

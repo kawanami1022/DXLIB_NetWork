@@ -58,10 +58,10 @@ std::vector<std::shared_ptr<Character>> Map::SponePlayer()
 			if (SponePlayerFlag(Tile))
 			{
 				characterTmp.push_back(std::make_unique<Character>(Position2(Tile * 32)));
+
 			}
 		}
 	}
-
 	return characterTmp;
 }
 

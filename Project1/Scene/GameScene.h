@@ -12,6 +12,7 @@ using VecCharacter = std::vector<std::shared_ptr<Character>>;
 class GameScene :
 	public BaseScene
 {
+
 public:
 	UniqueBase input(UniqueBase);
 	UniqueBase UpDate(UniqueBase);
@@ -26,7 +27,7 @@ public:
 
 private:
 	// •Ï”–¼
-	std::unique_ptr<Map> map_;
+	std::shared_ptr<Map> map_;
 	std::vector<std::shared_ptr<Character>> character_;
 	bool Init();
 

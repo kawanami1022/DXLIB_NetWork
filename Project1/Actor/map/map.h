@@ -43,6 +43,6 @@ public:
 	bool IsTurnRight(Position2 actorPos);
 private:
 	std::shared_ptr< File::TMX_File> tmxFile_;
-	std::unique_ptr<int[]> tileHandle_;
+	std::shared_ptr<int[]> tileHandle_;
 };
 

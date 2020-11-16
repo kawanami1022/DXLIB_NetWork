@@ -91,7 +91,11 @@ void HostNetWorkState::UpdateFuncStanby()
 
 void HostNetWorkState::UpdateFuncPlay()
 {
+    std::cout << "----------------Play----------------" << std::endl;
+    if (GetLostNetWork() != -1)
+    {
 
+    }
 }
 
 void HostNetWorkState::UpdateFuncOFFLINE()

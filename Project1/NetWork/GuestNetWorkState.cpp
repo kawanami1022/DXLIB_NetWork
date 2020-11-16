@@ -80,37 +80,37 @@ void GuestNetWorkState::UpdateFuncStanby()
 
 void GuestNetWorkState::UpdateFuncPlay()
 {
-
+    std::cout << "----------------Play----------------" << std::endl;
     controller_.Update();
-    input_.moveDir = 0x00;
-    if (controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Old)] == 1)
-    {
-        //ビット演算
-        input_.moveDir |= 0x01;
-    }
+    //input_.moveDir = 0x00;
+    //if (controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Up][static_cast<int>(Trg::Old)] == 1)
+    //{
+    //    //ビット演算
+    //    input_.moveDir |= 0x01;
+    //}
 
-    if (controller_.GetCntData()[InputID::Right][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Right][static_cast<int>(Trg::Old)] == 1)
-    {
-        //ビット演算
-        input_.moveDir |= 0x02;
-    }
+    //if (controller_.GetCntData()[InputID::Right][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Right][static_cast<int>(Trg::Old)] == 1)
+    //{
+    //    //ビット演算
+    //    input_.moveDir |= 0x02;
+    //}
 
-    if (controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Old)] == 1)
-    {
-        //ビット演算
-        input_.moveDir |= 0x04;
-    }
+    //if (controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Down][static_cast<int>(Trg::Old)] == 1)
+    //{
+    //    //ビット演算
+    //    input_.moveDir |= 0x04;
+    //}
 
-    if (controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Old)] == 1)
-    {
-        //ビット演算
-        input_.moveDir |= 0x08;
-    }
-    NetWorkSend(netHandle, &input_, sizeof(input_));
-    if (GetLostNetWork()==0)
-    {
-        active_ = ActiveState::Init;
-    }
+    //if (controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Now)] == 1 && controller_.GetCntData()[InputID::Left][static_cast<int>(Trg::Old)] == 1)
+    //{
+    //    //ビット演算
+    //    input_.moveDir |= 0x08;
+    //}
+    //NetWorkSend(netHandle, &input_, sizeof(input_));
+    //if (GetLostNetWork()==0)
+    //{
+    //    active_ = ActiveState::Init;
+    //}
 }
 
 void GuestNetWorkState::UpdateFuncOFFLINE()

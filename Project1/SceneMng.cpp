@@ -8,7 +8,7 @@ SceneMng* SceneMng::hInstance = nullptr;
 
 int SceneMng::Run()
 {
-
+	SetAlwaysRunFlag(true);
 	SetDoubleStartValidFlag(TRUE);
 	ChangeWindowMode(true);
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);

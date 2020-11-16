@@ -39,17 +39,27 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
+
+	
+	for (auto CHAR : character_)
+	{
+		CHAR->Update(map_);
+	}
 }
 
 void GameScene::UpdateGuest()
 {
+	for (auto CHAR : character_)
+	{
+
+	}
 }
 
 void GameScene::UpdateOFFLINE()
 {
 	for (auto CHAR : character_)
 	{
-		CHAR->Update();
+		CHAR->Update(map_);
 	}
 }
 
@@ -66,10 +76,10 @@ GameScene::~GameScene()
 
 bool GameScene::Init()
 {
-	map_=std::make_unique<Map>();
+	map_=std::make_shared<Map>();
 	updateFunc_ = { { NetWorkMode::OFFLINE,std::bind(&GameScene::UpdateOFFLINE,this) },
-{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
-{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
+							{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
+							{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
 
 	// sponePlayer
 	VecCharacter sponePlayer= map_->SponePlayer();

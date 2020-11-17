@@ -131,9 +131,9 @@ public:
 		return std::move(tmxFile_);
 	}
 
-	void SetMesPacket()
+	void SetMesPacket(int data)
 	{
-
+		dataPacket_.emplace_back(data);
 	}
 
 protected:
@@ -152,7 +152,7 @@ protected:
 	MesHeader mesData_;
 	unionData uniondata_;
 
-	MesPacket dataPacket;
+	MesPacket dataPacket_;
 	
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;

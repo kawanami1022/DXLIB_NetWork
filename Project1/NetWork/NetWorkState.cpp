@@ -48,6 +48,13 @@ bool NetWorkState::Update()
 	return false;
 }
 
+bool NetWorkState::RevUpdate()
+{
+	return false;
+}
+
+
+
 ActiveState NetWorkState::GetActive(void)
 {
 	return active_;
@@ -137,7 +144,7 @@ void NetWorkState::SendMessageData()
 				break;
 			}
 		}
-		dataPacket.push_back(mapdata);
+		dataPacket_.push_back(mapdata);
 	}
 
 	// 送信データ長を求める
@@ -148,12 +155,12 @@ void NetWorkState::SendMessageData()
 
 	//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
 	Header headerdata{ MesType::TMX_SIZE,0,0,1 };
-	dataPacket.insert(dataPacket.begin(), headerdata.data_[0]);
-	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,dataPacket.size()-1 };
-	dataPacket.insert(dataPacket.begin() + 1, headerdata.data_[0]);
-	dataPacket.insert(dataPacket.begin() + 2, headerdata.data_[1]);
+	dataPacket_.insert(dataPacket_.begin(), headerdata.data_[0]);
+	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,dataPacket_.size()-1 };
+	dataPacket_.insert(dataPacket_.begin() + 1, headerdata.data_[0]);
+	dataPacket_.insert(dataPacket_.begin() + 2, headerdata.data_[1]);
 
-	for (auto DATAPACKET : dataPacket)
+	for (auto DATAPACKET : dataPacket_)
 	{
 		std::cout << std::hex << DATAPACKET << std::endl;
 	}
@@ -165,26 +172,26 @@ void NetWorkState::SendMessageData()
 	int sendLength = 0;
 	do {
 		// 送信用のデータの長さを求める
-		sendLength = (dataSize - MESHEADER_INT < dataPacket.size()) ? 
-			dataSize - MESHEADER_INT : dataPacket.size() - MESHEADER_INT;
+		sendLength = (dataSize - MESHEADER_INT < dataPacket_.size()) ? 
+			dataSize - MESHEADER_INT : dataPacket_.size() - MESHEADER_INT;
 		
 		// 次のデータが存在するのか確かめる
-		headerdata.mesdata_.next = dataPacket.size() > dataSize ? 1 : 0;
-		dataPacket[1] = headerdata.data_[0];
+		headerdata.mesdata_.next = dataPacket_.size() > dataSize ? 1 : 0;
+		dataPacket_[1] = headerdata.data_[0];
 
 		// int型のマップデータ格納変数が0になるまで処理する
-		auto flag = NetWorkSend(netHandle, dataPacket.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
-		dataPacket.erase(dataPacket.begin() + MESHEADER_INT, dataPacket.begin() + MESHEADER_INT + sendLength);
+		auto flag = NetWorkSend(netHandle, dataPacket_.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
+		dataPacket_.erase(dataPacket_.begin() + MESHEADER_INT, dataPacket_.begin() + MESHEADER_INT + sendLength);
 		headerdata.mesdata_.sendID++;
 
-	} while (dataPacket.size() > MESHEADER_INT);
-
+	} while (dataPacket_.size() > MESHEADER_INT);
 
 
 	std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
 
 	mapId.clear();
+	dataPacket_.clear();
 	active_ = ActiveState::Play;
 	// debug display
 
@@ -218,19 +225,19 @@ void NetWorkState::ReservMessageData()
 			tmpPacketData.resize(headerdata.mesdata_.length_);
 		}
 		NetWorkRecv(netHandle, tmpPacketData.data(), headerdata.mesdata_.length_ * sizeof(int));
-		dataPacket.insert(dataPacket.end(), tmpPacketData.begin(), tmpPacketData.end());
+		dataPacket_.insert(dataPacket_.end(), tmpPacketData.begin(), tmpPacketData.end());
 
 	} while (GetNetWorkDataLength(netHandle) <= 0 &&headerdata.mesdata_.next == 1);
 	
 	std::cout << "データを受け取りました" << std::endl;
 
-	for (auto DATAPACKET : dataPacket)
+	for (auto DATAPACKET : dataPacket_)
 	{
 		std::cout << std::hex << DATAPACKET << std::endl;
 	}
 
 	id = 0;
-	for (auto DATAPACKET : dataPacket)
+	for (auto DATAPACKET : dataPacket_)
 	{
 		for (int idx = 0; idx < 8; idx++)
 		{
@@ -266,7 +273,7 @@ void NetWorkState::ReservMessageData()
 		}
 		std::cout << std::endl;
 	}
-
+	dataPacket_.clear();
 	active_ = ActiveState::Play;
 }
 

@@ -31,6 +31,6 @@ private:
 	std::vector<std::shared_ptr<Character>> character_;
 	bool Init();
 
-	std::unordered_map< NetWorkMode, std::function<void()>> updateFunc_;
+	std::unordered_map< NetWorkMode, std::function<void()>> updateNetWorkModeFunc_;
 };
 

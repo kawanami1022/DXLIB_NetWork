@@ -17,7 +17,7 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
 
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
-	updateFunc_[netWorkMode]();
+
 
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
@@ -39,17 +39,26 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
+	unsigned short id = 0;
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
+		Header headerData{ MesType::POS,1,id,0 };
+		IpNetWork->GetNetWorkState()->SetMesPacket(headerData.data_[0]);
+		auto charPos = CHAR->GetPos();
+		IpNetWork->GetNetWorkState()->SetMesPacket(charPos.x);
+		IpNetWork->GetNetWorkState()->SetMesPacket(charPos.y);
 	}
+	IpNetWork->GetNetWorkState()->RevUpdate();
 
 }
 
 void GameScene::UpdateGuest()
 {
+	IpNetWork->GetNetWorkState()->RevUpdate();
 	for (auto CHAR : character_)
 	{
+		
 	}
 }
 
@@ -75,9 +84,10 @@ GameScene::~GameScene()
 bool GameScene::Init()
 {
 	map_=std::make_shared<Map>();
-	updateFunc_ = { { NetWorkMode::OFFLINE,std::bind(&GameScene::UpdateOFFLINE,this) },
-							{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
-							{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
+	updateNetWorkModeFunc_ = 
+	{ { NetWorkMode::OFFLINE,std::bind(&GameScene::UpdateOFFLINE,this) },
+	{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
+	{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
 
 	// sponePlayer
 	VecCharacter sponePlayer= map_->SponePlayer();

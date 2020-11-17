@@ -146,9 +146,7 @@ void LoginScene::SetHostIP(UniqueBase& scene)
 	if (activeState_== ActiveState::Init)
 	{
 		std::cout << "Ú‘±¬Œ÷!" << std::endl;
-		
 		mode_ = UpdateMode::StartInit;
-		
 	}
 	else
 	{

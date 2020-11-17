@@ -9,6 +9,7 @@ GuestNetWorkState::GuestNetWorkState()
     input_.moveDir = 0;
     controller_.Setup(0);
     mesData_.sendID = 0;
+
 }
 
 GuestNetWorkState::~GuestNetWorkState()
@@ -48,7 +49,11 @@ bool GuestNetWorkState::Update()
 
 bool GuestNetWorkState::RevUpdate()
 {
-    return false;
+    if (GetLostNetWork() != -1)
+    {
+        return false;
+    }
+    return true;
 }
 
 void GuestNetWorkState::UpdateFuncNon()

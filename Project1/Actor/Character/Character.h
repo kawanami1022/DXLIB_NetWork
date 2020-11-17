@@ -48,9 +48,9 @@ public:
 		AdjustPos();
 	}
 
-	Character GetCharacter()
+	Position2 GetPos()
 	{
-		return (*this);
+		return pos_;
 	}
 
 protected:

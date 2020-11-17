@@ -49,10 +49,13 @@ bool GuestNetWorkState::Update()
 
 bool GuestNetWorkState::RevUpdate()
 {
+    
     if (GetLostNetWork() != -1)
     {
         return false;
     }
+
+    
     return true;
 }
 

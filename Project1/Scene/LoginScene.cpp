@@ -143,16 +143,12 @@ void LoginScene::SetHostIP(UniqueBase& scene)
 
 	std::cout << "HOST‚ÌIPƒAƒhƒŒƒX	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "‚ÉÝ’è‚³‚ê‚Ü‚µ‚½!" << std::endl;
 	activeState_ = IpNetWork->ConnectHost(hostIp);
-	if (activeState_== ActiveState::Init)
-	{
+	if (activeState_== ActiveState::Init){
 		std::cout << "Ú‘±¬Œ÷!" << std::endl;
 		mode_ = UpdateMode::StartInit;
-	}
-	else
-	{
+	}else{
 		std::cout << "Ú‘±Ž¸”s!" << std::endl;
-		mode_ = UpdateMode::SetHostIP;
-	}
+		mode_ = UpdateMode::SetHostIP;}
 }
 
 void LoginScene::StartInit(UniqueBase& scene)
@@ -175,27 +171,6 @@ void LoginScene::StartInit(UniqueBase& scene)
 
 void LoginScene::Play(UniqueBase& scene)
 {
-
-	//auto InputMode = IpNetWork->GetInputState();
-	//if (InputMode.moveDir & 0x02)
-	//{
-	//	pos_x += 3;
-	//}
-	//if (InputMode.moveDir & 0x08)
-	//{
-	//	pos_x -= 3;
-	//}
-
-	//if (circlePos_.y >= screen_size_y)
-	//{
-	//	std::random_device seed_gen;
-	//	std::mt19937 engine(seed_gen());
-	//	std::uniform_int_distribution<int> distribution(0, screen_size_x);
-	//	auto tmp_pos_x = distribution(engine);
-	//	circlePos_.x = tmp_pos_x;
-	//	circlePos_.y = 0;
-	//}
-	//circlePos_.y += 5;
 	if (CheckHitKey(KEY_INPUT_SPACE))
 	{
 		auto nextScene = std::make_unique<GameScene>();

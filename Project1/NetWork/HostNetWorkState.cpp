@@ -51,6 +51,11 @@ bool HostNetWorkState::Update()
     return false;
 }
 
+bool HostNetWorkState::RevUpdate()
+{
+    return false;
+}
+
 void HostNetWorkState::UpdateFuncNon()
 {
 }
@@ -94,7 +99,7 @@ void HostNetWorkState::UpdateFuncPlay()
     std::cout << "----------------Play----------------" << std::endl;
     if (GetLostNetWork() != -1)
     {
-
+        //NetWorkSend(netHandle,)
     }
 }
 

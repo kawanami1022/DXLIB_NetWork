@@ -13,7 +13,6 @@
 #include "../Time/Time.h"
 #include "NetWorkState.h"
 
-
 NetWorkState::NetWorkState()
 {
 	active_ = ActiveState::Non;

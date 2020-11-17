@@ -10,6 +10,8 @@ public:
 	ActiveState ConnectHost(IPDATA hostIP);
 	bool CheckNetWork();
 	bool Update();
+	bool RevUpdate();
+
 	//ゲッターセッター
 private:
 
@@ -20,5 +22,6 @@ private:
 	void UpdateFuncStanby();	// 初期化情報送信済みの開始待ち
 	void UpdateFuncPlay();	// ゲーム中(ホスト/ゲスト兼用)
 	void UpdateFuncOFFLINE();
+
 };
 

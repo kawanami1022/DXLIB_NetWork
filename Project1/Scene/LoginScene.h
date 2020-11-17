@@ -9,8 +9,8 @@ enum class UpdateMode;
 
 
 class Timer;
-using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void()>>;
-
+using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void(UniqueBase&)>>;
+using DrawMapFunc = std::unordered_map < UpdateMode, std::function<void(void)>>;
 enum class UpdateMode
 {
 	SetNetWork,			// ホスト/ゲスト/オフラインの選択
@@ -37,10 +37,10 @@ private:
 	void Draw();
 	//void DrawOwnScreen();
 	//updateFunc_
-	void SetNetWork();
-	void SetHostIP();
-	void StartInit();
-	void Play();
+	void SetNetWork(UniqueBase& scene);
+	void SetHostIP(UniqueBase& scene);
+	void StartInit(UniqueBase& scene);
+	void Play(UniqueBase& scene);
 	//DrawFunc_
 	void SetNetWorkDraw();
 	void SetHostIPDraw();
@@ -50,7 +50,7 @@ private:
 	// 変数
 	UpdateMode mode_;
 	UpdateMapFunc updateFunc_;
-	UpdateMapFunc DrawFunc_;
+	DrawMapFunc DrawFunc_;
 	
 	int screen_size_x=800;
 	int screen_size_y=600;

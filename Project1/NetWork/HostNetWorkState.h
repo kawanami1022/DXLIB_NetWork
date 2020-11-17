@@ -12,6 +12,8 @@ public:
 	NetWorkMode GetNetWorkMode();
 	bool CheckNetWork();
 	bool Update();
+	bool RevUpdate();
+
 protected:
 private:
 	// ä÷êî

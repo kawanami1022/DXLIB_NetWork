@@ -48,6 +48,11 @@ public:
 		AdjustPos();
 	}
 
+	Character GetCharacter()
+	{
+		return (*this);
+	}
+
 protected:
 	Vector2Tmp<float> speed = { 1.f,1.f };
 	std::vector<int> HandleId_;

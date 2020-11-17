@@ -31,10 +31,10 @@ void LoginScene::Init()
 
 	// ŠÖ”‰Šú‰»
 	mode_ = UpdateMode::SetNetWork;
-	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&LoginScene::SetNetWork,this) },
-					{ UpdateMode::SetHostIP,std::bind(&LoginScene::SetHostIP,this) },
-					{ UpdateMode::StartInit,std::bind(&LoginScene::StartInit,this) },
-					{ UpdateMode::Play,std::bind(&LoginScene::Play,this) } };
+	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&LoginScene::SetNetWork,this,std::placeholders::_1) },
+					{ UpdateMode::SetHostIP,std::bind(&LoginScene::SetHostIP,this,std::placeholders::_1) },
+					{ UpdateMode::StartInit,std::bind(&LoginScene::StartInit,this,std::placeholders::_1) },
+					{ UpdateMode::Play,std::bind(&LoginScene::Play,this,std::placeholders::_1) } };
 
 	DrawFunc_ = { { UpdateMode::SetNetWork,std::bind(&LoginScene::SetNetWorkDraw,this) },
 					{ UpdateMode::SetHostIP,std::bind(&LoginScene::SetHostIPDraw,this) },
@@ -56,12 +56,8 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 
 		
 	IpNetWork->Update();
-	updateFunc_[mode_]();
-	if (CheckHitKey(KEY_INPUT_SPACE))
-	{
-		auto nextScene = std::make_unique<GameScene>();
-		nowScene = std::make_unique<CrossOver>(std::move(nowScene), std::move(nextScene));
-	}
+	updateFunc_[mode_](nowScene);
+
 	
 	Draw();
 	return nowScene;
@@ -70,13 +66,13 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 void LoginScene::Draw()
 {
 	
-	SetDrawScreen(screenSrcID_);
 	//ClsDrawScreen();
+	SetDrawScreen(screenSrcID_);
 	DrawFunc_[mode_]();
 }
 
 
-void LoginScene::SetNetWork()
+void LoginScene::SetNetWork(UniqueBase& scene)
 {
 	std::cout << "---------SetNetWork----------" << std::endl;
 	auto ipData = IpNetWork->GetIP();
@@ -122,7 +118,7 @@ void LoginScene::SetNetWork()
 
 }
 
-void LoginScene::SetHostIP()
+void LoginScene::SetHostIP(UniqueBase& scene)
 {
 	std::cout << "---------SetHostIP----------" << std::endl;
 	IPDATA hostIp = { 0,0,0,0 };
@@ -161,7 +157,7 @@ void LoginScene::SetHostIP()
 	}
 }
 
-void LoginScene::StartInit()
+void LoginScene::StartInit(UniqueBase& scene)
 {
 	std::cout << "---------StartInit-----------" << std::endl;
 	// ‰æ‘œ“Ç‚Ýž‚Ý
@@ -179,30 +175,34 @@ void LoginScene::StartInit()
 	mode_ = UpdateMode::Play;
 }
 
-void LoginScene::Play()
+void LoginScene::Play(UniqueBase& scene)
 {
 
-	auto InputMode = IpNetWork->GetInputState();
-	if (InputMode.moveDir & 0x02)
-	{
-		pos_x += 3;
-	}
-	if (InputMode.moveDir & 0x08)
-	{
-		pos_x -= 3;
-	}
+	//auto InputMode = IpNetWork->GetInputState();
+	//if (InputMode.moveDir & 0x02)
+	//{
+	//	pos_x += 3;
+	//}
+	//if (InputMode.moveDir & 0x08)
+	//{
+	//	pos_x -= 3;
+	//}
 
-	if (circlePos_.y >= screen_size_y)
+	//if (circlePos_.y >= screen_size_y)
+	//{
+	//	std::random_device seed_gen;
+	//	std::mt19937 engine(seed_gen());
+	//	std::uniform_int_distribution<int> distribution(0, screen_size_x);
+	//	auto tmp_pos_x = distribution(engine);
+	//	circlePos_.x = tmp_pos_x;
+	//	circlePos_.y = 0;
+	//}
+	//circlePos_.y += 5;
+	if (CheckHitKey(KEY_INPUT_SPACE))
 	{
-		std::random_device seed_gen;
-		std::mt19937 engine(seed_gen());
-		std::uniform_int_distribution<int> distribution(0, screen_size_x);
-		auto tmp_pos_x = distribution(engine);
-		circlePos_.x = tmp_pos_x;
-		circlePos_.y = 0;
+		auto nextScene = std::make_unique<GameScene>();
+		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
 	}
-	circlePos_.y += 5;
-
 }
 
 void LoginScene::SetNetWorkDraw()

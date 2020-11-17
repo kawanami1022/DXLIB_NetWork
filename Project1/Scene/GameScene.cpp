@@ -39,19 +39,17 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
-
-	
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
 	}
+
 }
 
 void GameScene::UpdateGuest()
 {
 	for (auto CHAR : character_)
 	{
-
 	}
 }
 

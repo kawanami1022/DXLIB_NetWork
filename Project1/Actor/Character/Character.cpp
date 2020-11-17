@@ -37,14 +37,13 @@ void Character::Draw()
 
 void Character::Move(std::shared_ptr<Map>&&  map)
 {
-	
 
 	// ˆÚ“®•ûŒü‚ðŒˆ‚ß‚é
 	std::unordered_map<MoveDir, std::pair<Position2,Position2>> tmpPos = 
-	{ {MoveDir::Down,std::make_pair<Position2,Position2>(Position2(pos_.x,posDR_.y),(Position2(pos_.x,pos_.y)))},
-	{MoveDir::Left,std::make_pair<Position2,Position2>(Position2(posUL_.x,pos_.y),(Position2(pos_.x,pos_.y)))},
-	{MoveDir::Up,std::make_pair<Position2,Position2>(Position2(pos_.x,posUL_.y),(Position2(pos_.x,pos_.y)))},
-	{MoveDir::Right,std::make_pair<Position2,Position2>(Position2(posDR_.x,pos_.y),(Position2(pos_.x,pos_.y)))}};
+			{ {MoveDir::Down,std::make_pair<Position2,Position2>(Position2(pos_.x,posDR_.y),(Position2(pos_.x,pos_.y)))},
+			{MoveDir::Left,std::make_pair<Position2,Position2>(Position2(posUL_.x,pos_.y),(Position2(pos_.x,pos_.y)))},
+			{MoveDir::Up,std::make_pair<Position2,Position2>(Position2(pos_.x,posUL_.y),(Position2(pos_.x,pos_.y)))},
+			{MoveDir::Right,std::make_pair<Position2,Position2>(Position2(posDR_.x,pos_.y),(Position2(pos_.x,pos_.y)))}};
 
 	//auto moveFunc = [&](MoveDir dir, std::pair<Position2, Position2> pos) {
 	//	pos.first.y = pos.first.y + static_cast<int>(speed.y);

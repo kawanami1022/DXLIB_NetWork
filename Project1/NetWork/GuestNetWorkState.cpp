@@ -46,6 +46,11 @@ bool GuestNetWorkState::Update()
     return false;
 }
 
+bool GuestNetWorkState::RevUpdate()
+{
+    return false;
+}
+
 void GuestNetWorkState::UpdateFuncNon()
 {
     std::cout << "NON" << std::endl;

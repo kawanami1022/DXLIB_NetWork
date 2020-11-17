@@ -26,6 +26,7 @@ union Header;
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
 using MesPacket = std::vector<int>;
+using MesPacketList = std::vector<int>;
 
 enum class MesType :char
 {
@@ -87,6 +88,7 @@ public:
 	NetWorkState();
 	virtual ~NetWorkState();
 	virtual bool Update();
+	virtual bool RevUpdate();
 	ActiveState ConnectHost(IPDATA hostIP);
 	//virtual bool CheckNetWork() = 0;
 	void SendMessageData();
@@ -127,6 +129,11 @@ public:
 	std::shared_ptr<File::TMX_File> GetTMxData()
 	{
 		return std::move(tmxFile_);
+	}
+
+	void SetMesPacket()
+	{
+
 	}
 
 protected:

@@ -53,10 +53,16 @@ bool HostNetWorkState::Update()
 
 bool HostNetWorkState::RevUpdate()
 {
+    
     if (GetLostNetWork() != -1)
     {
-
         return false;
+    }
+    NetWorkSend(netHandle, dataPacket_.data(), dataPacket_.size() * sizeof(int));
+
+    for (auto DATAPACKET : dataPacket_)
+    {
+        std::cout << "‘—‚Á‚½ƒf[ƒ^:" << std::hex << DATAPACKET << std::endl;
     }
     return true;
 }

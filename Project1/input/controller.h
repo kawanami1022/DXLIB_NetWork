@@ -54,7 +54,7 @@ struct controller
 protected:
 	CntData _data;
 	static int joyPadNum_;
-	int frame;
+	int frame = 0;
 	int id_;
 private:
 	virtual void Update(void) = 0;

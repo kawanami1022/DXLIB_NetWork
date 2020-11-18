@@ -17,7 +17,7 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
 
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
-
+	updateNetWorkModeFunc_[netWorkMode]();
 
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
@@ -43,11 +43,13 @@ void GameScene::UpdateHost()
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
-		Header headerData{ MesType::POS,1,id,0 };
+		int flag = (id == character_.size())? 0 : 1;
+		Header headerData{ MesType::POS,flag,id,0 };
 		IpNetWork->GetNetWorkState()->SetMesPacket(headerData.data_[0]);
 		auto charPos = CHAR->GetPos();
 		IpNetWork->GetNetWorkState()->SetMesPacket(charPos.x);
 		IpNetWork->GetNetWorkState()->SetMesPacket(charPos.y);
+		id++;
 	}
 	IpNetWork->GetNetWorkState()->RevUpdate();
 

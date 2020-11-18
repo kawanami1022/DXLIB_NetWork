@@ -277,4 +277,9 @@ void NetWorkState::ReservMessageData()
 	active_ = ActiveState::Play;
 }
 
+void NetWorkState::ClearDataPacket()
+{
+	dataPacket_.clear();
+}
+
 

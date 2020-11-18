@@ -93,6 +93,7 @@ public:
 	//virtual bool CheckNetWork() = 0;
 	void SendMessageData();
 	void ReservMessageData();
+	void ClearDataPacket();
 
 	//ゲッターセッター
 	virtual NetWorkMode GetNetWorkMode();
@@ -135,6 +136,9 @@ public:
 	{
 		dataPacket_.emplace_back(data);
 	}
+	
+
+
 
 protected:
 

@@ -12,12 +12,18 @@ class Map;
 enum class NetWorkMode;
 
 // æ“ª‚ÌID‚Édef‚ğƒZƒbƒg‚·‚é
-// host 0 def
-//        10 net
-//        20 net
+// host	0 def
+//			5  net
+//			10 auto
+//			15 net 
+//			20 auto
+//			25 net
 
-//gest 5  def
+//gest 0  net
+//       5  def
+//		  10 net
 //		  15 auto 
+//		  20 net
 //		  25 auto
 
 // DEFF (5):“ü—Í ©•ª‚Ìê‡(‘Šè‘¤‚©‚ç‚·‚é‚ÆNET)
@@ -83,9 +89,10 @@ protected:
 	Position2 posDR_;
 
 	std::unordered_map<NetWorkMode,std::function<void()>> InitFunc;
-	std::function<void()> updateFunc;
+	std::function<void()> updateFunc_;
 private:
 	static int Id_;
+	int playerID_;
 	int animcnt_ = 0;
 	bool Init();
 

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <iomanip>
 #include <DxLib.h>
+#include "../../NetWork/NetWork.h"
+#include "../../NetWork/NetWorkState.h"
 #include "../../Scene/BaseScene.h"
 #include "../../Scene/GameScene.h"
 #include "../map/map.h"
@@ -107,9 +109,28 @@ bool Character::Init()
 	LoadDivGraph("Image/bomberman.png", width * height, width, height, 20, 32, HandleData_[0], true);
 
 	// Init ID
+
+	auto InitFunc = [&](int num, std::function<void()> deff, std::function<void()> func1, std::function<void()> func2) {
+		if (playerID_ <= UNIT_ID_BASE)
+		{
+			updateFunc_ = ((playerID_ % UNIT_ID_BASE) % 2 == num) ? std::bind(&Character::NetUpdate, this) : std::bind(&Character::AutoUpdate, this);
+			return;
+		}
+
+		if ((playerID_ % UNIT_ID_BASE) % 2 == num)
+		{
+			updateFunc_ = func1;
+		}
+		else {
+			updateFunc_ = func2;
+		}
+	};
+
+	playerID_ = Id_;
+
+
+
+
 	Id_ += UNIT_ID_BASE;
-	
-
-
 	return false;
 }

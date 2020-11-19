@@ -1,11 +1,11 @@
 
+#include <sstream>
 #include <iostream>
 #include <DxLib.h>
 #include "../_debug/_DebugConOut.h"
 #include "NetWork.h"
 #include "HostNetWorkState.h"
 #include "GuestNetWorkState.h"
-#include <sstream>
 
 NetWork* NetWork::hInstance = nullptr;
 

@@ -5,9 +5,10 @@
 #include <functional>
 #include <memory>
 #include <DxLib.h>
-
 #include "NetWorkState.h"
 #define IpNetWork	NetWork::Gethinstance()
+#define IpNetWorkState	NetWork::Gethinstance()->GetNetWorkState()
+class NetWorkState;
 
 class NetWork
 {

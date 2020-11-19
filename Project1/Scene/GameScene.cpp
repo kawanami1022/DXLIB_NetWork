@@ -39,16 +39,18 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
+	IpNetWork->GetNetWorkState()->ClearDataPacket();
 	unsigned short id = 0;
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
-		int flag = (id == character_.size())? 0 : 1;
-		Header headerData{ MesType::POS,flag,id,0 };
-		IpNetWork->GetNetWorkState()->SetMesPacket(headerData.data_[0]);
+		int flag = (id == character_.size() - 1) ? 0 : 1;
+		Header headerData{ MesType::POS,flag,id,static_cast<int>(CHAR->GetMoveDir()) };
+		IpNetWork->GetNetWorkState()->SetDataPacket(headerData.data_[0]);
+		IpNetWork->GetNetWorkState()->SetDataPacket(headerData.data_[1]);
 		auto charPos = CHAR->GetPos();
-		IpNetWork->GetNetWorkState()->SetMesPacket(charPos.x);
-		IpNetWork->GetNetWorkState()->SetMesPacket(charPos.y);
+		IpNetWork->GetNetWorkState()->SetDataPacket(charPos.x);
+		IpNetWork->GetNetWorkState()->SetDataPacket(charPos.y);
 		id++;
 	}
 	IpNetWork->GetNetWorkState()->RevUpdate();
@@ -58,9 +60,12 @@ void GameScene::UpdateHost()
 void GameScene::UpdateGuest()
 {
 	IpNetWork->GetNetWorkState()->RevUpdate();
-	for (auto CHAR : character_)
+	auto dataPacket = IpNetWork->GetNetWorkState()->GetDataPacket();
+
+	for (auto DATAPACKET : dataPacket)
 	{
-		
+		std::cout << "Žó‚¯Žæ‚Á‚½ƒf[ƒ^:";
+		std::cout << DATAPACKET << std::endl;
 	}
 }
 

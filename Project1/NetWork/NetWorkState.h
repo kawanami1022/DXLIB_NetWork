@@ -43,7 +43,7 @@ struct MesHeader
 	MesType type;
 	unsigned char next = 0;	// データ送信が分割の場合に次がある場合0:ない1
 	unsigned short sendID;	// 分割送信時のナンバリング
-	unsigned int length_;		// 分割かどうかにかかわらず、単一パケットのデータ長(intの数)
+	int length_;		// 分割かどうかにかかわらず、単一パケットのデータ長(intの数)
 };
 
 union unionData
@@ -55,7 +55,7 @@ union unionData
 union Header
 {
 	MesHeader mesdata_;
-	unsigned int data_[2];
+	int data_[2];
 };
 
 struct InputState
@@ -132,12 +132,15 @@ public:
 		return std::move(tmxFile_);
 	}
 
-	void SetMesPacket(int data)
+	void SetDataPacket(int data)
 	{
 		dataPacket_.emplace_back(data);
 	}
 	
-
+	MesPacket GetDataPacket()
+	{
+		return dataPacket_;
+	}
 
 
 protected:

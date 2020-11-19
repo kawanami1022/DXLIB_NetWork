@@ -23,7 +23,7 @@ Character::~Character()
 
 }
 
-void Character::Update(std::shared_ptr<Map> map)
+void Character::Update(std::weak_ptr<Map> map)
 {
 	Move(std::move(map));
 }
@@ -35,7 +35,7 @@ void Character::Draw()
 	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(moveDir_)], true);
 }
 
-void Character::Move(std::shared_ptr<Map>&&  map)
+void Character::Move(std::weak_ptr<Map>&&  map)
 {
 	
 
@@ -70,7 +70,7 @@ void Character::Move(std::shared_ptr<Map>&&  map)
 		tmpPos[moveDir_].first.y -= static_cast<int>(speed.y);
 		tmpPos[moveDir_].second.y -= static_cast<int>(speed.y);
 	}
-	if (map->IsTurnRight(tmpPos[moveDir_].first))
+	if (map.lock()->IsTurnRight(tmpPos[moveDir_].first))
 	{
 		moveDir_ = static_cast<MoveDir>((static_cast<int>(moveDir_) + 1) % (static_cast<int>(MoveDir::Deth)));
 	}

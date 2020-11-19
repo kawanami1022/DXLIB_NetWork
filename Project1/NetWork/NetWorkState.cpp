@@ -156,7 +156,7 @@ void NetWorkState::SendMessageData()
 	//dataPacket‚Ì“Y‚¦Žš[0]:TMXSIZE	[1]:TMXDATA‚ð‘—‚é
 	Header headerdata{ MesType::TMX_SIZE,0,0,1 };
 	dataPacket_.insert(dataPacket_.begin(), headerdata.data_[0]);
-	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,dataPacket_.size()-1 };
+	headerdata.mesdata_ = { MesType::TMX_DATA,0,0,static_cast<int>(dataPacket_.size())-1 };
 	dataPacket_.insert(dataPacket_.begin() + 1, headerdata.data_[0]);
 	dataPacket_.insert(dataPacket_.begin() + 2, headerdata.data_[1]);
 

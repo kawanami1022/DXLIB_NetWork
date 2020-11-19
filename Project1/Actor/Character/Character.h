@@ -31,17 +31,13 @@ public:
 	Character();
 	Character(Position2);
 	~Character();
-	void Update(std::shared_ptr<Map> map);
+	void Update(std::weak_ptr<Map> map);
 	void Draw();
 
-	void Move(std::shared_ptr<Map>&& map);
+	void Move(std::weak_ptr<Map>&& map);
 
 	// Getter Setter
-	void SetMap(std::weak_ptr<Map>&& map)
-	{
-		map_ = map;
 
-	}
 	void SetPos(Position2 pos)
 	{
 		pos_ = pos;
@@ -53,11 +49,15 @@ public:
 		return pos_;
 	}
 
+	MoveDir GetMoveDir()
+	{
+		return moveDir_;
+	}
+
 protected:
 	Vector2Tmp<float> speed = { 1.f,1.f };
 	std::vector<int> HandleId_;
 	std::vector<int*> HandleData_;
-	std::weak_ptr<Map> map_;
 	MoveDir moveDir_ = MoveDir::Right;
 	Position2 posUL_;
 	Position2 posDR_;

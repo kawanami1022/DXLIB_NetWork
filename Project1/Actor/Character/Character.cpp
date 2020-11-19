@@ -3,8 +3,12 @@
 #include <iostream>
 #include <iomanip>
 #include <DxLib.h>
+#include "../../Scene/BaseScene.h"
+#include "../../Scene/GameScene.h"
 #include "../map/map.h"
 #include "Character.h"
+
+int Character::Id_ = 0;
 
 Character::Character()
 {
@@ -26,6 +30,18 @@ Character::~Character()
 void Character::Update(std::weak_ptr<Map> map)
 {
 	Move(std::move(map));
+}
+
+void Character::DeffUpdate()
+{
+}
+
+void Character::NetUpdate()
+{
+}
+
+void Character::AutoUpdate()
+{
 }
 
 

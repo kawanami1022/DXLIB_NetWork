@@ -27,14 +27,12 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 
 void GameScene::Draw()
 {
-
 	SetDrawScreen(screenSrcID_);
 	map_->Draw();
 	for (auto CHARACTER : character_)
 	{
 		CHARACTER->Draw();
 	}
-
 }
 
 void GameScene::UpdateHost()

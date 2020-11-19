@@ -1,11 +1,27 @@
 #pragma once
+#include <unordered_map>
 #include <vector>
+#include <functional>
 #include "../Actor.h"
 
 constexpr auto CHAR_WIDTH = 32;
 constexpr auto CHAR_HEIGHT = 32;
+constexpr auto UNIT_ID_BASE = 5;		// PlayerのiDを5刻みにする
 
 class Map;
+enum class NetWorkMode;
+
+// 先頭のIDにdefをセットする
+// host 0 def
+//        10 net
+//        20 net
+
+//gest 5  def
+//		  15 auto 
+//		  25 auto
+
+// DEFF (5):入力 自分の場合(相手側からするとNET)
+// NET(10~)  : ネットワーク
 
 enum class AnimState
 {
@@ -32,6 +48,10 @@ public:
 	Character(Position2);
 	~Character();
 	void Update(std::weak_ptr<Map> map);
+
+	void DeffUpdate();			// コントローラーやキーボードで移動
+	void NetUpdate();				// オートパイロットで移動
+	void AutoUpdate();			// 上の情報をネットワークから受けとる
 	void Draw();
 
 	void Move(std::weak_ptr<Map>&& map);
@@ -61,7 +81,11 @@ protected:
 	MoveDir moveDir_ = MoveDir::Right;
 	Position2 posUL_;
 	Position2 posDR_;
+
+	std::unordered_map<NetWorkMode,std::function<void()>> InitFunc;
+	std::function<void()> updateFunc;
 private:
+	static int Id_;
 	int animcnt_ = 0;
 	bool Init();
 

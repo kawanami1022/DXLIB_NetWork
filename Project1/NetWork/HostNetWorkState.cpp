@@ -107,7 +107,7 @@ void HostNetWorkState::UpdateFuncStanby()
 
 void HostNetWorkState::UpdateFuncPlay()
 {
-    std::cout << "----------------Play----------------" << std::endl;
+    //std::cout << "----------------Play----------------" << std::endl;
     if (GetLostNetWork() != -1)
     {
         std::cout << "Ú‘±‚ªØ‚ê‚Ü‚µ‚½!" << std::endl;

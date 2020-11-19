@@ -3,6 +3,7 @@
 #include <functional>
 #include <unordered_map>
 #include <thread>
+#include <utility>
 #include <DxLib.h>
 #include "../input/controller.h"
 #include "../input/Pad.h"
@@ -10,7 +11,6 @@
 
 constexpr	auto MTU = 1454;
 constexpr auto MESHEADER_INT = 3;
-
 namespace File {
 	enum class ReadTmxMode;
 	struct Tiled_Map;
@@ -22,10 +22,12 @@ enum class ActiveState;
 struct MesHeader;
 union unionData;
 union Header;
+enum class MesType :char;
 
 using ActiveFunc = std::unordered_map< ActiveState, std::function<void(void)>>;
 using RevBox = std::vector<char>;
 using MesPacket = std::vector<int>;
+using RevPacket = std::pair<MesType, std::vector<int>>;
 using MesPacketList = std::vector<int>;
 
 enum class MesType :char
@@ -35,7 +37,8 @@ enum class MesType :char
 	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
 	TMX_SIZE,
 	TMX_DATA,
-	POS
+	POS,
+	SET_BOM				// ボムを配置
 };
 
 struct MesHeader

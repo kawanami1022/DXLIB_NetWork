@@ -106,7 +106,7 @@ void GuestNetWorkState::UpdateFuncStanby()
 
 void GuestNetWorkState::UpdateFuncPlay()
 {
-    std::cout << "----------------Play----------------" << std::endl;
+    //std::cout << "----------------Play----------------" << std::endl;
     controller_.Update();
 }
 

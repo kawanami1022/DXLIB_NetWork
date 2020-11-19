@@ -105,10 +105,13 @@ bool Character::Init()
 		HandleData_.emplace_back(&HandleId_[width * idx]);
 	}
 	LoadDivGraph("Image/bomberman.png", width * height, width, height, 20, 32, HandleData_[0], true);
-
 	for (auto HANDLE : HandleId_)
 	{
 		std::cout << HANDLE << std::endl;
 	}
+	Id_ += UNIT_ID_BASE;
+
+
+
 	return false;
 }

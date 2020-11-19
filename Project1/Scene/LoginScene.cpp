@@ -171,7 +171,7 @@ void LoginScene::StartInit(UniqueBase& scene)
 
 void LoginScene::Play(UniqueBase& scene)
 {
-	if (CheckHitKey(KEY_INPUT_SPACE))
+	if (IpNetWork->GetNetWorkState()->GetActive()==ActiveState::Play)
 	{
 		auto nextScene = std::make_unique<GameScene>();
 		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));

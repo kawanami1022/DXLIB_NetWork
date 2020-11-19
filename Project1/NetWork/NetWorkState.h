@@ -93,7 +93,6 @@ public:
 	virtual bool Update();
 	virtual bool RevUpdate();
 	ActiveState ConnectHost(IPDATA hostIP);
-	//virtual bool CheckNetWork() = 0;
 	void SendMessageData();
 	void ReservMessageData();
 	void ClearDataPacket();

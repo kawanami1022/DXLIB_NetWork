@@ -134,8 +134,10 @@ void NetWorkState::SendMessageData()
 	auto mapdata = 0;
 	while (mapId.size() > 0)
 	{
+		mapdata = 0;
 		for (unsigned int i = 0; i < 8; i++)
 		{
+			std::cout << std::hex << mapdata << ":" << std::endl;
 			mapdata |= mapId.front();
 			mapId.erase(mapId.begin());
 			if (i != (8 - 1))mapdata <<= 4;
@@ -144,6 +146,8 @@ void NetWorkState::SendMessageData()
 				break;
 			}
 		}
+
+		std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
 		dataPacket_.push_back(mapdata);
 	}
 
@@ -194,7 +198,7 @@ void NetWorkState::SendMessageData()
 	dataPacket_.clear();
 	active_ = ActiveState::Play;
 	// debug display
-
+	std::cin.get();
 }
 
 void NetWorkState::ReservMessageData()

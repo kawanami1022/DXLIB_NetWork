@@ -152,6 +152,8 @@
   <ItemGroup>
     <ClInclude Include="Actor\Actor.h" />
     <ClInclude Include="Actor\Character\Character.h" />
+    <ClInclude Include="Actor\Item\Bomb\Bomb.h" />
+    <ClInclude Include="Actor\Item\Item.h" />
     <ClInclude Include="Lib\Constraint\cast.h" />
     <ClInclude Include="Lib\Constraint\constraint.h" />
     <ClInclude Include="Lib\Math\math.h" />
@@ -182,6 +184,8 @@
   <ItemGroup>
     <ClCompile Include="Actor\Actor.cpp" />
     <ClCompile Include="Actor\Character\Character.cpp" />
+    <ClCompile Include="Actor\Item\Item.cpp" />
+    <ClCompile Include="Actor\Item\Bomb\Bomb.cpp" />
     <ClCompile Include="Lib\Math\math.cpp" />
     <ClCompile Include="Actor\map\map.cpp" />
     <ClCompile Include="Scene\CrossOver.cpp" />

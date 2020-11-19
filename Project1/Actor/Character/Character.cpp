@@ -99,18 +99,16 @@ bool Character::Init()
 	const int width = 5;
 	const int height = 4;
 	AdjustPos();
+
+	// Init Graphices handle
 	HandleId_.resize(width * height);
 	for (int idx = 0; idx < height; idx++)
-	{
-		HandleData_.emplace_back(&HandleId_[width * idx]);
-	}
+	{HandleData_.emplace_back(&HandleId_[width * idx]);}
 	LoadDivGraph("Image/bomberman.png", width * height, width, height, 20, 32, HandleData_[0], true);
-	for (auto HANDLE : HandleId_)
-	{
-		std::cout << HANDLE << std::endl;
-	}
-	Id_ += UNIT_ID_BASE;
 
+	// Init ID
+	Id_ += UNIT_ID_BASE;
+	
 
 
 	return false;

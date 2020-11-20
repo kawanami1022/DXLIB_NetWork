@@ -45,10 +45,8 @@ bool Pad::Setup(int no)
 	PadIdList_ = { DX_INPUT_PAD1 ,DX_INPUT_PAD2 };
 	_xInputTbl = { {InputID::Up,XINPUT_BUTTON_DPAD_UP},
 				{InputID::Down, XINPUT_BUTTON_DPAD_DOWN},
-				{InputID::Right,XINPUT_BUTTON_DPAD_LEFT},
-				{InputID::Right,XINPUT_BUTTON_DPAD_RIGHT},
-				{InputID::TURN_L,XINPUT_BUTTON_A},
-				{InputID::TURN_R,XINPUT_BUTTON_B} };
+				{InputID::Left,XINPUT_BUTTON_DPAD_LEFT},
+				{InputID::Right,XINPUT_BUTTON_DPAD_RIGHT}};
 	joyPadNum_ = GetJoypadNum();
 	return true;
 }

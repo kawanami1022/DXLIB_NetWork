@@ -1,10 +1,15 @@
+#include <list>
 #include <functional>
 #include <array>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 #include <DxLib.h>
 #include "../../NetWork/NetWork.h"
 #include "../../NetWork/NetWorkState.h"
+#include "../../input/controller.h"
+#include "../../input/keyInput.h"
+#include "../../input/Pad.h"
 #include "../../Scene/BaseScene.h"
 #include "../../Scene/GameScene.h"
 #include "../map/map.h"
@@ -36,6 +41,28 @@ void Character::Update(std::weak_ptr<Map> map)
 
 void Character::DeffUpdate(std::weak_ptr<Map> map)
 {
+
+	using PairID = std::pair<InputID, int>;
+	std::vector<std::pair<InputID, int>> inputList;
+
+	(*controller_)();
+
+	for (auto CONT_DATA : controller_->GetCntData())
+	{
+		inputList.emplace_back(CONT_DATA.first, CONT_DATA.second[static_cast<int>(Trg::Now)]);
+	}
+
+	std::cout << std::endl;
+	std::sort(inputList.begin(), inputList.end(), [&](PairID x, PairID y) {return x.second < y.second;});
+
+
+	if (inputList.end()->first == InputID::Down)
+	{
+
+	}
+
+
+	std::cout << std::endl;
 }
 
 void Character::NetUpdate(std::weak_ptr<Map> map)
@@ -52,6 +79,7 @@ void Character::Draw()
 {
 	animcnt_++;
 	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(moveDir_)], true);
+	DrawFormatString(posUL_.x, posUL_.y, 0x000000, "%d", playerID_);
 }
 
 void Character::Move(std::weak_ptr<Map>&&  map)
@@ -117,12 +145,17 @@ bool Character::Init()
 	//@param func2	çXêVä÷êî
 	auto InitFunc = [&](int num, std::function<void(std::weak_ptr<Map>)> deff, std::function<void(std::weak_ptr<Map> )> func1, std::function<void(std::weak_ptr<Map> )> func2)
 	{
+		bool isPlayer =( (playerID_ / UNIT_ID_BASE) % 2 == num);
 		if (playerID_ <= UNIT_ID_BASE)
 		{
-			updateFunc_ = ((playerID_ % UNIT_ID_BASE) % 2 == num) ? deff : func1;
+			updateFunc_ = (isPlayer) ? deff : func1;
+			if (isPlayer) {
+				controller_ = std::make_unique<KeyInput>(); 
+				controller_->Setup(0);
+			}
 			return;
 		}
-		updateFunc_ = ((playerID_ % UNIT_ID_BASE) % 2 == num) ? func1 : func2;
+		updateFunc_ = ((playerID_ / UNIT_ID_BASE) % 2 == num) ? func1 : func2;
 	};
 
 	playerID_ = Id_;

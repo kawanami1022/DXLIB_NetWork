@@ -6,6 +6,9 @@ class Actor
 public:
 	Actor();
 	~Actor();
+
+	
+
 	Position2 GetPos()
 	{
 		return pos_;

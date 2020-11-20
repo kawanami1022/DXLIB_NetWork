@@ -9,6 +9,7 @@ constexpr auto CHAR_HEIGHT = 32;
 constexpr auto UNIT_ID_BASE = 5;		// Player‚ÌiD‚ğ5‚İ‚É‚·‚é
 
 class Map;
+struct controller;
 enum class NetWorkMode;
 
 // æ“ª‚ÌID‚Édef‚ğƒZƒbƒg‚·‚é
@@ -84,12 +85,15 @@ protected:
 	Vector2Tmp<float> speed = { 1.f,1.f };
 	std::vector<int> HandleId_;
 	std::vector<int*> HandleData_;
+
+	std::unique_ptr<controller> controller_;
+
 	MoveDir moveDir_ = MoveDir::Right;
 	Position2 posUL_;
 	Position2 posDR_;
 
 	std::unordered_map<NetWorkMode,std::function<void()>> InitFunc;
-	std::function<void(std::weak_ptr<Map >)> updateFunc_;
+	std::function<void(std::weak_ptr<Map >)> updateFunc_=nullptr;
 private:
 	static int Id_;
 	int playerID_;

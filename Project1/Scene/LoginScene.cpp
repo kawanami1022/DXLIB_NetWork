@@ -176,6 +176,12 @@ void LoginScene::Play(UniqueBase& scene)
 		auto nextScene = std::make_unique<GameScene>();
 		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
 	}
+	if (IpNetWork->GetNetWorkState()->GetNetWorkMode() ==NetWorkMode::OFFLINE)
+	{
+		auto nextScene = std::make_unique<GameScene>();
+		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
+	}
+
 }
 
 void LoginScene::SetNetWorkDraw()

@@ -55,9 +55,9 @@ public:
 	~Character();
 	void Update(std::weak_ptr<Map> map);
 
-	void DeffUpdate();			// コントローラーやキーボードで移動
-	void NetUpdate();				// オートパイロットで移動
-	void AutoUpdate();			// 上の情報をネットワークから受けとる
+	void DeffUpdate(std::weak_ptr<Map> map);			// コントローラーやキーボードで移動
+	void NetUpdate(std::weak_ptr<Map> map);				// オートパイロットで移動
+	void AutoUpdate(std::weak_ptr<Map> map);			// 上の情報をネットワークから受けとる
 	void Draw();
 
 	void Move(std::weak_ptr<Map>&& map);
@@ -89,7 +89,7 @@ protected:
 	Position2 posDR_;
 
 	std::unordered_map<NetWorkMode,std::function<void()>> InitFunc;
-	std::function<void()> updateFunc_;
+	std::function<void(std::weak_ptr<Map >)> updateFunc_;
 private:
 	static int Id_;
 	int playerID_;

@@ -31,19 +31,20 @@ Character::~Character()
 
 void Character::Update(std::weak_ptr<Map> map)
 {
+	updateFunc_(map);
+}
+
+void Character::DeffUpdate(std::weak_ptr<Map> map)
+{
+}
+
+void Character::NetUpdate(std::weak_ptr<Map> map)
+{
+}
+
+void Character::AutoUpdate(std::weak_ptr<Map> map)
+{
 	Move(std::move(map));
-}
-
-void Character::DeffUpdate()
-{
-}
-
-void Character::NetUpdate()
-{
-}
-
-void Character::AutoUpdate()
-{
 }
 
 
@@ -110,25 +111,35 @@ bool Character::Init()
 
 	// Init ID
 
-	auto InitFunc = [&](int num, std::function<void()> deff, std::function<void()> func1, std::function<void()> func2) {
+	//@param num	0偶数 1:奇数
+	//@param deff:	入力用更新関数
+	//@param func1	更新関数
+	//@param func2	更新関数
+	auto InitFunc = [&](int num, std::function<void(std::weak_ptr<Map>)> deff, std::function<void(std::weak_ptr<Map> )> func1, std::function<void(std::weak_ptr<Map> )> func2)
+	{
 		if (playerID_ <= UNIT_ID_BASE)
 		{
-			updateFunc_ = ((playerID_ % UNIT_ID_BASE) % 2 == num) ? std::bind(&Character::NetUpdate, this) : std::bind(&Character::AutoUpdate, this);
+			updateFunc_ = ((playerID_ % UNIT_ID_BASE) % 2 == num) ? deff : func1;
 			return;
 		}
-
-		if ((playerID_ % UNIT_ID_BASE) % 2 == num)
-		{
-			updateFunc_ = func1;
-		}
-		else {
-			updateFunc_ = func2;
-		}
+		updateFunc_ = ((playerID_ % UNIT_ID_BASE) % 2 == num) ? func1 : func2;
 	};
 
 	playerID_ = Id_;
-
-
+	
+	auto mode = IpNetWorkState->GetNetWorkMode();
+	if (mode == NetWorkMode::GUEST)
+	{
+		InitFunc(0, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1));
+	}else if
+	(mode == NetWorkMode::HOST)
+	{
+		InitFunc(1, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1));
+	}
+	else  if (mode == NetWorkMode::OFFLINE) {
+		InitFunc(0, std::bind(&Character::DeffUpdate,this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1));
+	}
+	
 
 
 	Id_ += UNIT_ID_BASE;

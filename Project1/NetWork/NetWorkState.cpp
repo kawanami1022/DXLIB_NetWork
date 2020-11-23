@@ -52,39 +52,43 @@ bool NetWorkState::RevUpdate()
 {
 	if (GetLostNetWork() != -1)
 	{
+		revPacket_.clear();
+		std::cout << "接続が切れてます!" << std::endl;
 		return false;
 	}
-	NetWorkSend(netHandle, dataPacket_.data(), dataPacket_.size() * sizeof(int));
-
-	for (auto DATAPACKET : dataPacket_)
+	// ネットワークバッファに溜まっているデータが存在するかくにんする
+	while (GetNetWorkDataLength(netHandle) > 0)
 	{
-		std::cout << "送ったデータ:" << std::hex << DATAPACKET << std::endl;
+		for (auto REVDATA : revPacket_)
+		{
+			NetWorkRecv(netHandle, &REVDATA, sizeof(int));
+			
+		}
 	}
+
+	for (auto REVDATA : revPacket_)
+	{
+		std::cout << "受け取ったデータ:" << std::hex << REVDATA << std::endl;
+	}
+
 	return true;
 }
 
 bool NetWorkState::SendUpdate()
 {
-	dataPacket_.clear();
-	int revData = 0;
+	
 	if (GetLostNetWork() != -1)
 	{
-		std::cout << "接続が切れてます!" << std::endl;
 		return false;
 	}
+	NetWorkSend(netHandle, sendPacket_.data(), sendPacket_.size() * sizeof(int));
 
-	// ネットワークバッファに溜まっているデータが存在するかくにんする
-	while (GetNetWorkDataLength(netHandle) > 0)
+	for (auto DATAPACKET : sendPacket_)
 	{
-		NetWorkRecv(netHandle, &revData, sizeof(int));
-		dataPacket_.emplace_back(revData);
+		std::cout << "送ったデータ:" << std::hex << DATAPACKET << std::endl;
 	}
-
-	for (auto REVDATA : dataPacket_)
-	{
-		std::cout << "受け取ったデータ:" << std::hex << REVDATA << std::endl;
-	}
-
+	std::cout << std::endl;
+	sendPacket_.clear();
 	return true;
 }
 
@@ -233,7 +237,7 @@ void NetWorkState::SendMessageData()
 	dataPacket_.clear();
 	active_ = ActiveState::Play;
 	// debug display
-	std::cin.get();
+
 }
 
 void NetWorkState::ReservMessageData()
@@ -285,7 +289,7 @@ void NetWorkState::ReservMessageData()
 			DATAPACKET <<= 4;
 		}
 	}
-
+	if (mapId.size() == 0)return;
 
 	int idx = 0;
 	for (auto Name : tmxFile_->name_)
@@ -319,6 +323,16 @@ void NetWorkState::ReservMessageData()
 void NetWorkState::ClearDataPacket()
 {
 	dataPacket_.clear();
+}
+
+void NetWorkState::ClearRevPacket()
+{
+	revPacket_.clear();
+}
+
+void NetWorkState::ClearSendPacket()
+{
+	sendPacket_.clear();
 }
 
 

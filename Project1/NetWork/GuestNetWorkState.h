@@ -10,7 +10,6 @@ public:
 	ActiveState ConnectHost(IPDATA hostIP);
 	bool CheckNetWork();
 	bool Update();
-	bool RevUpdate();
 
 	//ゲッターセッター
 private:

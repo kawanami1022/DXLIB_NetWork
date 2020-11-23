@@ -127,11 +127,29 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 
 void Character::NetUpdate(std::weak_ptr<Map> map)
 {
+
 }
 
 void Character::AutoUpdate(std::weak_ptr<Map> map)
 {
-	Move(std::move(map));
+	AutoMove(std::move(map));
+	// offlineMode だったら終了
+	if (IpNetWork->GetNetWorkMode() == NetWorkMode::OFFLINE)return;
+
+	std::vector<int> sendData =
+	{ static_cast<int>(MesType::POS),
+		playerID_,
+		pos_.x,
+		pos_.y,
+		static_cast<int>(moveDir_)
+	};
+
+	
+	for (auto SEND_DATA : sendData)
+	{
+		IpNetWorkState->SetSendPacket(SEND_DATA);
+	}
+
 }
 
 
@@ -141,7 +159,7 @@ void Character::Draw()
 	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(moveDir_)], true);
 }
 
-void Character::Move(std::weak_ptr<Map>&&  map)
+void Character::AutoMove(std::weak_ptr<Map>&&  map)
 {
 	
 
@@ -197,7 +215,6 @@ bool Character::Init()
 	LoadDivGraph("Image/bomberman.png", width * height, width, height, 20, 32, HandleData_[0], true);
 
 	// Init ID
-
 	//@param num	0偶数 1:奇数
 	//@param deff:	入力用更新関数
 	//@param func1	更新関数
@@ -232,8 +249,6 @@ bool Character::Init()
 		InitFunc(0, std::bind(&Character::DeffUpdate,this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1));
 	}
 	
-
-
 	Id_ += UNIT_ID_BASE;
 	return false;
 }

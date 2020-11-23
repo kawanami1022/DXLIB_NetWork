@@ -57,11 +57,11 @@ public:
 	void Update(std::weak_ptr<Map> map);
 
 	void DeffUpdate(std::weak_ptr<Map> map);			// コントローラーやキーボードで移動
-	void NetUpdate(std::weak_ptr<Map> map);				// オートパイロットで移動
-	void AutoUpdate(std::weak_ptr<Map> map);			// 上の情報をネットワークから受けとる
+	void NetUpdate(std::weak_ptr<Map> map);			// 上の情報をネットワークから受けとる
+	void AutoUpdate(std::weak_ptr<Map> map);			// オートパイロット
 	void Draw();
 
-	void Move(std::weak_ptr<Map>&& map);
+	void AutoMove(std::weak_ptr<Map>&& map);
 
 	// Getter Setter
 

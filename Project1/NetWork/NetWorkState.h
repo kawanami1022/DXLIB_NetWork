@@ -9,8 +9,6 @@
 #include "../input/Pad.h"
 #include "../input/keyInput.h"
 
-
-
 constexpr	auto MTU = 1454;
 constexpr auto MESHEADER_INT = 3;
 namespace File {
@@ -99,7 +97,8 @@ public:
 	void SendMessageData();
 	void ReservMessageData();
 	void ClearDataPacket();
-
+	void ClearRevPacket();
+	void ClearSendPacket();
 	//ゲッターセッター
 	virtual NetWorkMode GetNetWorkMode();
 
@@ -148,6 +147,29 @@ public:
 	}
 
 
+	void SetRevPacket(int data)
+	{
+		revPacket_.emplace_back(data);
+	}
+
+	MesPacket GetRevPacket()
+	{
+		return revPacket_;
+	}
+
+
+
+	void SetSendPacket(int data)
+	{
+		sendPacket_.emplace_back(data);
+	}
+
+
+	MesPacket GetSendPacket()
+	{
+		return sendPacket_;
+	}
+
 protected:
 
 	// 変数宣言
@@ -165,6 +187,9 @@ protected:
 
 	MesPacket dataPacket_;
 	
+	MesPacket revPacket_;
+	MesPacket sendPacket_;
+
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;
 	std::shared_ptr<File::TMX_File> tmxFile_ = nullptr;

@@ -43,12 +43,7 @@ void GameScene::UpdateHost()
 	{
 		CHAR->Update(map_);
 		int flag = (id == character_.size() - 1) ? 0 : 1;
-		Header headerData{ MesType::POS,flag,id,static_cast<int>(CHAR->GetMoveDir()) };
-		IpNetWork->GetNetWorkState()->SetDataPacket(headerData.data_[0]);
-		IpNetWork->GetNetWorkState()->SetDataPacket(headerData.data_[1]);
-		auto charPos = CHAR->GetPos();
-		IpNetWork->GetNetWorkState()->SetDataPacket(charPos.x);
-		IpNetWork->GetNetWorkState()->SetDataPacket(charPos.y);
+
 		id++;
 	}
 	IpNetWork->GetNetWorkState()->RevUpdate();
@@ -58,7 +53,7 @@ void GameScene::UpdateHost()
 void GameScene::UpdateGuest()
 {
 	IpNetWork->GetNetWorkState()->RevUpdate();
-	auto dataPacket = IpNetWork->GetNetWorkState()->GetDataPacket();
+	auto dataPacket = IpNetWork->GetNetWorkState()->GetRevPacket();
 
 	for (auto DATAPACKET : dataPacket)
 	{

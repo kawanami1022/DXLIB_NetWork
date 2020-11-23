@@ -13,7 +13,6 @@ HostNetWorkState::HostNetWorkState()
     std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
   
     mesData_.sendID = 0;
-    controller_.Setup(0);
 }
 
 HostNetWorkState::~HostNetWorkState()
@@ -49,22 +48,6 @@ bool HostNetWorkState::Update()
 {
     activeFunc_[active_]();
     return false;
-}
-
-bool HostNetWorkState::RevUpdate()
-{
-    
-    if (GetLostNetWork() != -1)
-    {
-        return false;
-    }
-    NetWorkSend(netHandle, dataPacket_.data(), dataPacket_.size() * sizeof(int));
-
-    for (auto DATAPACKET : dataPacket_)
-    {
-        std::cout << "‘—‚Á‚½ƒf[ƒ^:" << std::hex << DATAPACKET << std::endl;
-    }
-    return true;
 }
 
 void HostNetWorkState::UpdateFuncNon()

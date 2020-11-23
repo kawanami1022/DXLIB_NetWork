@@ -61,6 +61,15 @@ Vector2Tmp<T> operator%(const Vector2Tmp<T>& vec2, T K);
 
 
 template<class T>
+bool operator==(const Vector2Tmp<T>& vec2, T k);
+template<class T>
+bool operator!=(Vector2Tmp<T>& vec2, T k);
+template<class T>
+bool operator<(Vector2Tmp<T>& vec2, T k);
+template<class T>
+bool operator<=(Vector2Tmp<T>& vec2, T k);
+
+template<class T>
 Vector2Tmp<T> operator+(const Vector2Tmp<T>& vec2, Vector2Tmp<T> vec2_)
 {
 	// TODO: return ステートメントをここに挿入します
@@ -122,7 +131,7 @@ inline Vector2Tmp<T> operator%(const Vector2Tmp<T>& vec2, T K)
 }
 
 template<class T>
-inline bool operator==(Vector2Tmp<T>& vec2, T k)
+inline bool operator==(const Vector2Tmp<T>& vec2, T k)
 {
 	return (vec2.x == k && vec2.y == k);
 }
@@ -145,15 +154,6 @@ inline bool operator<=(Vector2Tmp<T>& vec2, T k)
 	return (vec2.x <= k && vec2.y <= k);
 }
 
-
-template<class T>
-bool operator==(Vector2Tmp<T>& vec2,T k);
-template<class T>
-bool operator!=(Vector2Tmp<T>& vec2, T k);
-template<class T>
-bool operator<(Vector2Tmp<T>& vec2, T k);
-template<class T>
-bool operator<=(Vector2Tmp<T>& vec2, T k);
 
 using Vector2 = Vector2Tmp<int>;
 using Vector2l = Vector2Tmp<long>;

@@ -94,6 +94,7 @@ public:
 	virtual ~NetWorkState();
 	virtual bool Update();
 	virtual bool RevUpdate();
+	virtual bool SendUpdate();
 	ActiveState ConnectHost(IPDATA hostIP);
 	void SendMessageData();
 	void ReservMessageData();
@@ -153,7 +154,6 @@ protected:
 	const int portNum_ = 8086;
 	ActiveState active_;
 	int netHandle = 0;		// dxlibが使用するハンドル
-	KeyInput controller_;
 
 	InputState input_;
 	ActiveFunc activeFunc_;

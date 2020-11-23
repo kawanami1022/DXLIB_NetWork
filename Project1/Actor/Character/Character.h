@@ -86,7 +86,7 @@ protected:
 	std::vector<int> HandleId_;
 	std::vector<int*> HandleData_;
 
-	std::unique_ptr<controller> controller_;
+	std::unique_ptr<controller> controller_=nullptr;
 
 	MoveDir moveDir_ = MoveDir::Right;
 	Position2 posUL_;
@@ -104,7 +104,7 @@ private:
 	void AdjustPos()
 	{
 		posUL_ = pos_ - Position2(CHAR_WIDTH / 2, CHAR_HEIGHT / 2);
-		posDR_ = pos_ + Position2(CHAR_WIDTH / 2, CHAR_HEIGHT / 2);
+		posDR_ = pos_ + Position2(CHAR_WIDTH / 2-1, CHAR_HEIGHT / 2-1);
 	}
 };
 

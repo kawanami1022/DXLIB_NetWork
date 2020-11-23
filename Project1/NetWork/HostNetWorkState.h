@@ -14,6 +14,7 @@ public:
 	bool Update();
 	bool RevUpdate();
 
+
 protected:
 private:
 	// ŠÖ”

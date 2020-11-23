@@ -52,17 +52,77 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 		inputList.emplace_back(CONT_DATA.first, CONT_DATA.second[static_cast<int>(Trg::Now)]);
 	}
 
-	std::cout << std::endl;
 	std::sort(inputList.begin(), inputList.end(), [&](PairID x, PairID y) {return x.second < y.second;});
 
+	// É^ÉCÉãÇÃíÜêSÇ…PlayerÇ™ë∂ç›Ç∑ÇÈÇ©í≤Ç◊ÇÈ
+	auto MapId = [&](Position2 pos) {
+		return map.lock()->GetMapId(pos);
+	};
 
-	if (inputList.end()->first == InputID::Down)
-	{
 
-	}
+	bool process = false;	// true:èàóùÇåpë±Ç≥ÇπÇÈ
+	std::for_each(inputList.crbegin(), inputList.crend(), [&](auto&& list) {
+		if (process)return;
+		Position2 pos= pos_;
+		Position2 posUL = posUL_;
+		Position2 posDR= posDR_;
 
+		if (list.second == 0) { return; };
+		if (list.first == InputID::Down)
+		{
+			posUL.y += speed.y;
+			posDR.y += speed.y;
+			pos.y += speed.y;
+			moveDir_ = MoveDir::Down;
+			if (MapId(Position2(pos.x, posDR.y)) == MAP_ID::NON)
+			{
+				pos_ = pos;
+				process = true;
+				return;
+			}
 
-	std::cout << std::endl;
+		}
+		if (list.first == InputID::Up)
+		{
+			posUL.y -= speed.y;
+			posDR.y -= speed.y;
+			pos.y -= speed.y;
+			moveDir_ = MoveDir::Up;
+			if (MapId(Position2(pos.x, posUL.y)) == MAP_ID::NON)
+			{
+				pos_ = pos;
+				process = true;
+				return;
+			}
+		}
+		if (list.first == InputID::Left)
+		{
+			posUL.x -= speed.x;
+			posDR.x -= speed.x;
+			pos.x -= speed.x;
+			moveDir_ = MoveDir::Left;
+			if (MapId(Position2(posUL.x, pos.y)) == MAP_ID::NON)
+			{
+				pos_ = pos;
+				process = true;
+				return;
+			}
+		}
+		if (list.first == InputID::Right)
+		{
+			posUL.x += speed.x;
+			posDR.x += speed.x;
+			pos.x += speed.x;
+			moveDir_ = MoveDir::Right;
+			if (MapId(Position2(posDR.x, pos.y)) == MAP_ID::NON)
+			{
+				pos_ = pos;
+				process = true;
+				return;
+			}
+		}
+	});
+	AdjustPos();
 }
 
 void Character::NetUpdate(std::weak_ptr<Map> map)
@@ -79,7 +139,6 @@ void Character::Draw()
 {
 	animcnt_++;
 	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(moveDir_)], true);
-	DrawFormatString(posUL_.x, posUL_.y, 0x000000, "%d", playerID_);
 }
 
 void Character::Move(std::weak_ptr<Map>&&  map)

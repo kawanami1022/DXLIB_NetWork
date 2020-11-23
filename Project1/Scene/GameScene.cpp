@@ -94,9 +94,6 @@ bool GameScene::Init()
 	{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
 	{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
 
-
-	
-
 	// sponePlayer
 	VecCharacter sponePlayer= map_->SponePlayer();
 	character_.insert(character_.end(), sponePlayer.begin(), sponePlayer.end());

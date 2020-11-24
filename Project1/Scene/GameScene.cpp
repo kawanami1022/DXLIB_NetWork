@@ -15,10 +15,10 @@ UniqueBase GameScene::input(UniqueBase nowScene)
 
 UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
-
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
 	updateNetWorkModeFunc_[netWorkMode]();
-
+	if(flame>30)std::cin.get();
+	flame++;
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
 	Draw();
@@ -37,29 +37,34 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
-	IpNetWork->GetNetWorkState()->ClearDataPacket();
-	unsigned short id = 0;
+	IpNetWorkState->RevUpdate();
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
-		int flag = (id == character_.size() - 1) ? 0 : 1;
-
-		id++;
 	}
-	IpNetWork->GetNetWorkState()->RevUpdate();
-
+	IpNetWorkState->SendUpdate();
+	
 }
 
 void GameScene::UpdateGuest()
 {
-	IpNetWork->GetNetWorkState()->RevUpdate();
-	auto dataPacket = IpNetWork->GetNetWorkState()->GetRevPacket();
-
-	for (auto DATAPACKET : dataPacket)
+	IpNetWorkState->RevUpdate();
+	auto revPacket = IpNetWorkState->GetRevPacket();
+	MesPacket playerPacket;
+	while (revPacket.size() > 0)
 	{
-		std::cout << "Žó‚¯Žæ‚Á‚½ƒf[ƒ^:";
-		std::cout << DATAPACKET << std::endl;
+		if (revPacket[0] == static_cast<int>(MesType::POS))
+		{
+
+		}
 	}
+
+	for (auto CHAR : character_)
+	{
+
+		CHAR->Update(map_);
+	}
+	IpNetWorkState->SendUpdate();
 }
 
 void GameScene::UpdateOFFLINE()
@@ -74,7 +79,6 @@ void GameScene::UpdateOFFLINE()
 GameScene::GameScene()
 {
 	Init();
-
 }
 
 GameScene::~GameScene()
@@ -89,6 +93,8 @@ bool GameScene::Init()
 	{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
 	{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
 
+	IpNetWorkState->ClearRevPacket();
+	IpNetWorkState->ClearSendPacket();
 	// sponePlayer
 	VecCharacter sponePlayer= map_->SponePlayer();
 	character_.insert(character_.end(), sponePlayer.begin(), sponePlayer.end());

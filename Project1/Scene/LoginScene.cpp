@@ -40,6 +40,7 @@ void LoginScene::Init()
 					{ UpdateMode::SetHostIP,std::bind(&LoginScene::SetHostIPDraw,this) },
 					{ UpdateMode::StartInit,std::bind(&LoginScene::StartInitDraw,this) },
 					{ UpdateMode::Play,std::bind(&LoginScene::PlayDraw,this) } };
+
 	circlePos_ = Vector2(0, 0);
 	CirlcleHandle_ = LoadGraph("Image/Circle.png", true);
 

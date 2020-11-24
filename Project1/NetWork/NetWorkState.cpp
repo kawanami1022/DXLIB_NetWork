@@ -50,20 +50,22 @@ bool NetWorkState::Update()
 
 bool NetWorkState::RevUpdate()
 {
+	revPacket_.clear();
 	if (GetLostNetWork() != -1)
 	{
-		revPacket_.clear();
+		
 		std::cout << "接続が切れてます!" << std::endl;
 		return false;
 	}
+	if (GetNetWorkDataLength(netHandle) == 0) {
+		std::cout << "データが受け取れてません!" << std::endl;
+	}
+	auto RevData = 0;
 	// ネットワークバッファに溜まっているデータが存在するかくにんする
 	while (GetNetWorkDataLength(netHandle) > 0)
 	{
-		for (auto REVDATA : revPacket_)
-		{
-			NetWorkRecv(netHandle, &REVDATA, sizeof(int));
-			
-		}
+		NetWorkRecv(netHandle, &RevData, sizeof(int));
+		revPacket_.emplace_back(RevData);
 	}
 
 	for (auto REVDATA : revPacket_)
@@ -237,7 +239,7 @@ void NetWorkState::SendMessageData()
 	dataPacket_.clear();
 	active_ = ActiveState::Play;
 	// debug display
-
+	NetWorkRecvBufferClear(netHandle);
 }
 
 void NetWorkState::ReservMessageData()
@@ -317,6 +319,7 @@ void NetWorkState::ReservMessageData()
 		std::cout << std::endl;
 	}
 	dataPacket_.clear();
+	NetWorkRecvBufferClear(netHandle);
 	active_ = ActiveState::Play;
 }
 

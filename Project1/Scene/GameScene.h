@@ -14,6 +14,7 @@ class GameScene :
 {
 
 public:
+
 	UniqueBase input(UniqueBase);
 	UniqueBase UpDate(UniqueBase);
 	void Draw();
@@ -28,6 +29,7 @@ public:
 	~GameScene();
 
 private:
+	int flame = 0;
 	// •Ï”–¼
 	std::shared_ptr<Map> map_;
 	std::vector<std::shared_ptr<Character>> character_;

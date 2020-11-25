@@ -228,18 +228,14 @@ void NetWorkState::SendMessageData()
 		auto flag = NetWorkSend(netHandle, dataPacket_.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
 		dataPacket_.erase(dataPacket_.begin() + MESHEADER_INT, dataPacket_.begin() + MESHEADER_INT + sendLength);
 		headerdata.mesdata_.sendID++;
-
 	} while (dataPacket_.size() > MESHEADER_INT);
 
 
 	std::cout << "Œv‘ªŽžŠÔ:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 	std::cout << std::endl;
-
-	mapId.clear();
-	dataPacket_.clear();
+	
 	active_ = ActiveState::Play;
 	// debug display
-	NetWorkRecvBufferClear(netHandle);
 }
 
 void NetWorkState::ReservMessageData()
@@ -306,20 +302,6 @@ void NetWorkState::ReservMessageData()
 		idx++;
 	}
 
-	//for (auto Name : tmxFile_->name_)
-	//{
-	//	for (int y = 0; y < tmxFile_->height_; y++)
-	//	{
-	//		for (int x = 0; x < tmxFile_->width_; x++)
-	//		{
-	//			std::cout << tmxFile_->tiledMap_[Name].titleID_[x][y];
-	//		}
-	//		std::cout << std::endl;
-	//	}
-	//	std::cout << std::endl;
-	//}
-	dataPacket_.clear();
-	NetWorkRecvBufferClear(netHandle);
 	active_ = ActiveState::Play;
 }
 

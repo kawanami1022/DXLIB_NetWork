@@ -7,7 +7,7 @@
 class Map;
 class Character;
 enum class NetWorkMode;
-using VecCharacter = std::vector<std::shared_ptr<Character>>;
+using CharacterList = std::vector<std::shared_ptr<Character>>;
 
 class GameScene :
 	public BaseScene
@@ -34,7 +34,7 @@ private:
 	int flame = 0;
 	// •Ï”–¼
 	std::shared_ptr<Map> map_;
-	std::vector<std::shared_ptr<Character>> character_;
+	CharacterList character_;
 	bool Init();
 
 	std::unordered_map< NetWorkMode, std::function<void()>> updateNetWorkModeFunc_;

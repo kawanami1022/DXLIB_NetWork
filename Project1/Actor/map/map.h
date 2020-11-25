@@ -36,7 +36,9 @@ public:
 	void Draw();
 
 	MAP_ID GetMapId(Position2 actorPos);
-	
+	int GetGridID(Position2 GridPos,std::string Layer);
+	Vector2 GetMapSize();
+
 	std::vector<std::shared_ptr<Character>> SponePlayer();
 
 	bool SponePlayerFlag(Position2 tilePos);

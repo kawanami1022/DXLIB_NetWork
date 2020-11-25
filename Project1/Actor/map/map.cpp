@@ -1,3 +1,4 @@
+#include <iostream>
 #include <DxLib.h>
 #include "../../NetWork/NetWork.h"
 #include "../../Lib/File/TMX_File.h"
@@ -38,6 +39,7 @@ void Map::Draw()
 MAP_ID Map::GetMapId(Position2 actorPos)
 {
 	actorPos /= 32;
+
 	if (tmxFile_->tiledMap_["map"].titleID_[actorPos.x][actorPos.y]==0)
 	{
 		return MAP_ID::NON;
@@ -45,11 +47,27 @@ MAP_ID Map::GetMapId(Position2 actorPos)
 	return MAP_ID::BLOCK;
 }
 
+int Map::GetGridID(Position2 GridPos, std::string Layer)
+{
+	if (GridPos.x < tmxFile_->width_ && GridPos.x < tmxFile_->height_)
+	{
+		return tmxFile_->tiledMap_[Layer].titleID_[GridPos.x][GridPos.y];
+	}
+	// ‚»‚±‚Étile‚ª‘¶Ý‚µ‚È‚¢
+	return -1;
+}
+
+Vector2 Map::GetMapSize()
+{
+	return Vector2(tmxFile_->width_,tmxFile_->height_);
+}
+
 std::vector<std::shared_ptr<Character>> Map::SponePlayer()
 {
 	Position2 sponePos;
 	Position2 Tile = Position2(0, 0);
 	std::vector<std::shared_ptr<Character>> characterTmp;
+	std::cout << "‚±‚ê‚©‚çcharacterƒ’¶¬‚·‚é" << std::endl;
 	for (int x=0;x< tmxFile_->width_;x++)
 	{
 		for (int y = 0; y < tmxFile_->height_; y++)
@@ -57,8 +75,8 @@ std::vector<std::shared_ptr<Character>> Map::SponePlayer()
 			Tile = { x,y };
 			if (SponePlayerFlag(Tile))
 			{
-				characterTmp.push_back(std::make_unique<Character>(Position2(Tile * 32)));
-
+				characterTmp.emplace_back(std::make_shared<Character>(Position2(Tile * 32)));
+				std::cout << characterTmp.size() << std::endl;
 			}
 		}
 	}

@@ -20,6 +20,7 @@ LoginScene::LoginScene():BaseScene()
 LoginScene::~LoginScene()
 {
 	DeleteGraph(CirlcleHandle_);
+	std::cout << "------------LoginSceneI—¹----------------" << std::endl;
 }
 
 void LoginScene::Init()

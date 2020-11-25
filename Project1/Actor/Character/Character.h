@@ -63,6 +63,8 @@ public:
 
 	void AutoMove(std::weak_ptr<Map>&& map);
 
+	bool SendCharData();
+
 	// Getter Setter
 
 	void SetPos(Position2 pos)

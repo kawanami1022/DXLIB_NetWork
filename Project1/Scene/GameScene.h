@@ -23,6 +23,8 @@ public:
 	void UpdateGuest();
 	void UpdateOFFLINE();
 
+	void Network();
+
 	bool SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet);	// ownerID 親のID selfID 自身のID pos 爆弾を置く位置  sendNet
 	//void DrawOwnScreen();
 	GameScene();

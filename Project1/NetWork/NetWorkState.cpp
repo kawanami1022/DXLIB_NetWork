@@ -57,9 +57,9 @@ bool NetWorkState::RevUpdate()
 		std::cout << "接続が切れてます!" << std::endl;
 		return false;
 	}
-	if (GetNetWorkDataLength(netHandle) == 0) {
-		std::cout << "データが受け取れてません!" << std::endl;
-	}
+	//if (GetNetWorkDataLength(netHandle) == 0) {
+	//	std::cout << "データが受け取れてません!" << std::endl;
+	//}
 	auto RevData = 0;
 	// ネットワークバッファに溜まっているデータが存在するかくにんする
 	while (GetNetWorkDataLength(netHandle) > 0)
@@ -72,7 +72,7 @@ bool NetWorkState::RevUpdate()
 	{
 		std::cout << "受け取ったデータ:" << std::hex << REVDATA << std::endl;
 	}
-
+	std::cout << std::endl;
 	return true;
 }
 
@@ -178,7 +178,7 @@ void NetWorkState::SendMessageData()
 		mapdata = 0;
 		for (unsigned int i = 0; i < 8; i++)
 		{
-			std::cout << std::hex << mapdata << ":" << std::endl;
+			//std::cout << std::hex << mapdata << ":" << std::endl;
 			mapdata |= mapId.front();
 			mapId.erase(mapId.begin());
 			if (i != (8 - 1))mapdata <<= 4;
@@ -205,10 +205,10 @@ void NetWorkState::SendMessageData()
 	dataPacket_.insert(dataPacket_.begin() + 1, headerdata.data_[0]);
 	dataPacket_.insert(dataPacket_.begin() + 2, headerdata.data_[1]);
 
-	for (auto DATAPACKET : dataPacket_)
-	{
-		std::cout << std::hex << DATAPACKET << std::endl;
-	}
+	//for (auto DATAPACKET : dataPacket_)
+	//{
+	//	std::cout << std::hex << DATAPACKET << std::endl;
+	//}
 
 
 	std::cout << "これからデータを送信します" << std::endl;
@@ -253,7 +253,7 @@ void NetWorkState::ReservMessageData()
 
 	if(GetNetWorkDataLength(netHandle)<=0)
 	{
-		std::cout << "headerデータが読み込めませんでした!" << std::endl;
+		//std::cout << "headerデータが読み込めませんでした!" << std::endl;
 		return;
 	}
 	
@@ -306,18 +306,18 @@ void NetWorkState::ReservMessageData()
 		idx++;
 	}
 
-	for (auto Name : tmxFile_->name_)
-	{
-		for (int y = 0; y < tmxFile_->height_; y++)
-		{
-			for (int x = 0; x < tmxFile_->width_; x++)
-			{
-				std::cout << tmxFile_->tiledMap_[Name].titleID_[x][y];
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
+	//for (auto Name : tmxFile_->name_)
+	//{
+	//	for (int y = 0; y < tmxFile_->height_; y++)
+	//	{
+	//		for (int x = 0; x < tmxFile_->width_; x++)
+	//		{
+	//			std::cout << tmxFile_->tiledMap_[Name].titleID_[x][y];
+	//		}
+	//		std::cout << std::endl;
+	//	}
+	//	std::cout << std::endl;
+	//}
 	dataPacket_.clear();
 	NetWorkRecvBufferClear(netHandle);
 	active_ = ActiveState::Play;

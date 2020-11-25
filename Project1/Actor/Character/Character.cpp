@@ -122,6 +122,7 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 		}
 	});
 	AdjustPos();
+	SendCharData();
 }
 
 void Character::NetUpdate(std::weak_ptr<Map> map)
@@ -132,23 +133,8 @@ void Character::NetUpdate(std::weak_ptr<Map> map)
 void Character::AutoUpdate(std::weak_ptr<Map> map)
 {
 	AutoMove(std::move(map));
-	// offlineMode ‚¾‚Á‚½‚çI—¹
-	if (IpNetWork->GetNetWorkMode() == NetWorkMode::OFFLINE)return;
 
-	std::vector<int> sendData =
-	{ static_cast<int>(MesType::POS),
-		playerID_,
-		pos_.x,
-		pos_.y,
-		static_cast<int>(moveDir_)
-	};
-
-	
-	for (auto SEND_DATA : sendData)
-	{
-		IpNetWorkState->SetSendPacket(SEND_DATA);
-	}
-
+	SendCharData();
 }
 
 
@@ -199,6 +185,27 @@ void Character::AutoMove(std::weak_ptr<Map>&&  map)
 	}
 	else { pos_ = tmpPos[moveDir_].second; };
 	AdjustPos();
+}
+
+bool Character::SendCharData()
+{
+	// offlineMode ‚¾‚Á‚½‚çI—¹
+	if (IpNetWork->GetNetWorkMode() == NetWorkMode::OFFLINE)return false;
+
+	std::vector<int> sendData =
+	{ static_cast<int>(MesType::POS),
+		playerID_,
+		pos_.x,
+		pos_.y,
+		static_cast<int>(moveDir_)
+	};
+
+
+	for (auto SEND_DATA : sendData)
+	{
+		IpNetWorkState->SetSendPacket(SEND_DATA);
+	}
+	return true;
 }
 
 bool Character::Init()

@@ -71,6 +71,11 @@ public:
 		AdjustPos();
 	}
 
+	void SetDir(MoveDir moveDir)
+	{
+		moveDir_ = moveDir;
+	}
+
 	Position2 GetPos()
 	{
 		return pos_;

@@ -14,7 +14,6 @@
 #include "../../Scene/GameScene.h"
 #include "../map/map.h"
 #include "Character.h"
-
 int Character::Id_ = 0;
 
 Character::Character()

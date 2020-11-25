@@ -55,7 +55,17 @@ void GameScene::UpdateGuest()
 	{
 		if (revPacket[0] == static_cast<int>(MesType::POS))
 		{
+			try
+			{
 
+				int playerPos[] = { revPacket[0],revPacket[1],revPacket[2] ,revPacket[3],revPacket[4] };
+				character_[revPacket[4]]->SetPos(Position2(revPacket[2], revPacket[3]));
+				character_[revPacket[4]]->SetDir(static_cast<MoveDir>(revPacket[4]));
+			}
+			catch (...)
+			{
+				std::cout << "illegal access" << std::endl;
+			}
 		}
 	}
 

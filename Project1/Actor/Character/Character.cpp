@@ -53,11 +53,22 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 
 	std::sort(inputList.begin(), inputList.end(), [&](PairID x, PairID y) {return x.second < y.second;});
 
-	// タイルの中心にPlayerが存在するか調べる
+	// MapIdを取得する
 	auto MapId = [&](Position2 pos) {
 		return map.lock()->GetMapId(pos);
 	};
+	std::vector<Position2> posList;
 
+	auto IsPos = [&](std::vector<Position2> list) {
+		for (auto POS_LIST : list)
+		{
+			if (MapId(POS_LIST) != MAP_ID::NON)
+			{
+				return false;
+			}
+		}
+		return true;
+	};
 
 	bool process = false;	// true:処理を継続させる
 	std::for_each(inputList.crbegin(), inputList.crend(), [&](auto&& list) {
@@ -73,12 +84,15 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 			posDR.y += speed.y;
 			pos.y += speed.y;
 			moveDir_ = MoveDir::Down;
-			if (MapId(Position2(pos.x, posDR.y)) == MAP_ID::NON)
+			posList = { {posUL.x, posDR.y},{pos.x, posDR.y }, { posDR.x, posDR.y }};
+			if (!IsPos(posList))
 			{
-				pos_ = pos;
-				process = true;
+				pos_.y = map.lock()->GetTilePos(pos).y + std::abs(pos.y - posDR.y);
 				return;
 			}
+			pos_ = pos;
+			process = true;
+			return;
 
 		}
 		if (list.first == InputID::Up)
@@ -87,12 +101,15 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 			posDR.y -= speed.y;
 			pos.y -= speed.y;
 			moveDir_ = MoveDir::Up;
-			if (MapId(Position2(pos.x, posUL.y)) == MAP_ID::NON)
+			posList = { {posUL.x, posUL.y }, { pos.x, posUL.y }, {posDR.x, posUL.y}};
+			if (!IsPos(posList))
 			{
-				pos_ = pos;
-				process = true;
+				pos_.y = map.lock()->GetTilePos(pos).y + std::abs(pos.y - posUL.y);
 				return;
 			}
+			pos_ = pos;
+			process = true;
+			return;
 		}
 		if (list.first == InputID::Left)
 		{
@@ -100,12 +117,11 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 			posDR.x -= speed.x;
 			pos.x -= speed.x;
 			moveDir_ = MoveDir::Left;
-			if (MapId(Position2(posUL.x, pos.y)) == MAP_ID::NON)
-			{
-				pos_ = pos;
-				process = true;
-				return;
-			}
+			posList = { {posUL.x, pos.y}, {posUL.x, posUL.y},{posUL.x, posDR.y} };
+			if (!IsPos(posList))return;
+			pos_ = pos;
+			process = true;
+			return;
 		}
 		if (list.first == InputID::Right)
 		{
@@ -113,12 +129,11 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 			posDR.x += speed.x;
 			pos.x += speed.x;
 			moveDir_ = MoveDir::Right;
-			if (MapId(Position2(posDR.x, pos.y)) == MAP_ID::NON)
-			{
-				pos_ = pos;
-				process = true;
-				return;
-			}
+			posList = { {posDR.x, pos.y}, {posDR.x, posUL.y},{posDR.x, posDR.y} };
+			if (!IsPos(posList))return;
+			pos_ = pos;
+			process = true;
+			return;
 		}
 	});
 	AdjustPos();
@@ -141,6 +156,7 @@ void Character::AutoUpdate(std::weak_ptr<Map> map)
 void Character::Draw()
 {
 	animcnt_++;
+	DrawBox(posUL_.x, posUL_.y, posDR_.x, posDR_.y, 0xff0000, false);
 	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(moveDir_)], true);
 }
 
@@ -205,6 +221,7 @@ bool Character::SendCharData()
 	{
 		IpNetWorkState->SetSendPacket(SEND_DATA);
 	}
+
 	return true;
 }
 
@@ -257,4 +274,10 @@ bool Character::Init()
 	
 	Id_ += UNIT_ID_BASE;
 	return false;
+}
+//@param plPos	playerの位置
+void Character::MatchGridPos(Position2 plPos)
+{
+
+
 }

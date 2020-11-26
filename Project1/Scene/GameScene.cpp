@@ -1,3 +1,4 @@
+#include <thread>
 #include <iostream>
 #include <DxLib.h>
 #include "../Lib/File/TMX_File.h"
@@ -17,10 +18,11 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
 	updateNetWorkModeFunc_[netWorkMode]();
-
+	
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
 	Draw();
+	flame++;
 	return nowScene;
 }
 
@@ -36,17 +38,20 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
-	Network();
+	std::thread netWorkThread(&GameScene::Network,this);
+	netWorkThread.join();
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
 	}
+	
 	IpNetWorkState->SendUpdate();
 }
 
 void GameScene::UpdateGuest()
 {
-	Network();
+	std::thread netWorkThread(&GameScene::Network, this);
+	netWorkThread.join();
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
@@ -65,24 +70,34 @@ void GameScene::UpdateOFFLINE()
 void GameScene::Network()
 {
 	
-	//IpNetWorkState->RevUpdate();
-	//auto revPacket = IpNetWorkState->GetRevPacket();
+	IpNetWorkState->RevUpdate();
+	auto revPacket = IpNetWorkState->GetRevPacket();
 	//std::cout << "取得したデータサイズ:" << revPacket.size() << std::endl;
 
-	//if (revPacket[0] == static_cast<int>(MesType::POS))
-	//{
-	//	try
-	//	{
-	//		int playerPos[] = { revPacket[0],revPacket[1],revPacket[2] ,revPacket[3],revPacket[4] };
-	//		character_[revPacket[4]]->SetPos(Position2(revPacket[2], revPacket[3]));
-	//		character_[revPacket[4]]->SetDir(static_cast<MoveDir>(revPacket[4]));
-	//		revPacket.erase(revPacket.begin(), revPacket.begin() + 5);
-	//	}
-	//	catch (...)
-	//	{
-	//		std::cout << "illegal access" << std::endl;
-	//	}
-	//}
+	while (revPacket.size() >=5)
+	{
+		try
+		{
+			if (revPacket.at(0) == static_cast<int>(MesType::POS))
+			{
+				for (auto PLAYER : character_)
+				{
+
+					int playerPos[] = { revPacket.at(0),revPacket.at(1),revPacket.at(2),revPacket.at(3),revPacket.at(4) };
+					if (PLAYER->GetPlID() == playerPos[1])
+					{
+						PLAYER->SetPos(Position2(playerPos[2], playerPos[3]));
+						PLAYER->SetDir(static_cast<MoveDir>(playerPos[4]));
+						revPacket.erase(revPacket.begin(), revPacket.begin() + 5);
+					}
+				}
+			}
+		}
+		catch (...)
+		{
+			std::cout << "illegal access" << std::endl;
+		}
+	}
 }
 
 
@@ -128,5 +143,6 @@ bool GameScene::Init()
 		}
 	}
 	std::cout << "-------------初期化終了---------------" << std::endl;
+	flame = 0;
 	return false;
 }

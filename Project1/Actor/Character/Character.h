@@ -88,8 +88,14 @@ public:
 		return moveDir_;
 	}
 
+	// GetPlaeyrId
+	int GetPlID()
+	{
+		return playerID_;
+	}
+
 protected:
-	Vector2Tmp<float> speed = { 1.f,1.f };
+	Vector2Tmp<float> speed = { 5.f,5.f };
 	std::vector<int> HandleId_;
 	std::vector<int*> HandleData_;
 
@@ -101,6 +107,7 @@ protected:
 
 	std::unordered_map<NetWorkMode,std::function<void()>> InitFunc;
 	std::function<void(std::weak_ptr<Map >)> updateFunc_=nullptr;
+	std::weak_ptr<Map> map_;
 private:
 	static int Id_;
 	int playerID_;
@@ -110,8 +117,9 @@ private:
 	// à íuí≤êÆ
 	void AdjustPos()
 	{
-		posUL_ = pos_ - Position2(CHAR_WIDTH / 2, CHAR_HEIGHT / 2);
+		posUL_ = pos_ - Position2(CHAR_WIDTH / 2-1, CHAR_HEIGHT / 2-1);
 		posDR_ = pos_ + Position2(CHAR_WIDTH / 2-1, CHAR_HEIGHT / 2-1);
 	}
+	void MatchGridPos(Position2 plPos);
 };
 

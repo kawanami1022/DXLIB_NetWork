@@ -162,4 +162,5 @@ using Vector2d = Vector2Tmp<double>;
 using Vector2s = Vector2Tmp<short>;
 
 using Position2=Vector2;
+using Position2f=Vector2f;
 

@@ -68,29 +68,33 @@ bool NetWorkState::RevUpdate()
 		revPacket_.emplace_back(RevData);
 	}
 
-	for (auto REVDATA : revPacket_)
-	{
-		std::cout << "受け取ったデータ:" << std::hex << REVDATA << std::endl;
-	}
+	//for (auto REVDATA : revPacket_)
+	//{
+	//	std::cout << "受け取ったデータ:" << std::hex << REVDATA << std::endl;
+	//}
 	std::cout << std::endl;
 	return true;
 }
 
 bool NetWorkState::SendUpdate()
 {
-	
-	if (GetLostNetWork() != -1)
-	{
-		return false;
-	}
-	NetWorkSend(netHandle, sendPacket_.data(), sendPacket_.size() * sizeof(int));
+	std::thread SendNetWorkThread([&]() {
 
-	for (auto DATAPACKET : sendPacket_)
-	{
-		std::cout << "送ったデータ:" << std::hex << DATAPACKET << std::endl;
-	}
-	std::cout << std::endl;
-	sendPacket_.clear();
+		if (GetLostNetWork() != -1)
+		{
+			return false;
+		}
+		NetWorkSend(netHandle, sendPacket_.data(), sendPacket_.size() * sizeof(int));
+
+		//for (auto DATAPACKET : sendPacket_)
+		//{
+		//	std::cout << "送ったデータ:" << std::hex << DATAPACKET << std::endl;
+		//}
+		//std::cout << std::endl;
+		sendPacket_.clear();
+		return true;
+	});
+	SendNetWorkThread.join();
 	return true;
 }
 
@@ -205,11 +209,6 @@ void NetWorkState::SendMessageData()
 	dataPacket_.insert(dataPacket_.begin() + 1, headerdata.data_[0]);
 	dataPacket_.insert(dataPacket_.begin() + 2, headerdata.data_[1]);
 
-	//for (auto DATAPACKET : dataPacket_)
-	//{
-	//	std::cout << std::hex << DATAPACKET << std::endl;
-	//}
-
 
 	std::cout << "これからデータを送信します" << std::endl;
 	timer_->StartMesurement();
@@ -312,6 +311,7 @@ void NetWorkState::ClearDataPacket()
 
 void NetWorkState::ClearRevPacket()
 {
+	NetWorkRecvBufferClear(netHandle);
 	revPacket_.clear();
 }
 

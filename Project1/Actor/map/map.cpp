@@ -62,6 +62,12 @@ Vector2 Map::GetMapSize()
 	return Vector2(tmxFile_->width_,tmxFile_->height_);
 }
 
+//
+Position2 Map::GetTilePos(Position2 actorPos)
+{
+	return actorPos / TileSize * TileSize;
+}
+
 std::vector<std::shared_ptr<Character>> Map::SponePlayer()
 {
 	Position2 sponePos;

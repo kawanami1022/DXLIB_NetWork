@@ -15,9 +15,9 @@ public:
 	Vector2Tmp();
 	Vector2Tmp(T x,T y);
 
-	double calcAngle(T x, T y);			// 角度を求める
-	double calcSin(T angle);				// y軸のベクトルを求める
-	double calcCos(T angle);				// x軸のベクトルを求める
+	double Angle(T x, T y);			// 角度を求める
+	double Sin(T angle);				// y軸のベクトルを求める
+	double Cos(T angle);				// x軸のベクトルを求める
 
 	T x, y;								// 座標格納用変数
 	Vector2Tmp& operator=(const Vector2Tmp& vec2);

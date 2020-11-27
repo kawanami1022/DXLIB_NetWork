@@ -1,8 +1,8 @@
 #include <iostream>
 #include <DxLib.h>
 #include "SceneMng.h"
-#include "Scene/BaseScene.h"
-#include "Scene/LoginScene.h"
+#include "../Scene/BaseScene.h"
+#include "../Scene/LoginScene.h"
 
 SceneMng* SceneMng::hInstance = nullptr;
 

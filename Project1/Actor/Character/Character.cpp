@@ -77,6 +77,8 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 		Position2 posUL = posUL_;
 		Position2 posDR= posDR_;
 
+
+
 		if (list.second == 0) { return; };
 		if (list.first == InputID::Down)
 		{
@@ -120,7 +122,7 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 			posList = { {posUL.x, pos.y}, {posUL.x, posUL.y},{posUL.x, posDR.y} };
 			if (!IsPos(posList)) 
 			{
-				pos_.x = map.lock()->GetTilePos(pos).x + TileSize - std::abs(pos.y - posUL.y)-1;
+				pos_.x = map.lock()->GetTilePos(Position2(posUL.x,pos.y)).x + TileSize+ std::abs(pos.x - posUL.x);
 				return;
 			};
 			pos_ = pos;
@@ -134,7 +136,11 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 			pos.x += speed.x;
 			moveDir_ = MoveDir::Right;
 			posList = { {posDR.x, pos.y}, {posDR.x, posUL.y},{posDR.x, posDR.y} };
-			if (!IsPos(posList))return;
+			if (!IsPos(posList))
+			{
+				pos_.x = map.lock()->GetTilePos(Position2(posDR.x, pos.y)).x  - std::abs(pos.x- posUL.x);
+				return;
+			}
 			pos_ = pos;
 			process = true;
 			return;

@@ -117,8 +117,8 @@ private:
 	// à íuí≤êÆ
 	void AdjustPos()
 	{
-		posUL_ = pos_ - Position2(CHAR_WIDTH / 2-1, CHAR_HEIGHT / 2-1);
-		posDR_ = pos_ + Position2(CHAR_WIDTH / 2-1, CHAR_HEIGHT / 2-1);
+		posUL_ = pos_ - Position2(CHAR_WIDTH / 2-4, CHAR_HEIGHT / 2-8);
+		posDR_ = pos_ + Position2(CHAR_WIDTH / 2-4, CHAR_HEIGHT / 2-1);
 	}
 	void MatchGridPos(Position2 plPos);
 };

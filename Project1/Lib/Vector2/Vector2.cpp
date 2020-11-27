@@ -18,7 +18,7 @@ template<class T> Vector2Tmp<T>::Vector2Tmp(T x, T y)
 // 目的:デカルト座標系での角度を求める
 //入力	:x	x座標
 //		:y	y座標
-template<class T>double Vector2Tmp<T>::calcAngle(T x, T y)
+template<class T>double Vector2Tmp<T>::Angle(T x, T y)
 {
 	// 0°～90°の時
 	if (0 < x && 0 < y)
@@ -33,14 +33,14 @@ template<class T>double Vector2Tmp<T>::calcAngle(T x, T y)
 
 //目的	:
 //入力	:angle
-template<class T>double Vector2Tmp<T>::calcSin(T angle)
+template<class T>double Vector2Tmp<T>::Sin(T angle)
 {
 	return std::sin(angle * (PI / 180));
 }
 
 //目的	:
 //入力	:angle
-template<class T>double Vector2Tmp<T>::calcCos(T angle)
+template<class T>double Vector2Tmp<T>::Cos(T angle)
 {
 	return std::cos(angle * (PI / 180));
 }

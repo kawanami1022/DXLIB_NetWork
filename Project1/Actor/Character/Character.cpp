@@ -118,7 +118,11 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 			pos.x -= speed.x;
 			moveDir_ = MoveDir::Left;
 			posList = { {posUL.x, pos.y}, {posUL.x, posUL.y},{posUL.x, posDR.y} };
-			if (!IsPos(posList))return;
+			if (!IsPos(posList)) 
+			{
+				pos_.x = map.lock()->GetTilePos(pos).x + TileSize - std::abs(pos.y - posUL.y)-1;
+				return;
+			};
 			pos_ = pos;
 			process = true;
 			return;

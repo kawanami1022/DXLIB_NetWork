@@ -56,11 +56,9 @@ UniqueBase LoginScene::input(UniqueBase nowScene)
 UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 {
 
-		
 	IpNetWork->Update();
 	updateFunc_[mode_](nowScene);
 
-	
 	Draw();
 	return nowScene;
 }
@@ -173,6 +171,14 @@ void LoginScene::StartInit(UniqueBase& scene)
 
 void LoginScene::Play(UniqueBase& scene)
 {
+
+	if(IpNetWorkState->GetNetWorkMode()==NetWorkMode::HOST)
+	if (CheckHitKey(KEY_INPUT_SPACE) == 1)
+	{
+		IpNetWorkState->SetNetWorkState(ActiveState::Stanby);
+		std::cout << "-----------StanbyMode----------" << std::endl;
+	}
+
 	if (IpNetWork->GetNetWorkState()->GetActive()==ActiveState::Play)
 	{
 		auto nextScene = std::make_unique<GameScene>();

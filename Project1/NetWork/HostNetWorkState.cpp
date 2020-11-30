@@ -89,8 +89,15 @@ void HostNetWorkState::UpdateFuncInit()
 void HostNetWorkState::UpdateFuncStanby()
 {
 
-    if(netHandle.size()>=1)active_ = ActiveState::Play;
-
+    std::cout <<"ネットワークハンドル数:"<< netHandle.size() << std::endl;
+    if (netHandle.size() >= 1)
+    {
+        for (auto NetWorkHandle : netHandle)
+        {
+            NetWorkSend(NetWorkHandle.first, &active_, sizeof(char));
+        }
+        active_ = ActiveState::Play;
+    }
     // ネットワークが確立されているか確認!
     active_= ActiveState::Wait;
 }

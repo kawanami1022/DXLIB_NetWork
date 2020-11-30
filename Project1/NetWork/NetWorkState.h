@@ -29,16 +29,22 @@ using RevBox = std::vector<char>;
 using MesPacket = std::vector<int>;
 using RevPacket = std::pair<MesType, std::vector<int>>;
 using MesPacketList = std::vector<int>;
+using ListInt = std::list<std::pair<int, unsigned int>>;		//int ネットハンドル:unsigned int :プレーヤーID
 
 enum class MesType :char
 {
 	NON = 100,
+	COUNT_DOWN,		// 接続受付カウントダウン
+	ID,						// 自分のIDとプレーヤーの総数
 	STANBY,				// 初期化情報送信完了
-	GAME_START,			// ホストから初期化情報での初期化完了、ゲーム開始(
-	TMX_SIZE,
-	TMX_DATA,
-	POS,
-	SET_BOM				// ボムを配置
+	GAME_START,		// ホストから初期化情報での初期化完了、ゲーム開始(
+	TMX_SIZE,				
+	TMX_DATA,			// 
+	POS,						// ゲーム中のデータ
+	SET_BOM,				// ボムを配置
+	DETH,					// 死亡
+	LOST,					// ネットワーク切断時に生成(ホストは自分のネットワークにセットする)
+	MAX
 };
 
 struct MesHeader
@@ -111,7 +117,7 @@ public:
 	const int GetPortNum() {
 		return portNum_;
 	}
-	int GetNetWorkHandle()
+	ListInt GetNetWorkHandle()
 	{
 		return netHandle;
 	}
@@ -123,7 +129,7 @@ public:
 
 	void SetNetHandle(int handle)
 	{
-		netHandle = handle;
+		netHandle.emplace_back(std::make_pair(handle,0));
 	}
 
 	void SetTMXData(std::shared_ptr<File::TMX_File> tmxdata)
@@ -175,7 +181,7 @@ protected:
 	// 変数宣言
 	const int portNum_ = 8086;
 	ActiveState active_;
-	int netHandle = 0;		// dxlibが使用するハンドル
+	ListInt netHandle;		// dxlibが使用するハンドル
 
 	InputState input_;
 	ActiveFunc activeFunc_;
@@ -189,6 +195,9 @@ protected:
 	
 	MesPacket revPacket_;
 	MesPacket sendPacket_;
+
+	int playerID_;
+	int playerMax_;
 
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;

@@ -133,7 +133,7 @@ bool GameScene::Init()
 			{
 				try
 				{
-				character_.emplace_back(std::make_unique<Character>(TilePos * TileSize));
+					character_.emplace_back(std::make_unique<Character>(TilePos * TileSize));
 				}
 				catch (std::out_of_range& e)
 				{

@@ -23,15 +23,15 @@ NetWorkMode GuestNetWorkState::GetNetWorkMode()
 ActiveState GuestNetWorkState::ConnectHost(IPDATA hostIP)
 {
     // ConnectNetWork‚ª¬Œ÷‚µ‚Ä‚¢‚½‚çtrue‚É‚·‚é
-    netHandle = ConnectNetWork(hostIP);
+    netHandle.front().first = ConnectNetWork(hostIP);
 
     active_ = ActiveState::Init;
-    if (netHandle != -1)
+    if (netHandle.front().first != -1)
     {
         // Ú‘±‚³‚ê‚Ä‚Ü‚¹‚ñ
         active_ = ActiveState::Non;
     }
-    std::cout << netHandle << std::endl;
+    std::cout << netHandle.front().first << std::endl;
     return active_;
 }
 
@@ -67,9 +67,9 @@ void GuestNetWorkState::UpdateFuncStanby()
 {
     std::thread func(&GuestNetWorkState::ReservMessageData,this);
     func.join();
-    if (GetNetWorkDataLength(netHandle) >= sizeof(input_))
+    if (GetNetWorkDataLength(netHandle.front().first) >= sizeof(input_))
     {
-        if (NetWorkRecv(netHandle, &input_, sizeof(input_)) == 0)
+        if (NetWorkRecv(netHandle.front().first, &input_, sizeof(input_)) == 0)
         {
             std::cout << "‰Šú‰»î•ñ‚ğóM‚Ü‚µ‚½" << std::endl;
             //‚±‚±‚É‰Šú‰»î•ñ‚ğ“ü—Í‚·‚é

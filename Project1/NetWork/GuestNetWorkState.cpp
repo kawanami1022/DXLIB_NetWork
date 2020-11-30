@@ -60,12 +60,7 @@ void GuestNetWorkState::UpdateFuncInit()
 {
 
     std::cout << "Init" << std::endl;
-    active_ = ActiveState::Stanby;
-}
-
-void GuestNetWorkState::UpdateFuncStanby()
-{
-    std::thread func(&GuestNetWorkState::ReservMessageData,this);
+    std::thread func(&GuestNetWorkState::ReservMessageData, this);
     func.join();
     if (GetNetWorkDataLength(netHandle.front().first) >= sizeof(input_))
     {
@@ -73,13 +68,32 @@ void GuestNetWorkState::UpdateFuncStanby()
         {
             std::cout << "‰Šú‰»î•ñ‚ðŽóM‚Ü‚µ‚½" << std::endl;
             //‚±‚±‚É‰Šú‰»î•ñ‚ð“ü—Í‚·‚é
-            active_ = ActiveState::Play;
+        }
+    }
+
+   
+    active_ = ActiveState::Stanby;
+}
+
+void GuestNetWorkState::UpdateFuncStanby()
+{
+    char mesType = 0;
+    for (auto NetHandle : netHandle)
+    {
+        if (GetNetWorkDataLength(NetHandle.first) > 0)
+        {
+            NetWorkRecv(NetHandle.first, &mesType, sizeof(MesType));
+            if (static_cast<MesType>(mesType) == MesType::STANBY)
+            {
+                active_ = ActiveState::Play;
+            }
         }
     }
 }
 
 void GuestNetWorkState::UpdateFuncPlay()
 {
+   
     //std::cout << "----------------Play----------------" << std::endl;
 }
 

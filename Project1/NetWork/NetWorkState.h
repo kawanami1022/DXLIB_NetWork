@@ -129,7 +129,9 @@ public:
 
 	void SetNetHandle(int handle)
 	{
-		netHandle.emplace_back(std::make_pair(handle,0));
+		netHandle.emplace_back(std::make_pair(handle,playerID_));
+		playerID_++;
+		playerMax_ = playerID_;
 	}
 
 	void SetTMXData(std::shared_ptr<File::TMX_File> tmxdata)
@@ -163,13 +165,10 @@ public:
 		return revPacket_;
 	}
 
-
-
 	void SetSendPacket(int data)
 	{
 		sendPacket_.emplace_back(data);
 	}
-
 
 	MesPacket GetSendPacket()
 	{

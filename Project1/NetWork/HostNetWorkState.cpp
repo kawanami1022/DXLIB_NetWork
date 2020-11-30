@@ -59,24 +59,19 @@ void HostNetWorkState::UpdateFuncWait()
     auto handle = GetNewAcceptNetWork();
     if (handle !=-1)
     {
-        netHandle.emplace_back(std::make_pair(handle,0));
+        netHandle.emplace_back(std::make_pair(handle,playerID_));
+        playerID_++;
         std::cout << "接続されてます" << std::endl;
         active_ = ActiveState::Init;
     }
+
 }
 
 void HostNetWorkState::UpdateFuncInit()
 {
+    std::thread func(&HostNetWorkState::SendMessageData, this);
 
     std::cout << "初期化完了 !    Stanby状態に移動" << std::endl;
-
-    active_ = ActiveState::Stanby;
-}
-
-void HostNetWorkState::UpdateFuncStanby()
-{
-    std::thread func(&HostNetWorkState::SendMessageData,this);
-
     if (CheckNetWork())
     {
         auto DataLength = GetNetWorkDataLength(netHandle.front().first);
@@ -86,8 +81,18 @@ void HostNetWorkState::UpdateFuncStanby()
             std::cout << "取得したデータ" << std::setw(5) << input_.moveDir << std::endl;
         }
         func.join();
-        active_ = ActiveState::Play;
+        active_ = ActiveState::Wait;
     }
+   
+}
+
+void HostNetWorkState::UpdateFuncStanby()
+{
+
+    if(netHandle.size()>=1)active_ = ActiveState::Play;
+
+    // ネットワークが確立されているか確認!
+    active_= ActiveState::Wait;
 }
 
 void HostNetWorkState::UpdateFuncPlay()

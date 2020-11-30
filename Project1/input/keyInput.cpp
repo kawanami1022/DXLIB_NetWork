@@ -11,21 +11,11 @@ bool KeyInput::Setup(int no)
 	if (no == 0)
 	{
 		_InputTbl = {
-			{InputID::Up,KEY_INPUT_UP},
-			{InputID::Down,KEY_INPUT_DOWN},
-			{InputID::Left,KEY_INPUT_LEFT},
-			{InputID::Right,KEY_INPUT_RIGHT},
-			//{InputID::SPACE,KEY_INPUT_SPACE},
-		};
-	}
-	else
-	{
-		_InputTbl = {
 			{InputID::Up,KEY_INPUT_W},
 			{InputID::Down,KEY_INPUT_S},
-			{InputID::Right,KEY_INPUT_A},
+			{InputID::Left,KEY_INPUT_A},
 			{InputID::Right,KEY_INPUT_D},
-			//{InputID::SPACE,KEY_INPUT_SPACE},
+			{InputID::SetBomb,KEY_INPUT_F},
 		};
 	}
 	id_ = no;

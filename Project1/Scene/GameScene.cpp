@@ -34,6 +34,7 @@ void GameScene::Draw()
 	{
 		CHARACTER->Draw();
 	}
+	bomb_.Draw();
 }
 
 void GameScene::UpdateHost()
@@ -142,7 +143,11 @@ bool GameScene::Init()
 			}
 		}
 	}
+
+	bomb_ = Bomb();
+
 	std::cout << "-------------‰Šú‰»I—¹---------------" << std::endl;
+
 	flame = 0;
 	return false;
 }

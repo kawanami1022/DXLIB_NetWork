@@ -4,8 +4,11 @@
 #include <vector>
 #include <memory>
 #include "BaseScene.h"
+#include "../Actor/Item/Bomb/Bomb.h"
+
 class Map;
 class Character;
+
 enum class NetWorkMode;
 using CharacterList = std::vector<std::shared_ptr<Character>>;
 
@@ -36,7 +39,7 @@ private:
 	std::shared_ptr<Map> map_;
 	CharacterList character_;
 	bool Init();
-
+	Bomb bomb_;
 	std::unordered_map< NetWorkMode, std::function<void()>> updateNetWorkModeFunc_;
 };
 

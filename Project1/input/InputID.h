@@ -8,6 +8,7 @@ enum class InputID
 	Left,
 	Right,
 	Up,
+	SetBomb,
 	Max
 };
 

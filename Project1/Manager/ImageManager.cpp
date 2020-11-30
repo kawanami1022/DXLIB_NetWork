@@ -24,7 +24,7 @@ bool ImageManager::LoadTexture(std::string ImageName, std::string FilePath)
 bool ImageManager::LoadDivTexture(std::string ImageName, std::string FilePath, int xNum, int yNum,int allNum)
 {
 	// this ImageName  already Exists
-	if (fileName_.find(ImageName) == fileName_.end())return false;
+	if (fileName_.find(ImageName) != fileName_.end())return false;
 
 
 	fileName_.try_emplace(ImageName);	// map's key add in ImageName
@@ -49,7 +49,7 @@ bool ImageManager::LoadDivTexture(std::string ImageName, std::string FilePath, i
 }
 
 // GetTexture
-pairImageHandle ImageManager::GetTextuerHandle(std::string ImageName)
+pairImageHandle ImageManager::GetTxHdl(std::string ImageName)
 {
 	return imageHandle_[fileName_[ImageName]];
 }

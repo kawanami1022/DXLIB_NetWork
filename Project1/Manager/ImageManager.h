@@ -5,7 +5,7 @@
 #include <utility>
 #include <string>
 
-#define IpImageManager ImageManager::GethInstance()
+#define IpImage ImageManager::GethInstance()
 
 using pairImageHandle = std::pair < std::vector<int*>, std::vector<int>>;
 
@@ -19,7 +19,7 @@ public:
 
 	bool LoadTexture(std::string ImageName, std::string FilePath);
 	bool LoadDivTexture(std::string ImageName, std::string FilePath,int xNum,int yNum, int allNum);
-	pairImageHandle GetTextuerHandle(std::string ImageName);
+	pairImageHandle GetTxHdl(std::string ImageName);
 private:
 
 	std::unordered_map<std::string, std::string> fileName_;

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "../Lib/Vector2/Vector2.h"
 
 class Actor
@@ -7,8 +8,9 @@ public:
 	Actor();
 	~Actor();
 
+	virtual void Update();
+	virtual void Draw();
 	
-
 	Position2 GetPos()
 	{
 		return pos_;

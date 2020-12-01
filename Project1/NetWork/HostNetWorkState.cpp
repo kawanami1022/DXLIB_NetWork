@@ -97,6 +97,7 @@ void HostNetWorkState::UpdateFuncStanby()
             NetWorkSend(NetWorkHandle.first, &active_, sizeof(char));
         }
         active_ = ActiveState::Play;
+        return;
     }
     // ネットワークが確立されているか確認!
     active_= ActiveState::Wait;
@@ -104,7 +105,7 @@ void HostNetWorkState::UpdateFuncStanby()
 
 void HostNetWorkState::UpdateFuncPlay()
 {
-    //std::cout << "----------------Play----------------" << std::endl;
+    std::cout << "----------------Play----------------" << std::endl;
     if (GetLostNetWork() != -1)
     {
         std::cout << "接続が切れました!" << std::endl;

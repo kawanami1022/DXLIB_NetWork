@@ -34,10 +34,11 @@ using ListInt = std::list<std::pair<int, unsigned int>>;		//int ネットハンドル:u
 enum class MesType :char
 {
 	NON = 100,
-	COUNT_DOWN,		// 接続受付カウントダウン
-	ID,						// 自分のIDとプレーヤーの総数
-	STANBY,				// 初期化情報送信完了
-	GAME_START,		// ホストから初期化情報での初期化完了、ゲーム開始(
+	COUNT_DOWN,				// 接続受付カウントダウン
+	ID,								// 自分のIDとプレーヤーの総数
+	STANBY_HOST,				// 初期化情報送信完了(ゲスト用)
+	STANBY_GUEST,				// 初期化情報送信完了(ホスト用)
+	COUNT_DOWN_TIME,		//全員の初期化完了ごのゲーム開始時間
 	TMX_SIZE,				
 	TMX_DATA,			// 
 	POS,						// ゲーム中のデータ
@@ -99,9 +100,10 @@ public:
 	virtual bool Update();
 	virtual bool RevUpdate();
 	virtual bool SendUpdate();
+	virtual void CreateThread();
 	ActiveState ConnectHost(IPDATA hostIP);
-	void SendMessageData();
-	void ReservMessageData();
+	bool SendMessageData();
+	bool ReservMessageData();
 	void ClearDataPacket();
 	void ClearRevPacket();
 	void ClearSendPacket();

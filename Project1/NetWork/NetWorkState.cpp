@@ -25,12 +25,9 @@ NetWorkState::NetWorkState()
 				{ActiveState::Play,std::bind(&NetWorkState::UpdateFuncPlay,this)},
 				{ActiveState::OFFLINE,std::bind(&NetWorkState::UpdateFuncOFFLINE,this)} };
 
-	updateMesType_ =
-	{ {MesType::TMX_SIZE ,std::bind(&NetWorkState::TMX_SIZE,this)},
-		{MesType::GAME_START ,std::bind(&NetWorkState::GAME_START,this)},
-		{MesType::STANBY ,std::bind(&NetWorkState::STANBY,this)} };
 	timer_ = std::make_unique<Timer>();
 	mesData_.sendID = 0;
+
 }
 
 NetWorkState::~NetWorkState()
@@ -103,6 +100,12 @@ bool NetWorkState::SendUpdate()
 	return true;
 }
 
+void NetWorkState::CreateThread()
+{
+	std::thread func(&NetWorkState::ReservMessageData, this);
+	func.detach();
+}
+
 
 
 ActiveState NetWorkState::GetActive(void)
@@ -151,7 +154,7 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 	return active_;
 }
 
-void NetWorkState::SendMessageData()
+bool NetWorkState::SendMessageData()
 {
 	std::vector<int> mapId;	// tmxFile's tiledmap 
 	short sendNum = 0;
@@ -164,7 +167,7 @@ void NetWorkState::SendMessageData()
 	if (tmxFile_ == nullptr)
 	{
 		std::cout << "tmxdataが読み込めません" << std::endl;
-		return;
+		return false;
 	}
 	std::memset(&mesData_, 0, sizeof(MesHeader));
 
@@ -242,73 +245,80 @@ void NetWorkState::SendMessageData()
 	
 	active_ = ActiveState::Play;
 	// debug display
+	return true;
 }
 
-void NetWorkState::ReservMessageData()
+bool NetWorkState::ReservMessageData()
 {
 	std::vector<int> mapId;	// tmxFile's tiledmap 
 	std::string lineData_;
-	Header headerdata{MesType::STANBY};
+	Header headerdata{MesType::STANBY_GUEST};
 	auto id = 0; 
 	unsigned int dataSize = 0;
-
-
-	if(GetNetWorkDataLength(netHandle.front().first)<=0)
+	while (0)
 	{
-		//std::cout << "headerデータが読み込めませんでした!" << std::endl;
-		return;
-	}
-	
-	MesPacket tmpPacketData;
-	do {
-		int recvdata = 0;
-		NetWorkRecv(netHandle.front().first, &recvdata, sizeof(int));
-		headerdata.data_[0] = recvdata;
-		NetWorkRecv(netHandle.front().first, &recvdata, sizeof(int));
-		headerdata.data_[0] = recvdata;
-		if (headerdata.mesdata_.type == MesType::TMX_DATA)
+		if(netHandle.size()<=0&&GetNetWorkDataLength(netHandle.front().first)<=0)
 		{
-			NetWorkRecv(netHandle.front().first, &headerdata.mesdata_.length_, sizeof(int));
-			tmpPacketData.resize(headerdata.mesdata_.length_);
+			std::cout << "headerデータが読み込めませんでした!" << std::endl;
+			continue;
 		}
-		NetWorkRecv(netHandle.front().first, tmpPacketData.data(), headerdata.mesdata_.length_ * sizeof(int));
-		dataPacket_.insert(dataPacket_.end(), tmpPacketData.begin(), tmpPacketData.end());
-
-	} while (GetNetWorkDataLength(netHandle.front().first) <= 0 &&headerdata.mesdata_.next == 1);
 	
-	std::cout << "データを受け取りました" << std::endl;
-
-	for (auto DATAPACKET : dataPacket_)
-	{
-		std::cout << std::hex << DATAPACKET << std::endl;
-	}
-
-	id = 0;
-	for (auto DATAPACKET : dataPacket_)
-	{
-		for (int idx = 0; idx < 8; idx++)
-		{
-			id = (DATAPACKET & 0xf0000000) >> (4 * 7);
-			mapId.push_back(id);
-			DATAPACKET <<= 4;
-		}
-	}
-	if (mapId.size() == 0)return;
-
-	int idx = 0;
-	for (auto Name : tmxFile_->name_)
-	{
-		for (int y = 0; y < tmxFile_->height_; y++)
-		{
-			for (int x = 0; x < tmxFile_->width_; x++)
+		MesPacket tmpPacketData;
+		do {
+			int recvdata = 0;
+			NetWorkRecv(netHandle.front().first, &recvdata, sizeof(int));
+			headerdata.data_[0] = recvdata;
+			NetWorkRecv(netHandle.front().first, &recvdata, sizeof(int));
+			headerdata.data_[0] = recvdata;
+			if (headerdata.mesdata_.type == MesType::TMX_DATA)
 			{
-				tmxFile_->tiledMap_[Name].titleID_[x][y] = mapId[x + y * tmxFile_->width_ + idx * tmxFile_->height_ * tmxFile_->width_];
+				NetWorkRecv(netHandle.front().first, &headerdata.mesdata_.length_, sizeof(int));
+				tmpPacketData.resize(headerdata.mesdata_.length_);
+			}
+			NetWorkRecv(netHandle.front().first, tmpPacketData.data(), headerdata.mesdata_.length_ * sizeof(int));
+			dataPacket_.insert(dataPacket_.end(), tmpPacketData.begin(), tmpPacketData.end());
+
+		} while (GetNetWorkDataLength(netHandle.front().first) <= 0 &&headerdata.mesdata_.next == 1);
+	
+		std::cout << "データを受け取りました" << std::endl;
+
+		for (auto DATAPACKET : dataPacket_)
+		{
+			std::cout << std::hex << DATAPACKET << std::endl;
+		}
+
+		std::cout << "mapIdに挿入" << std::endl;
+
+		id = 0;
+		for (auto DATAPACKET : dataPacket_)
+		{
+			for (int idx = 0; idx < 8; idx++)
+			{
+				id = (DATAPACKET & 0xf0000000) >> (4 * 7);
+				mapId.push_back(id);
+				DATAPACKET <<= 4;
 			}
 		}
-		idx++;
+		if (mapId.size() == 0)return false;
+
+		int idx = 0;
+		for (auto Name : tmxFile_->name_)
+		{
+			for (int y = 0; y < tmxFile_->height_; y++)
+			{
+				for (int x = 0; x < tmxFile_->width_; x++)
+				{
+					tmxFile_->tiledMap_[Name].titleID_[x][y] = mapId[x + y * tmxFile_->width_ + idx * tmxFile_->height_ * tmxFile_->width_];
+				}
+			}
+			idx++;
+		}
+
+		active_ = ActiveState::Stanby;
+		break;
 	}
 
-	active_ = ActiveState::Play;
+	return true;
 }
 
 void NetWorkState::ClearDataPacket()

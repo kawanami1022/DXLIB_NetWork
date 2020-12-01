@@ -45,6 +45,9 @@ void LoginScene::Init()
 	circlePos_ = Vector2(0, 0);
 	CirlcleHandle_ = LoadGraph("Image/Circle.png", true);
 
+	tmxFile_ = std::make_unique<File::TMX_File>();
+
+
 }
 
 UniqueBase LoginScene::input(UniqueBase nowScene)
@@ -106,6 +109,7 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 	else if (NetWorkMode == NetWorkMode::GUEST)
 	{
 		std::cout << "GUEST‚ÉÝ’è‚³‚ê‚Ä‚Ü‚·" << std::endl;
+
 		mode_ = UpdateMode::SetHostIP;
 	}
 	else if (NetWorkMode == NetWorkMode::OFFLINE)
@@ -113,7 +117,11 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 		std::cout << "OFFLINE‚ÉÝ’è‚³‚ê‚Ä‚Ü‚·" << std::endl;
 		mode_ = UpdateMode::StartInit;
 	}
-
+	if (!tmxFile_->load_TMX("map.tmx"))
+	{
+		std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
+	}
+	IpNetWork->GetNetWorkState()->SetTMXData(tmxFile_);
 	std::cout << "ó‘Ô‚Í" << static_cast<int>(IpNetWork->GetActive()) << "‚Å‚·\n" << std::endl;
 
 }
@@ -159,12 +167,12 @@ void LoginScene::StartInit(UniqueBase& scene)
 
 	std::cout << Handle << std::endl;
 
-	tmxFile_ = std::make_unique<File::TMX_File>();
-	if (!tmxFile_->load_TMX("map.tmx"))
-	{
-		std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
-	}
-	IpNetWork->GetNetWorkState()->SetTMXData(tmxFile_);
+	//tmxFile_ = std::make_unique<File::TMX_File>();
+	//if (!tmxFile_->load_TMX("map.tmx"))
+	//{
+	//	std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
+	//}
+	//IpNetWork->GetNetWorkState()->SetTMXData(tmxFile_);
 
 	mode_ = UpdateMode::Play;
 }
@@ -172,19 +180,21 @@ void LoginScene::StartInit(UniqueBase& scene)
 void LoginScene::Play(UniqueBase& scene)
 {
 
-	if(IpNetWorkState->GetNetWorkMode()==NetWorkMode::HOST)
-	if (CheckHitKey(KEY_INPUT_SPACE) == 1)
+	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
 	{
-		IpNetWorkState->SetNetWorkState(ActiveState::Stanby);
-		std::cout << "-----------StanbyMode----------" << std::endl;
+		if (CheckHitKey(KEY_INPUT_SPACE) == 1)
+		{
+			IpNetWorkState->SetNetWorkState(ActiveState::Stanby);
+			std::cout << "-----------StanbyMode----------" << std::endl;
+		}
 	}
 
-	if (IpNetWork->GetNetWorkState()->GetActive()==ActiveState::Play)
+	if (IpNetWorkState->GetActive()==ActiveState::Play)
 	{
 		auto nextScene = std::make_unique<GameScene>();
 		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
 	}
-	if (IpNetWork->GetNetWorkState()->GetNetWorkMode() ==NetWorkMode::OFFLINE)
+	if (IpNetWorkState->GetNetWorkMode() ==NetWorkMode::OFFLINE)
 	{
 		auto nextScene = std::make_unique<GameScene>();
 		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));

@@ -60,19 +60,13 @@ void GuestNetWorkState::UpdateFuncInit()
 {
 
     std::cout << "Init" << std::endl;
-    std::thread func(&GuestNetWorkState::ReservMessageData, this);
-    func.join();
-    if (GetNetWorkDataLength(netHandle.front().first) >= sizeof(input_))
-    {
-        if (NetWorkRecv(netHandle.front().first, &input_, sizeof(input_)) == 0)
-        {
-            std::cout << "初期化情報を受信ました" << std::endl;
-            //ここに初期化情報を入力する
-        }
-    }
+    auto length = GetNetWorkDataLength(netHandle.front().first);
+    if (length <= 0)return;
+    //std::cout << "初期化情報を受信ました" << std::endl;
+    ////ここに初期化情報を入力する
+    //active_ = ActiveState::Stanby;
 
    
-    active_ = ActiveState::Stanby;
 }
 
 void GuestNetWorkState::UpdateFuncStanby()
@@ -82,8 +76,9 @@ void GuestNetWorkState::UpdateFuncStanby()
     {
         if (GetNetWorkDataLength(NetHandle.first) > 0)
         {
+            // スタンバイモードなのかしかめる
             NetWorkRecv(NetHandle.first, &mesType, sizeof(MesType));
-            if (static_cast<MesType>(mesType) == MesType::STANBY)
+            if (mesType == static_cast<char>(MesType::STANBY_GUEST))
             {
                 active_ = ActiveState::Play;
             }

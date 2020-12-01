@@ -276,7 +276,7 @@ bool NetWorkState::ReservMessageData()
 		if (netHandle.size() <= 0) {
 			continue;
 		}
-		if(netHandle.size()<=0&&GetNetWorkDataLength(netHandle.front().first)<=0)
+		if(netHandle.size()<=0||GetNetWorkDataLength(netHandle.front().first)<=0)
 		{
 			std::cout << "headerƒf[ƒ^‚ª“Ç‚Ýž‚ß‚Ü‚¹‚ñ‚Å‚µ‚½!" << std::endl;
 			continue;

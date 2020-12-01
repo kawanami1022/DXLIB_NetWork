@@ -88,6 +88,7 @@ void HostNetWorkState::UpdateFuncInit()
 
 void HostNetWorkState::UpdateFuncStanby()
 {
+    if (netHandle.size() <= 0)active_ = ActiveState::Stanby;
     Header header{MesType::STANBY_HOST,0,0,1 };
     std::cout <<"ネットワークハンドル数:"<< netHandle.size() << std::endl;
     for (auto NetHandle:netHandle)

@@ -100,10 +100,20 @@ bool NetWorkState::SendUpdate()
 	return true;
 }
 
-void NetWorkState::CreateThread()
+// mapデータの送受信
+void NetWorkState::CreateThreadMpdt(NetWorkMode mode)
 {
-	std::thread func(&NetWorkState::ReservMessageData, this);
-	func.detach();
+	if (mode == NetWorkMode::GUEST)
+	{
+		std::thread reserveData(&NetWorkState::ReservMessageData, this);
+		reserveData.detach();
+	}
+
+	if (mode == NetWorkMode::HOST)
+	{
+		std::thread sendData(&NetWorkState::SendMessageData, this);
+		sendData.detach();
+	}
 }
 
 
@@ -163,88 +173,94 @@ bool NetWorkState::SendMessageData()
 	unsigned int dataSize=0;
 	unsigned int sendDataLength = 0;
 	// debug display's variables
-
-	if (tmxFile_ == nullptr)
+	while (1)
 	{
-		std::cout << "tmxdataが読み込めません" << std::endl;
-		return false;
-	}
-	std::memset(&mesData_, 0, sizeof(MesHeader));
 
-	// substruction's mapId
-	for (auto Name : tmxFile_->name_)
-	{
-		for (int y = 0; y < tmxFile_->height_; y++)
+		if (tmxFile_ == nullptr)
 		{
-			for (int x = 0; x < tmxFile_->width_; x++)
-			{
-				mapId.push_back(tmxFile_->tiledMap_[Name].titleID_[x][y]);
-			}
+			std::cout << "tmxdataが読み込めません" << std::endl;
+			tmxFile_->load_TMX("map.tmx");
+			continue;
 		}
-	}
 
+		std::memset(&mesData_, 0, sizeof(MesHeader));
 
-	auto mapdata = 0;
-	while (mapId.size() > 0)
-	{
-		mapdata = 0;
-		for (unsigned int i = 0; i < 8; i++)
+		// substruction's mapId
+		for (auto Name : tmxFile_->name_)
 		{
-			//std::cout << std::hex << mapdata << ":" << std::endl;
-			mapdata |= mapId.front();
-			mapId.erase(mapId.begin());
-			if (i != (8 - 1))mapdata <<= 4;
-			if (!(mapId.size() > 0))
+			for (int y = 0; y < tmxFile_->height_; y++)
 			{
-				break;
+				for (int x = 0; x < tmxFile_->width_; x++)
+				{
+					mapId.push_back(tmxFile_->tiledMap_[Name].titleID_[x][y]);
+				}
 			}
 		}
 
-		std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
-		dataPacket_.push_back(mapdata);
-	}
 
-	// 送信データ長を求める
-	File::GetLineString(1, &linestring, "ini/setting.txt");		// 調査用文字列を取得する
-	dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length"))/sizeof(int);
-	std::cout << "dataSize:		" << dataSize << std::endl;
+		auto mapdata = 0;
+		while (mapId.size() > 0)
+		{
+			mapdata = 0;
+			for (unsigned int i = 0; i < 8; i++)
+			{
+				//std::cout << std::hex << mapdata << ":" << std::endl;
+				mapdata |= mapId.front();
+				mapId.erase(mapId.begin());
+				if (i != (8 - 1))mapdata <<= 4;
+				if (!(mapId.size() > 0))
+				{
+					break;
+				}
+			}
 
-	for (auto NetHandle : netHandle)
-	{
-		//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
-		Header headerdata{ MesType::TMX_SIZE,0,0,1 };
-		dataPacket_.insert(dataPacket_.begin(), headerdata.data_[0]);
-		headerdata.mesdata_ = { MesType::TMX_DATA,0,0,static_cast<int>(dataPacket_.size()) - 1 };
-		dataPacket_.insert(dataPacket_.begin() + 1, headerdata.data_[0]);
-		dataPacket_.insert(dataPacket_.begin() + 2, headerdata.data_[1]);
+			std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
+			dataPacket_.push_back(mapdata);
+		}
+
+		// 送信データ長を求める
+		File::GetLineString(1, &linestring, "ini/setting.txt");		// 調査用文字列を取得する
+		dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length"))/sizeof(int);
+		std::cout << "dataSize:		" << dataSize << std::endl;
+
+		for (auto NetHandle : netHandle)
+		{
+			//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
+			Header headerdata{ MesType::TMX_SIZE,0,0,1 };
+			dataPacket_.insert(dataPacket_.begin(), headerdata.data_[0]);
+			headerdata.mesdata_ = { MesType::TMX_DATA,0,0,static_cast<int>(dataPacket_.size()) - 1 };
+			dataPacket_.insert(dataPacket_.begin() + 1, headerdata.data_[0]);
+			dataPacket_.insert(dataPacket_.begin() + 2, headerdata.data_[1]);
 
 
-		std::cout << "これからデータを送信します" << std::endl;
-		timer_->StartMesurement();
+			std::cout << "これからデータを送信します" << std::endl;
+			timer_->StartMesurement();
 
-		int sendLength = 0;
-		do {
-			// 送信用のデータの長さを求める
-			sendLength = (dataSize - MESHEADER_INT < dataPacket_.size()) ?
-				dataSize - MESHEADER_INT : dataPacket_.size() - MESHEADER_INT;
+			int sendLength = 0;
+			do {
+				// 送信用のデータの長さを求める
+				sendLength = (dataSize - MESHEADER_INT < dataPacket_.size()) ?
+					dataSize - MESHEADER_INT : dataPacket_.size() - MESHEADER_INT;
 
-			// 次のデータが存在するのか確かめる
-			headerdata.mesdata_.next = dataPacket_.size() > dataSize ? 1 : 0;
-			dataPacket_[1] = headerdata.data_[0];
+				// 次のデータが存在するのか確かめる
+				headerdata.mesdata_.next = dataPacket_.size() > dataSize ? 1 : 0;
+				dataPacket_[1] = headerdata.data_[0];
 
-			// int型のマップデータ格納変数が0になるまで処理する
-			auto flag = NetWorkSend(NetHandle.first, dataPacket_.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
-			dataPacket_.erase(dataPacket_.begin() + MESHEADER_INT, dataPacket_.begin() + MESHEADER_INT + sendLength);
-			headerdata.mesdata_.sendID++;
-		} while (dataPacket_.size() > MESHEADER_INT);
-		dataPacket_.clear();
-	}
+				// int型のマップデータ格納変数が0になるまで処理する
+				auto flag = NetWorkSend(NetHandle.first, dataPacket_.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
+				dataPacket_.erase(dataPacket_.begin() + MESHEADER_INT, dataPacket_.begin() + MESHEADER_INT + sendLength);
+				headerdata.mesdata_.sendID++;
+			} while (dataPacket_.size() > MESHEADER_INT);
+			dataPacket_.clear();
+		}
 
-	std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
-	std::cout << std::endl;
+		std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
+		std::cout << std::endl;
 	
-	active_ = ActiveState::Play;
-	// debug display
+		active_ = ActiveState::Stanby;
+		break;
+		// debug display
+	}
 	return true;
 }
 
@@ -255,8 +271,11 @@ bool NetWorkState::ReservMessageData()
 	Header headerdata{MesType::STANBY_GUEST};
 	auto id = 0; 
 	unsigned int dataSize = 0;
-	while (0)
+	while (1)
 	{
+		if (netHandle.size() <= 0) {
+			continue;
+		}
 		if(netHandle.size()<=0&&GetNetWorkDataLength(netHandle.front().first)<=0)
 		{
 			std::cout << "headerデータが読み込めませんでした!" << std::endl;
@@ -299,7 +318,6 @@ bool NetWorkState::ReservMessageData()
 				DATAPACKET <<= 4;
 			}
 		}
-		if (mapId.size() == 0)return false;
 
 		int idx = 0;
 		for (auto Name : tmxFile_->name_)

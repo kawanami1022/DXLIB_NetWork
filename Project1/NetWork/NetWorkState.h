@@ -100,7 +100,7 @@ public:
 	virtual bool Update();
 	virtual bool RevUpdate();
 	virtual bool SendUpdate();
-	virtual void CreateThread();
+	virtual void CreateThreadMpdt(NetWorkMode mode);
 	ActiveState ConnectHost(IPDATA hostIP);
 	bool SendMessageData();
 	bool ReservMessageData();

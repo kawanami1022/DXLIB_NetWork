@@ -59,27 +59,28 @@ void GuestNetWorkState::UpdateFuncWait()
 void GuestNetWorkState::UpdateFuncInit()
 {
 
-    std::cout << "Init" << std::endl;
-    auto length = GetNetWorkDataLength(netHandle.front().first);
-    if (length <= 0)return;
+    //auto length = GetNetWorkDataLength(netHandle.front().first);
+    //if (length <= 0)return;
     //std::cout << "初期化情報を受信ました" << std::endl;
     ////ここに初期化情報を入力する
-    //active_ = ActiveState::Stanby;
-
    
 }
 
 void GuestNetWorkState::UpdateFuncStanby()
 {
-    char mesType = 0;
+
+
+    Header headerData = { MesType::NON,0,0,1 };
     for (auto NetHandle : netHandle)
     {
         if (GetNetWorkDataLength(NetHandle.first) > 0)
         {
             // スタンバイモードなのかしかめる
-            NetWorkRecv(NetHandle.first, &mesType, sizeof(MesType));
-            if (mesType == static_cast<char>(MesType::STANBY_GUEST))
+            NetWorkRecv(NetHandle.first, &headerData.data_[0], sizeof(int));
+            NetWorkRecv(NetHandle.first, &headerData.data_[1], sizeof(int));
+            if (headerData.mesdata_.type == MesType::STANBY_HOST)
             {
+                std::cout << "データ受け取りました" << std::endl;
                 active_ = ActiveState::Play;
             }
         }

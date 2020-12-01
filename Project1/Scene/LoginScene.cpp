@@ -109,7 +109,7 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 	else if (NetWorkMode == NetWorkMode::GUEST)
 	{
 		std::cout << "GUEST‚ÉÝ’è‚³‚ê‚Ä‚Ü‚·" << std::endl;
-
+		IpNetWorkState->CreateThreadMpdt(NetWorkMode);
 		mode_ = UpdateMode::SetHostIP;
 	}
 	else if (NetWorkMode == NetWorkMode::OFFLINE)
@@ -121,7 +121,7 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 	{
 		std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
 	}
-	IpNetWork->GetNetWorkState()->SetTMXData(tmxFile_);
+	IpNetWorkState->SetTMXData(tmxFile_);
 	std::cout << "ó‘Ô‚Í" << static_cast<int>(IpNetWork->GetActive()) << "‚Å‚·\n" << std::endl;
 
 }

@@ -88,19 +88,17 @@ void HostNetWorkState::UpdateFuncInit()
 
 void HostNetWorkState::UpdateFuncStanby()
 {
-
+    Header header{MesType::STANBY_HOST,0,0,1 };
     std::cout <<"ネットワークハンドル数:"<< netHandle.size() << std::endl;
-    if (netHandle.size() >= 1)
+    for (auto NetHandle:netHandle)
     {
-        for (auto NetWorkHandle : netHandle)
-        {
-            NetWorkSend(NetWorkHandle.first, &active_, sizeof(char));
-        }
+        std::cout << "STANBY_HOSTを送信します------" << std::endl;
+        NetWorkSend(NetHandle.first, &header.data_[0], sizeof(int));
+        NetWorkSend(NetHandle.first, &header.data_[1], sizeof(int));
         active_ = ActiveState::Play;
-        return;
     }
-    // ネットワークが確立されているか確認!
-    active_= ActiveState::Wait;
+        
+
 }
 
 void HostNetWorkState::UpdateFuncPlay()

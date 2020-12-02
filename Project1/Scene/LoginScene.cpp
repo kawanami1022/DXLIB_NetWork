@@ -9,7 +9,6 @@
 #include "LoginScene.h"
 #include "GameScene.h"
 #include "CrossOver.h"
-
 #include "../Time/Time.h"
 
 LoginScene::LoginScene():BaseScene()

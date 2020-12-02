@@ -80,7 +80,10 @@ void GuestNetWorkState::UpdateFuncStanby()
             NetWorkRecv(NetHandle.first, &headerData.data_[1], sizeof(int));
             if (headerData.mesdata_.type == MesType::STANBY_HOST)
             {
+                headerData = { MesType::STANBY_GUEST,0,0,1 };
                 std::cout << "ƒf[ƒ^Žó‚¯Žæ‚è‚Ü‚µ‚½" << std::endl;
+                NetWorkSend(NetHandle.first, &headerData.data_[0], sizeof(int));
+                NetWorkSend(NetHandle.first, &headerData.data_[1], sizeof(int));
                 active_ = ActiveState::Play;
             }
         }

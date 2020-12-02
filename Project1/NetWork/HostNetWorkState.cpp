@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include <iostream>
 #include <iomanip>
+#include <mutex>
 #include "NetWork.h"
 #include "HostNetWorkState.h"
 
@@ -88,17 +89,37 @@ void HostNetWorkState::UpdateFuncInit()
 
 void HostNetWorkState::UpdateFuncStanby()
 {
-    if (netHandle.size() <= 0)active_ = ActiveState::Stanby;
+
     Header header{MesType::STANBY_HOST,0,0,1 };
+    auto SendData=[&]() {
+        for (auto NetHandle : netHandle)
+        {
+            std::cout << "STANBY_HOSTを送信します------" << std::endl;
+            NetWorkSend(NetHandle.first, &header.data_[0], sizeof(int));
+            NetWorkSend(NetHandle.first, &header.data_[1], sizeof(int));
+        }
+    };
+
+    if (netHandle.size() <= 0)active_ = ActiveState::Wait;
     std::cout <<"ネットワークハンドル数:"<< netHandle.size() << std::endl;
-    for (auto NetHandle:netHandle)
+    static std::once_flag once;
+    std::call_once(once, SendData);
+
+    for (auto NetHandle : netHandle)
     {
-        std::cout << "STANBY_HOSTを送信します------" << std::endl;
-        NetWorkSend(NetHandle.first, &header.data_[0], sizeof(int));
-        NetWorkSend(NetHandle.first, &header.data_[1], sizeof(int));
-        active_ = ActiveState::Play;
-    }
+        if (0 != GetNetWorkDataLength(NetHandle.first))
+        {
+            NetWorkRecv(NetHandle.first, &header.data_[0], sizeof(int));
+            NetWorkRecv(NetHandle.first, &header.data_[1], sizeof(int));
+
+            active_ = (header.mesdata_.type == MesType::STANBY_GUEST)?
+                ActiveState::Play: ActiveState::Stanby;
+        }
+        else {
+            active_ = ActiveState::Stanby;
+        }
         
+    }
 
 }
 

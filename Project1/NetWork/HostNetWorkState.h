@@ -10,12 +10,15 @@ public:
 	HostNetWorkState();
 	~HostNetWorkState();
 	NetWorkMode GetNetWorkMode();
-	bool CheckNetWork();
+	bool CheckNetWork(int);
 	bool Update();
 
 
 protected:
 private:
+	bool sendStanbyFlag = true;
+
+
 	// 関数
 	void UpdateFuncNon();
 	void UpdateFuncWait();		// 接続待機状態(ホスト用)

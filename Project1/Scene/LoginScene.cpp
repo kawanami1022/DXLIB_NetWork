@@ -178,6 +178,11 @@ void LoginScene::StartInit(UniqueBase& scene)
 
 void LoginScene::Play(UniqueBase& scene)
 {
+	if (IpNetWorkState->GetActive()==ActiveState::Play)
+	{
+		auto nextScene = std::make_unique<GameScene>();
+		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
+	}
 
 	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
 	{
@@ -188,11 +193,6 @@ void LoginScene::Play(UniqueBase& scene)
 		}
 	}
 
-	if (IpNetWorkState->GetActive()==ActiveState::Play)
-	{
-		auto nextScene = std::make_unique<GameScene>();
-		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
-	}
 	if (IpNetWorkState->GetNetWorkMode() ==NetWorkMode::OFFLINE)
 	{
 		auto nextScene = std::make_unique<GameScene>();

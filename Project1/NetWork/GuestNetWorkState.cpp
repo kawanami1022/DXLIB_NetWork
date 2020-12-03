@@ -76,14 +76,12 @@ void GuestNetWorkState::UpdateFuncStanby()
         if (GetNetWorkDataLength(NetHandle.first) > 0)
         {
             // スタンバイモードなのかしかめる
-            NetWorkRecv(NetHandle.first, &headerData.data_[0], sizeof(int));
-            NetWorkRecv(NetHandle.first, &headerData.data_[1], sizeof(int));
+            NetWorkRecv(NetHandle.first, &headerData, sizeof(MesHeader));
             if (headerData.mesdata_.type == MesType::STANBY_HOST)
             {
                 headerData = { MesType::STANBY_GUEST,0,0,1 };
                 std::cout << "データ受け取りました" << std::endl;
-                NetWorkSend(NetHandle.first, &headerData.data_[0], sizeof(int));
-                NetWorkSend(NetHandle.first, &headerData.data_[1], sizeof(int));
+                NetWorkSend(NetHandle.first, &headerData, sizeof(MesHeader));
                 active_ = ActiveState::Play;
             }
         }

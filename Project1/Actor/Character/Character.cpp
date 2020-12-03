@@ -43,6 +43,11 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 
 	using PairID = std::pair<InputID, int>;
 	std::vector<std::pair<InputID, int>> inputList;
+	if (controller_ == nullptr)
+	{
+		controller_ = std::make_unique<KeyInput>();
+		controller_->Setup(0);
+	}
 
 	(*controller_)();
 
@@ -235,6 +240,11 @@ bool Character::SendCharData()
 	return true;
 }
 
+void Character::SetUpdateFunc(std::function<void(std::weak_ptr<Map >)> func)
+{
+	updateFunc_ = func;
+}
+
 bool Character::Init()
 {
 	const int width = 5;
@@ -269,19 +279,35 @@ bool Character::Init()
 
 	playerID_ = Id_;
 	
+	// 旧式のキャラクターのupdate関数の初期化
 	auto mode = IpNetWorkState->GetNetWorkMode();
-	if (mode == NetWorkMode::GUEST)
-	{
-		InitFunc(0, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1));
-	}else if
-	(mode == NetWorkMode::HOST)
-	{
-		InitFunc(1, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1));
-	}
-	else  if (mode == NetWorkMode::OFFLINE) {
+	//if (mode == NetWorkMode::GUEST)
+	//{
+	//	InitFunc(0, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1));
+	//}else if
+	//(mode == NetWorkMode::HOST)
+	//{
+	//	InitFunc(1, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1));
+	//}
+	//else 
+	if (mode == NetWorkMode::OFFLINE) {
 		InitFunc(0, std::bind(&Character::DeffUpdate,this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1));
 	}
-	
+	else if (mode == NetWorkMode::GUEST)
+	{
+		updateFunc_ = std::bind(&Character::NetUpdate, this, std::placeholders::_1);
+	}
+	else if (mode == NetWorkMode::HOST)
+	{
+		updateFunc_ = std::bind(&Character::NetUpdate, this, std::placeholders::_1);
+		if (Id_ == 0) 
+		{
+			updateFunc_ = std::bind(&Character::DeffUpdate, this, std::placeholders::_1);
+			controller_ = std::make_unique<KeyInput>();
+			controller_->Setup(0);
+		};
+	}
+
 	Id_ += UNIT_ID_BASE;
 	return false;
 }

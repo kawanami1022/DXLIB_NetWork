@@ -66,6 +66,7 @@ public:
 	bool SendCharData();
 
 	// Getter Setter
+	void SetUpdateFunc(std::function<void(std::weak_ptr<Map >)> func);
 
 	void SetPos(Position2 pos)
 	{

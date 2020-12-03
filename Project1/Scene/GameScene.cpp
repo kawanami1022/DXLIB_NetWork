@@ -39,8 +39,8 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
-	std::thread netWorkThread(&GameScene::Network,this);
-	netWorkThread.join();
+
+
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
@@ -51,8 +51,7 @@ void GameScene::UpdateHost()
 
 void GameScene::UpdateGuest()
 {
-	std::thread netWorkThread(&GameScene::Network, this);
-	netWorkThread.join();
+
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
@@ -70,33 +69,67 @@ void GameScene::UpdateOFFLINE()
 
 void GameScene::Network()
 {
-	
-	IpNetWorkState->RevUpdate();
-	auto revPacket = IpNetWorkState->GetRevPacket();
-	//std::cout << "取得したデータサイズ:" << revPacket.size() << std::endl;
 
-	while (revPacket.size() >=5)
+	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
 	{
-		try
+		for (auto NetHandle : IpNetWorkState->GetNetWorkHandle())
 		{
-			if (revPacket.at(0) == static_cast<int>(MesType::POS))
-			{
-				for (auto PLAYER : character_)
-				{
+			IpNetWorkState->SetSendPacket(static_cast<int>(MesType::ID));
+			IpNetWorkState->SetSendPacket(NetHandle.second);
+			IpNetWorkState->SendUpdate();
+		}
+	}
 
-					int playerPos[] = { revPacket.at(0),revPacket.at(1),revPacket.at(2),revPacket.at(3),revPacket.at(4) };
-					if (PLAYER->GetPlID() == playerPos[1])
+
+
+	while (!isInstance_)
+	{
+
+		IpNetWorkState->RevUpdate();
+		auto revPacket = IpNetWorkState->GetRevPacket();
+		//std::cout << "取得したデータサイズ:" << revPacket.size() << std::endl;
+		
+		while (revPacket.size() >0)
+		{
+			try
+			{
+				if (revPacket.at(0) == static_cast<int>(MesType::POS))
+				{
+					for (auto PLAYER : character_)
 					{
-						PLAYER->SetPos(Position2(playerPos[2], playerPos[3]));
-						PLAYER->SetDir(static_cast<MoveDir>(playerPos[4]));
-						revPacket.erase(revPacket.begin(), revPacket.begin() + 5);
+						int playerPos[] = { revPacket.at(0),revPacket.at(1),revPacket.at(2),revPacket.at(3),revPacket.at(4) };
+						if (PLAYER->GetPlID() == playerPos[1])
+						{
+							PLAYER->SetPos(Position2(playerPos[2], playerPos[3]));
+							PLAYER->SetDir(static_cast<MoveDir>(playerPos[4]));
+							revPacket.erase(revPacket.begin(), revPacket.begin() + 5);
+						}
+					}
+				}
+
+				if (revPacket.at(0) == static_cast<int>(MesType::ID))
+				{
+					int playerID[] = {
+						revPacket.at(0),	//MesTypeの情報
+						revPacket.at(1)	//IDの情報
+					};
+					std::cout << "playerID:" << revPacket.at(1) << std::endl;
+					for (auto PLAYER : character_)
+					{
+						if (PLAYER->GetPlID() == playerID[1])
+						{
+							PLAYER->SetUpdateFunc(std::bind(&Character::DeffUpdate, PLAYER, std::placeholders::_1));
+							
+							revPacket.erase(revPacket.begin(), revPacket.begin() + 2);
+						}
 					}
 				}
 			}
-		}
-		catch (...)
-		{
-			std::cout << "illegal access" << std::endl;
+			catch (...)
+			{
+				std::cout << "illegal access" << std::endl;
+				if (revPacket.size() > 0) { revPacket.erase(revPacket.begin()); }
+			}
 		}
 	}
 }
@@ -110,6 +143,7 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	isInstance_ = true;
 }
 
 bool GameScene::Init()
@@ -146,8 +180,11 @@ bool GameScene::Init()
 
 	bomb_ = Bomb();
 
-	std::cout << "-------------初期化終了---------------" << std::endl;
+	std::thread netWorkThread(&GameScene::Network, this);
+	netWorkThread.detach();
 
+	std::cout << "-------------初期化終了---------------" << std::endl;
+	
 	flame = 0;
 	return false;
 }

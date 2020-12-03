@@ -35,6 +35,7 @@ public:
 
 private:
 	int flame = 0;
+	bool isInstance_ = false;
 	// •Ï”–¼
 	std::shared_ptr<Map> map_;
 	CharacterList character_;

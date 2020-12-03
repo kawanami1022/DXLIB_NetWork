@@ -177,6 +177,12 @@ public:
 		return sendPacket_;
 	}
 
+	// Get playerID_.
+	int GetPlID()
+	{
+		return 0;
+	}
+
 protected:
 
 	// •Ï”éŒ¾

@@ -45,8 +45,10 @@ void GameScene::UpdateHost()
 	{
 		CHAR->Update(map_);
 	}
-	
-	IpNetWorkState->SendUpdate();
+	for (auto NetHandle : IpNetWorkState->GetNetWorkHandle())
+	{
+		IpNetWorkState->SendUpdate(NetHandle);
+	}
 }
 
 void GameScene::UpdateGuest()
@@ -56,7 +58,10 @@ void GameScene::UpdateGuest()
 	{
 		CHAR->Update(map_);
 	}
-	IpNetWorkState->SendUpdate();
+	for (auto NetHandle : IpNetWorkState->GetNetWorkHandle())
+	{
+		IpNetWorkState->SendUpdate(NetHandle);
+	}
 }
 
 void GameScene::UpdateOFFLINE()
@@ -76,7 +81,7 @@ void GameScene::Network()
 		{
 			IpNetWorkState->SetSendPacket(static_cast<int>(MesType::ID));
 			IpNetWorkState->SetSendPacket(NetHandle.second);
-			IpNetWorkState->SendUpdate();
+			IpNetWorkState->SendUpdate(NetHandle);
 		}
 	}
 

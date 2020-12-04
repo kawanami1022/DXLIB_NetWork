@@ -34,17 +34,17 @@ using ListInt = std::list<std::pair<int, unsigned int>>;		//int ネットハンドル:u
 enum class MesType :char
 {
 	NON = 100,
-	COUNT_DOWN,				// 接続受付カウントダウン
-	ID,								// 自分のIDとプレーヤーの総数
-	STANBY_HOST,				// 初期化情報送信完了(ゲスト用)
-	STANBY_GUEST,				// 初期化情報送信完了(ホスト用)
-	COUNT_DOWN_TIME,		//全員の初期化完了ごのゲーム開始時間
-	TMX_SIZE,				
-	TMX_DATA,			// 
-	POS,						// ゲーム中のデータ
-	SET_BOM,				// ボムを配置
-	DETH,					// 死亡
-	LOST,					// ネットワーク切断時に生成(ホストは自分のネットワークにセットする)
+	COUNT_DOWN_ROOM,				// 接続受付カウントダウン		{MesType ヘッダー,longlong 時間}
+	ID,								// 自分のIDとプレーヤーの総数					{MesType ヘッダー,int 自分のID,int playerの総数}
+	STANBY_HOST,				// 初期化情報送信完了(ゲスト用)			{MesType ヘッダー}		
+	STANBY_GUEST,				// 初期化情報送信完了(ホスト用)			{MesType ヘッダー}
+	COUNT_DOWN_GAME,		//全員の初期化完了ごのゲーム開始時間 {MesType ヘッダー,longlong 時間}
+	TMX_SIZE,						//															{ MesType ヘッダー,縦サイズ,横サイズ,レイヤー数}
+	TMX_DATA,			//																		{MesType ヘッダー,データ}
+	POS,						// ゲーム中のデータ											{MesType ヘッダー,ID,x,y,Dir}
+	SET_BOM,				// ボムを配置													{MesType ヘッダー,設置したキャラのID,爆弾自体のID,x,y,int 型　爆発までの時間(3秒),long long型 爆弾設置時間,}
+	DETH,					// 死亡																{MesType ヘッダー,自分のID}
+	LOST,					// ネットワーク切断時に生成(ホストは自分のネットワークにセットする)				{MesType ヘッダー}
 	MAX
 };
 
@@ -99,10 +99,10 @@ public:
 	virtual ~NetWorkState();
 	virtual bool Update();
 	virtual bool RevUpdate();
-	virtual bool SendUpdate();
+	virtual bool SendUpdate(std::pair<int, unsigned int>);
 	virtual void CreateThreadMpdt(NetWorkMode mode);
 	ActiveState ConnectHost(IPDATA hostIP);
-	bool SendMessageData();
+	bool SendMessageData(int netHandle);
 	bool ReservMessageData();
 	void ClearDataPacket();
 	void ClearRevPacket();

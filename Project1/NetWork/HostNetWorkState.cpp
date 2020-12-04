@@ -70,7 +70,7 @@ void HostNetWorkState::UpdateFuncWait()
 
 void HostNetWorkState::UpdateFuncInit()
 {
-    std::thread func(&HostNetWorkState::SendMessageData, this);
+    std::thread func([&]() {SendMessageData(netHandle.back().first); });
 
     std::cout << "‰Šú‰»Š®—¹ !    Stanbyó‘Ô‚ÉˆÚ“®" << std::endl;
     if (CheckNetWork(netHandle.back().first))

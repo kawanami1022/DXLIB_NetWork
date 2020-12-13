@@ -206,6 +206,8 @@ protected:
 	int playerID_;
 	int playerMax_;
 
+	long long time_;
+
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;
 	std::shared_ptr<File::TMX_File> tmxFile_ = nullptr;

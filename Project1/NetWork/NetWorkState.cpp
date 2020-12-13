@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstring>
 #include <fstream>
 #include <filesystem>
@@ -267,17 +268,81 @@ bool NetWorkState::ReservMessageData()
 
 	// STANBY_HOSTが来たら終了
 	do {
+		// netHandleが存在するのか
+		if (netHandle.size() <= 0)continue;
+		if (GetNetWorkDataLength(netHandle.front().first) == 0)continue;
 
-		if (GetNetWorkDataLength(netHandle.front().first)==0)continue;
 		NetWorkRecv(netHandle.front().first, &revData, sizeof(int));
-		headerdata.mesdata_.type=static_cast<MesHeader>revData;
+		headerdata.mesdata_.type = static_cast<MesType>(revData);
 		if (headerdata.mesdata_.type == MesType::COUNT_DOWN_ROOM)
 		{
-
+			std::cout << "-------------COUNT_DOWN_ROOM-------------" << std::endl;
+			NetWorkRecv(netHandle.front().first, &time_, sizeof(std::chrono::minutes));
+			std::cout << "時間:" <<time_<< std::endl;
+		}
+		if (headerdata.mesdata_.type == (MesType::ID))
+		{
+			std::cout << "-------------TMX_ID-------------" << std::endl;
+			NetWorkRecv(netHandle.front().first, &revData, sizeof(int));
+			playerMax_ = revData;
+			NetWorkRecv(netHandle.front().first, &revData, sizeof(int));
+			playerID_ = revData;
+			std::cout << "playerMax:" <<std::setw(5)<< playerMax_ << std::endl;
+			std::cout << "playerID:" <<std::setw(5)<< playerID_ << std::endl;
 		}
 
+		if (headerdata.mesdata_.type == (MesType::TMX_SIZE))
+		{
+			std::vector<int> tmplist;
+			std::cout << "-------------TMX_SIZE-------------" << std::endl;
+			while (GetNetWorkDataLength(netHandle.front().first) > 0)
+			{
 
+				//縦サイズ,横サイズ,レイヤー数
+				NetWorkRecv(netHandle.front().first, &revData, sizeof(int));
+				tmplist.emplace_back(revData);
 
+			}
+			for (auto TMP_LIST : tmplist)
+			{
+				std::cout << std::hex << TMP_LIST << std::endl;
+			}
+			//縦サイズ,横サイズ,レイヤー数
+			//auto height = revData;
+			//auto width = revData;
+			//auto layer = revData;
+			//std::cout << "縦サイズ:" << height << "横サイズ:" << width << std::endl;
+			//std::cout << "レイヤー数:" << layer << std::endl;
+
+			//tmxFile_->nextlayerid_ = layer;
+			//for (auto TILED_MAP : tmxFile_->tiledMap_)
+			//{
+			//	TILED_MAP.second.height_ = height;
+			//	TILED_MAP.second.width_ = width;
+			//	TILED_MAP.second.titleData_.resize(height * width);
+			//	for (unsigned int idx = 0; idx < width; idx++)
+			//	{
+			//		TILED_MAP.second.titleID_.emplace_back(&TILED_MAP.second.titleData_[idx * height]);
+			//	}
+			//}
+		}
+
+		if (headerdata.mesdata_.type == (MesType::TMX_DATA))
+		{
+			std::cout << "-------------TMX_DATA-------------" << std::endl;
+				MesPacket tmpPacketData;
+				do {
+					int recvdata = 0;
+					NetWorkRecv(netHandle.front().first, &recvdata, sizeof(int));
+					tmpPacketData.emplace_back(recvdata);
+
+				} while (GetNetWorkDataLength(netHandle.front().first) >0);
+		}
+
+		if (headerdata.mesdata_.type == (MesType::STANBY_HOST))
+		{
+			std::cout << "-------------STANBY_HOST-------------" << std::endl;
+		}
 	} while (headerdata.mesdata_.type != MesType::STANBY_HOST);
 	//while (1)
 	//{
@@ -344,6 +409,38 @@ bool NetWorkState::ReservMessageData()
 	//	break;
 	//}
 
+	std::cout << "データを受け取りました" << std::endl;
+
+	for (auto DATAPACKET : dataPacket_)
+	{
+		std::cout << std::hex << DATAPACKET << std::endl;
+	}
+
+	std::cout << "mapIdに挿入" << std::endl;
+
+	id = 0;
+	for (auto DATAPACKET : dataPacket_)
+	{
+		for (int idx = 0; idx < 8; idx++)
+		{
+			id = (DATAPACKET & 0xf0000000) >> (4 * 7);
+			mapId.push_back(id);
+			DATAPACKET <<= 4;
+		}
+	}
+
+	int idx = 0;
+	//for (auto Name : tmxFile_->name_)
+	//{
+	//	for (int y = 0; y < tmxFile_->height_; y++)
+	//	{
+	//		for (int x = 0; x < tmxFile_->width_; x++)
+	//		{
+	//			tmxFile_->tiledMap_[Name].titleID_[x][y] = mapId[x + y * tmxFile_->width_ + idx * tmxFile_->height_ * tmxFile_->width_];
+	//		}
+	//	}
+	//	idx++;
+	//}
 	return true;
 }
 

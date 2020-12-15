@@ -250,7 +250,6 @@ bool NetWorkState::SendMessageData(int netHandle)
 		std::cout << "Œv‘ªŽžŠÔ:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 		std::cout << std::endl;
 	
-		active_ = ActiveState::Stanby;
 		break;
 		// debug display
 	}
@@ -385,6 +384,8 @@ bool NetWorkState::ReservMessageData()
 	ofs.close();
 
 	tmxFile_->DisplayTiledMap();
+	active_ = ActiveState::Play;
+
 	return true;
 }
 

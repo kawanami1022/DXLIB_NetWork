@@ -90,7 +90,6 @@ void GuestNetWorkState::UpdateFuncStanby()
 void GuestNetWorkState::UpdateFuncPlay()
 {
    
-    //std::cout << "----------------Play----------------" << std::endl;
 }
 
 void GuestNetWorkState::UpdateFuncOFFLINE()

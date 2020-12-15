@@ -67,9 +67,15 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 
 void LoginScene::Draw()
 {
-	
+	std::unordered_map<UpdateMode, std::string> displayMode = 
+	{ {UpdateMode::SetNetWork,"SetNetWork"},
+		{UpdateMode::SetHostIP,"SetHostIP"},
+		{UpdateMode::Play,"Play"},
+		{UpdateMode::StartInit,"StartInit"} };
 	//ClsDrawScreen();
 	SetDrawScreen(screenSrcID_);
+	DrawFormatString(0, 0, 0xffffff, displayMode[mode_].data());
+	
 	DrawFunc_[mode_]();
 }
 
@@ -216,6 +222,7 @@ void LoginScene::StartInitDraw()
 
 void LoginScene::PlayDraw()
 {
-	DrawFormatString(0, 0, 0xffffff, "InputMode.move_way:%5d", IpNetWork->GetInputState());
+
 	DrawGraph(pos_x, pos_y, Handle, true);
+	
 }

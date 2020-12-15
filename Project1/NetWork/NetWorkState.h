@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <thread>
 #include <utility>
+#include <chrono>
 #include <DxLib.h>
 #include "../input/controller.h"
 #include "../input/Pad.h"
@@ -66,6 +67,7 @@ union Header
 {
 	MesHeader mesdata_;
 	int data_[2];
+	std::chrono::system_clock::time_point start_;
 };
 
 struct InputState

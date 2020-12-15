@@ -305,10 +305,6 @@ bool NetWorkState::ReservMessageData()
 			//横サイズ,縦サイズ,レイヤー数
 			unionData uniondata{ 0,0,0,0 };
 			uniondata.idata = revData;
-			uniondata.cdata[0];
-			uniondata.cdata[1];
-			uniondata.cdata[2];
-			uniondata.cdata[3];
 			std::cout << "横サイズ"  << static_cast<int>(uniondata.cdata[0]) <<  "  縦サイズ:" << static_cast<int>(uniondata.cdata[1]) << std::endl;
 			std::cout << "レイヤー数" << static_cast<int>(uniondata.cdata[2])<<std::endl;
 
@@ -373,8 +369,9 @@ bool NetWorkState::ReservMessageData()
 				}
 				idx++;
 			}
-			headerdata.mesdata_ = { MesType::STANBY_GUEST,0,0,1 };
-			NetWorkSend(netHandle.front().first, &headerdata.data_[0], sizeof(int));
+			headerdata.mesdata_ = { MesType::STANBY_GUEST,0,0,0 };
+			NetWorkSend(netHandle.front().first, &headerdata, sizeof(Header));
+			std::cout << "---------STANBY GUEST送信しました--------------" << std::endl;
 		}
 #elif	0
 		NetWorkRecv(netHandle.front().first, &revData, sizeof(int));

@@ -266,8 +266,13 @@ bool NetWorkState::ReservMessageData()
 	auto id = 0; 
 	int revData=0;
 	unsigned int dataSize = 0;
-
-	std::ofstream ofs("RevMsgDt.txt",std::ios::out);
+	std::fstream file;
+	file.open("rm.txt",std::ios_base::out);
+	if (file) {
+		file << revData;
+		file << revData;
+		file << revData;
+	}
 	// STANBY_HOST‚ª—ˆ‚½‚çI—¹
 	do {
 		// netHandle‚ª‘¶Ý‚·‚é‚Ì‚©
@@ -344,7 +349,8 @@ bool NetWorkState::ReservMessageData()
 		while (GetNetWorkDataLength(netHandle.front().first)>0)
 		{
 			NetWorkRecv(netHandle.front().first, &revData, sizeof(int));
-			ofs << revData << "\n";
+			std::cout << revData << std::endl;
+		
 		}
 #endif
 

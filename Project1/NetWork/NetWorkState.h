@@ -45,6 +45,7 @@ enum class MesType :char
 	POS,						// ゲーム中のデータ											{MesType ヘッダー,ID,x,y,Dir}
 	SET_BOM,				// ボムを配置													{MesType ヘッダー,設置したキャラのID,爆弾自体のID,x,y,int 型　爆発までの時間(3秒),long long型 爆弾設置時間,}
 	DETH,					// 死亡																{MesType ヘッダー,自分のID}
+	RESULT,				// 
 	LOST,					// ネットワーク切断時に生成(ホストは自分のネットワークにセットする)				{MesType ヘッダー}
 	MAX
 };

@@ -15,13 +15,14 @@ namespace File
 
 	struct Tiled_Map
 	{
-		unsigned int width_ = 0;
 		unsigned int height_ = 0;
+		unsigned int width_ = 0;
 		std::string dataEncoding_;
 		std::vector<int*> titleID_;
 		std::vector <int> titleData_;
 		void prepreateTiles();
 		void SetTiles(int y, int width, std::string);
+		void DebugDisplayTile();			// Display insertied Tiles
 
 	};
 
@@ -44,6 +45,7 @@ namespace File
 		int tileheight_ = 0;	// tilesize :height
 
 		bool load_TMX(std::string FilePos);
+		void DisplayTiledMap();
 	};
 
 }

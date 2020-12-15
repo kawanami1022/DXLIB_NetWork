@@ -28,8 +28,18 @@ void File::Tiled_Map::SetTiles(int y, int width, std::string lineString)
 	{
 		std::getline(ss, num, ',');
 		titleID_[x][y] = atoi(num.data());
-		std::cout << titleID_[x][y];
+	}
+}
 
+void File::Tiled_Map::DebugDisplayTile()
+{
+	for (int y = 0; y < height_; y++)
+	{
+		for (int x = 0; x < width_; x++)
+		{
+			std::cout << titleID_[x][y];
+		}
+		std::cout << std::endl;
 	}
 	std::cout << std::endl;
 }
@@ -151,7 +161,6 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 					this->tiledMap_[str].dataEncoding_ = strmanip::ExtractTheStrDblQt(lineString, "data encoding");
 					if (this->tiledMap_[str].dataEncoding_.length() != 0)
 
-						std::cout << this->tiledMap_[this->name_.back()].dataEncoding_ << std::endl;
 					// embed the ID of the tile in this area.
 					if (this->tiledMap_[this->name_.back()].dataEncoding_ == "csv")
 					{
@@ -197,4 +206,12 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 		}
 	}
 	return true;
+}
+
+void File::TMX_File::DisplayTiledMap()
+{
+	for (auto Name : name_)
+	{
+		this->tiledMap_[Name].DebugDisplayTile();
+	}
 }

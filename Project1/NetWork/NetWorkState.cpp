@@ -161,7 +161,9 @@ bool NetWorkState::SendMessageData(int netHandle)
 	std::string linestring;
 	unsigned int dataSize=0;
 	unsigned int sendDataLength = 0;
+	Header headerdata{ MesType::STANBY_GUEST };
 	// debug display's variables
+#ifndef 0
 	while (1)
 	{
 
@@ -209,7 +211,7 @@ bool NetWorkState::SendMessageData(int netHandle)
 
 		// 送信データ長を求める
 		File::GetLineString(1, &linestring, "ini/setting.txt");		// 調査用文字列を取得する
-		dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length"))/sizeof(int);
+		dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length")) / sizeof(int);
 		std::cout << "dataSize:		" << dataSize << std::endl;
 
 		//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
@@ -243,10 +245,23 @@ bool NetWorkState::SendMessageData(int netHandle)
 
 		std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
 		std::cout << std::endl;
-	
+
 		break;
 		// debug display
-	}
+	};
+#elif	1
+	do
+	{
+		if (tmxFile_ == nullptr)
+		{
+			std::cout << "tmxdataが読み込めません" << std::endl;
+			tmxFile_->load_TMX("map.tmx");
+			continue;
+		}
+	} while ();
+
+
+#endif // !1
 	return true;
 }
 

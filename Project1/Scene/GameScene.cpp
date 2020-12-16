@@ -162,7 +162,6 @@ bool GameScene::Init()
 		for (unsigned int x = 0; x < map_->GetMapSize().x; x++)
 		{
 			Position2 TilePos = Position2(x, y);
-			std::cout <<std::dec<< TilePos.x << "," << TilePos.y <<"  "<< map_->GetGridID(TilePos, "character") << std::endl;
 			if (map_->GetGridID(TilePos, "character")==4)
 			{
 				try

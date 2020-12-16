@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <random>
+#include <thread>
 #include <DxLib.h>
 #include "../_debug/_DebugDispOut.h"
 #include "../Lib/File/TMX_File.h"
@@ -46,7 +47,6 @@ void LoginScene::Init()
 
 	tmxFile_ = std::make_unique<File::TMX_File>();
 
-
 }
 
 UniqueBase LoginScene::input(UniqueBase nowScene)
@@ -59,6 +59,7 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 {
 
 	IpNetWork->Update();
+	
 	updateFunc_[mode_](nowScene);
 
 	Draw();
@@ -171,13 +172,6 @@ void LoginScene::StartInit(UniqueBase& scene)
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 
 	std::cout << Handle << std::endl;
-
-	//tmxFile_ = std::make_unique<File::TMX_File>();
-	//if (!tmxFile_->load_TMX("map.tmx"))
-	//{
-	//	std::cout << "“Ç‚ÝŽæ‚è‚ÉŽ¸”s!" << std::endl;
-	//}
-	//IpNetWork->GetNetWorkState()->SetTMXData(tmxFile_);
 
 	mode_ = UpdateMode::Play;
 }

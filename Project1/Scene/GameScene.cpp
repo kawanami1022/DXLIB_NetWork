@@ -157,16 +157,18 @@ bool GameScene::Init()
 	IpNetWorkState->ClearRevPacket();
 	IpNetWorkState->ClearSendPacket();
 	std::cout << "-------------ClearPacket---------------" << std::endl;
-	for (unsigned int y = 0; y < map_->GetMapSize().y+1; y++)
+	for (unsigned int y = 0; y < map_->GetMapSize().y; y++)
 	{
-		for (unsigned int x = 0; x < map_->GetMapSize().x+1; x++)
+		for (unsigned int x = 0; x < map_->GetMapSize().x; x++)
 		{
 			Position2 TilePos = Position2(x, y);
+			std::cout <<std::dec<< TilePos.x << "," << TilePos.y <<"  "<< map_->GetGridID(TilePos, "character") << std::endl;
 			if (map_->GetGridID(TilePos, "character")==4)
 			{
 				try
 				{
 					character_.emplace_back(std::make_unique<Character>(TilePos * TileSize));
+					
 				}
 				catch (std::out_of_range& e)
 				{
@@ -183,7 +185,7 @@ bool GameScene::Init()
 	netWorkThread.detach();
 
 	std::cout << "-------------‰Šú‰»I—¹---------------" << std::endl;
-	
+	std::cin.get();
 	flame = 0;
 	return false;
 }

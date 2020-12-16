@@ -49,7 +49,7 @@ MAP_ID Map::GetMapId(Position2 actorPos)
 
 int Map::GetGridID(Position2 GridPos, std::string Layer)
 {
-	if (GridPos.x < tmxFile_->width_ && GridPos.x < tmxFile_->height_)
+	if (GridPos.x < tmxFile_->width_ && GridPos.y < tmxFile_->height_)
 	{
 		return tmxFile_->tiledMap_[Layer].titleID_[GridPos.x][GridPos.y];
 	}

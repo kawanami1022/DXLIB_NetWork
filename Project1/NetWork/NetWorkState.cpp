@@ -52,13 +52,10 @@ bool NetWorkState::RevUpdate()
 	revPacket_.clear();
 	if (GetLostNetWork() != -1)
 	{
-		
 		std::cout << "接続が切れてます!" << std::endl;
 		return false;
 	}
-	//if (GetNetWorkDataLength(netHandle) == 0) {
-	//	std::cout << "データが受け取れてません!" << std::endl;
-	//}
+
 	auto RevData = 0;
 	// ネットワークバッファに溜まっているデータが存在するかくにんする
 	for (auto NetHandle : netHandle)
@@ -69,10 +66,7 @@ bool NetWorkState::RevUpdate()
 			revPacket_.emplace_back(RevData);
 		}
 	}
-	//for (auto REVDATA : revPacket_)
-	//{
-	//	std::cout << "受け取ったデータ:" << std::hex << REVDATA << std::endl;
-	//}
+
 	std::cout << std::endl;
 	return true;
 }
@@ -368,8 +362,8 @@ bool NetWorkState::ReservMessageData()
 				}
 				idx++;
 			}
-			headerdata.mesdata_ = { MesType::STANBY_GUEST,0,0,0 };
-			NetWorkSend(netHandle.front().first, &headerdata, sizeof(Header));
+			Header sendHeader{ MesType::STANBY_GUEST,0,0,0 };
+			NetWorkSend(netHandle.front().first,&sendHeader, sizeof(Header));
 			std::cout << "---------STANBY GUEST送信しました--------------" << std::endl;
 		}
 #elif	0
@@ -385,7 +379,7 @@ bool NetWorkState::ReservMessageData()
 
 	tmxFile_->DisplayTiledMap();
 	active_ = ActiveState::Play;
-
+	std::cout << "play" << std::endl;
 	return true;
 }
 

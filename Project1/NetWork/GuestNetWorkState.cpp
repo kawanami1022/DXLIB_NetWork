@@ -57,18 +57,12 @@ void GuestNetWorkState::UpdateFuncWait()
 
 void GuestNetWorkState::UpdateFuncInit()
 {
-
-    //auto length = GetNetWorkDataLength(netHandle.front().first);
-    //if (length <= 0)return;
-    //std::cout << "‰Šú‰»î•ñ‚ðŽóM‚Ü‚µ‚½" << std::endl;
-    ////‚±‚±‚É‰Šú‰»î•ñ‚ð“ü—Í‚·‚é
-   
 }
 
 void GuestNetWorkState::UpdateFuncStanby()
 {
 
-
+    std::cout << "Stanby" << std::endl;
     Header headerData = { MesType::NON,0,0,1 };
     for (auto NetHandle : netHandle)
     {

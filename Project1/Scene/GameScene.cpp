@@ -68,69 +68,29 @@ void GameScene::UpdateOFFLINE()
 
 void GameScene::Network()
 {
-
-	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
-	{
-		for (auto NetHandle : IpNetWorkState->GetNetWorkHandle())
-		{
-			IpNetWorkState->SetSendPacket(static_cast<int>(MesType::ID));
-			IpNetWorkState->SetSendPacket(NetHandle.second);
-			IpNetWorkState->SendUpdate(NetHandle);
-		}
-	}
-
-
-
-	while (!isInstance_)
+	std::cout << "network" << std::endl;
+	while (isInstance_)
 	{
 
+		// Guest
 		IpNetWorkState->RevUpdate();
-		auto revPacket = IpNetWorkState->GetRevPacket();
-		//std::cout << "取得したデータサイズ:" << revPacket.size() << std::endl;
-		
-		while (revPacket.size() >0)
+		auto data = IpNetWorkState->GetRevPacket();
+		if (log.is_open() == true)
 		{
-			try
+			for (auto DATA : data)
 			{
-				if (revPacket.at(0) == static_cast<int>(MesType::POS))
-				{
-					for (auto PLAYER : character_)
-					{
-						int playerPos[] = { revPacket.at(0),revPacket.at(1),revPacket.at(2),revPacket.at(3),revPacket.at(4) };
-						if (PLAYER->GetPlID() == playerPos[1])
-						{
-							PLAYER->SetPos(Position2(playerPos[2], playerPos[3]));
-							PLAYER->SetDir(static_cast<MoveDir>(playerPos[4]));
-							revPacket.erase(revPacket.begin(), revPacket.begin() + 5);
-						}
-					}
-				}
-
-				if (revPacket.at(0) == static_cast<int>(MesType::ID))
-				{
-					int playerID[] = {
-						revPacket.at(0),	//MesTypeの情報
-						revPacket.at(1)	//IDの情報
-					};
-					std::cout << "playerID:" << revPacket.at(1) << std::endl;
-					for (auto PLAYER : character_)
-					{
-						if (PLAYER->GetPlID() == playerID[1])
-						{
-							PLAYER->SetUpdateFunc(std::bind(&Character::DeffUpdate, PLAYER, std::placeholders::_1));
-							
-							revPacket.erase(revPacket.begin(), revPacket.begin() + 2);
-						}
-					}
-				}
-			}
-			catch (...)
-			{
-				std::cout << "illegal access" << std::endl;
-				if (revPacket.size() > 0) { revPacket.erase(revPacket.begin()); }
+				std::cout << DATA << std::endl;
+				log << DATA << "\n";
 			}
 		}
 	}
+#ifdef DEBUG
+	while (isInstance_)
+	{
+
+	}
+
+#endif // !1
 }
 
 
@@ -142,7 +102,7 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
-	isInstance_ = true;
+	isInstance_ = false;
 }
 
 bool GameScene::Init()
@@ -167,7 +127,6 @@ bool GameScene::Init()
 				try
 				{
 					character_.emplace_back(std::make_unique<Character>(TilePos * TileSize));
-					
 				}
 				catch (std::out_of_range& e)
 				{
@@ -179,9 +138,38 @@ bool GameScene::Init()
 	}
 
 	bomb_ = Bomb();
+	
+	std::ifstream start_time("Login.txt");
+	std::vector<int> timeList;
+	std::string line;
+	Header headerdata{MesType::NON};
 
+	while (!start_time.eof())
+	{
+		std::getline(start_time, line);
+		timeList.emplace_back(std::stoi(line));
+	}
+
+	int idx = 0;
+	while (idx < timeList.size())
+	{
+		if (static_cast<MesType>(timeList[idx]) == MesType::COUNT_DOWN_GAME)
+		{
+			headerdata.data_[0] = timeList[idx];
+			headerdata.data_[1]= timeList[idx++];
+			if (headerdata.mesdata_.length_ == 2)
+			{
+				headerdata.data_[0]= timeList[idx++];
+				headerdata.data_[1]= timeList[idx++];
+				break;
+			}
+		}
+		idx++;
+	}
+	std::cout<<std::chrono::time_point(headerdata.start)
 	std::thread netWorkThread(&GameScene::Network, this);
 	netWorkThread.detach();
+	log.open("Game.txt", std::ios::beg | std::ios::out);
 
 	std::cout << "-------------初期化終了---------------" << std::endl;
 	std::cin.get();

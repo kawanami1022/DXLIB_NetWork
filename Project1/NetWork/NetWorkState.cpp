@@ -67,7 +67,6 @@ bool NetWorkState::RevUpdate()
 		}
 	}
 
-	std::cout << std::endl;
 	return true;
 }
 
@@ -162,8 +161,10 @@ bool NetWorkState::SendMessageData(int netHandle)
 	unsigned int dataSize=0;
 	unsigned int sendDataLength = 0;
 	Header headerdata{ MesType::STANBY_GUEST };
+#ifdef DEBUG
+
+
 	// debug display's variables
-#ifndef 0
 	while (1)
 	{
 
@@ -249,7 +250,8 @@ bool NetWorkState::SendMessageData(int netHandle)
 		break;
 		// debug display
 	};
-#elif	1
+#endif // DEBUG
+
 	do
 	{
 		if (tmxFile_ == nullptr)
@@ -258,10 +260,9 @@ bool NetWorkState::SendMessageData(int netHandle)
 			tmxFile_->load_TMX("map.tmx");
 			continue;
 		}
-	} while ();
+	} while (GetNetWorkDataLength(netHandle));
 
 
-#endif // !1
 	return true;
 }
 

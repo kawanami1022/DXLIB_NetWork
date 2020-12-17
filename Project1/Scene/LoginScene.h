@@ -2,7 +2,6 @@
 #include <unordered_map>
 #include <array>
 #include <functional>
-
 #include "BaseScene.h"
 
 enum class UpdateMode;
@@ -35,18 +34,16 @@ private:
 	UniqueBase input(UniqueBase);
 	UniqueBase UpDate(UniqueBase);
 	void Draw();
-	//void DrawOwnScreen();
-	//updateFunc_
 	void SetNetWork(UniqueBase& scene);
 	void SetHostIP(UniqueBase& scene);
 	void StartInit(UniqueBase& scene);
 	void Play(UniqueBase& scene);
-	//DrawFunc_
 	void SetNetWorkDraw();
 	void SetHostIPDraw();
 	void StartInitDraw();
 	void PlayDraw();
 
+	void NetWork();
 	// ïœêî
 	UpdateMode mode_;
 	UpdateMapFunc updateFunc_;

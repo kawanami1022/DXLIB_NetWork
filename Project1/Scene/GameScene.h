@@ -1,8 +1,10 @@
 #pragma once
+#include <fstream>
 #include <unordered_map>
 #include <functional>
 #include <vector>
 #include <memory>
+#include <chrono>
 #include "BaseScene.h"
 #include "../Actor/Item/Bomb/Bomb.h"
 
@@ -35,12 +37,12 @@ public:
 
 private:
 	int flame = 0;
-	bool isInstance_ = false;
 	// ïœêîñº
 	std::shared_ptr<Map> map_;
 	CharacterList character_;
 	bool Init();
 	Bomb bomb_;
 	std::unordered_map< NetWorkMode, std::function<void()>> updateNetWorkModeFunc_;
+	std::chrono::system_clock::time_point start_;
 };
 

@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <fstream>
 #include "../NetWork/NetWork.h"
 #include "../Lib/Vector2/Vector2.h"
 
@@ -28,10 +29,11 @@ public:
 protected:
 	int screenSrcID_=0;
 	int screen_;
+	bool isInstance_ = true;
 	// “ü—ÍŒn
 	// ‰æ‘œ
 	std::shared_ptr< File::TMX_File> tmxFile_;
-	
+	std::ofstream log;
 private:
 };
 

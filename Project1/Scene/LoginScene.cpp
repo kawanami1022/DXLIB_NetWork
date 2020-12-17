@@ -14,6 +14,7 @@
 
 LoginScene::LoginScene():BaseScene()
 {
+	isInstance_ = true;
 	Init();
 }
 
@@ -21,6 +22,7 @@ LoginScene::~LoginScene()
 {
 	DeleteGraph(CirlcleHandle_);
 	std::cout << "------------LoginSceneI—¹----------------" << std::endl;
+	isInstance_ = false;
 }
 
 void LoginScene::Init()
@@ -46,7 +48,7 @@ void LoginScene::Init()
 	CirlcleHandle_ = LoadGraph("Image/Circle.png", true);
 
 	tmxFile_ = std::make_unique<File::TMX_File>();
-
+	log.open("Login.txt");
 }
 
 UniqueBase LoginScene::input(UniqueBase nowScene)
@@ -173,6 +175,7 @@ void LoginScene::StartInit(UniqueBase& scene)
 
 	std::cout << Handle << std::endl;
 
+
 	mode_ = UpdateMode::Play;
 }
 
@@ -180,6 +183,8 @@ void LoginScene::Play(UniqueBase& scene)
 {
 	if (IpNetWorkState->GetActive()==ActiveState::Play)
 	{
+		std::thread network(&LoginScene::NetWork, this);
+		network.detach();
 		auto nextScene = std::make_unique<GameScene>();
 		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
 	}
@@ -219,4 +224,23 @@ void LoginScene::PlayDraw()
 
 	DrawGraph(pos_x, pos_y, Handle, true);
 	
+}
+
+void LoginScene::NetWork()
+{
+	std::cout << "network" << std::endl;
+	while (isInstance_)
+	{
+		// Guest
+		IpNetWorkState->RevUpdate();
+		auto data = IpNetWorkState->GetRevPacket();
+		if (log.is_open() == true)
+		{
+			for (auto DATA : data)
+			{
+				std::cout << DATA << std::endl;
+				log << DATA << "\n";
+			}
+		}
+	}
 }

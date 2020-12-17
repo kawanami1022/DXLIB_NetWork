@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 #include <fstream>
 #include <unordered_map>
 #include <functional>
@@ -44,5 +45,6 @@ private:
 	Bomb bomb_;
 	std::unordered_map< NetWorkMode, std::function<void()>> updateNetWorkModeFunc_;
 	std::chrono::system_clock::time_point start_;
+	std::once_flag once;
 };
 

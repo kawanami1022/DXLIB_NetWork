@@ -1,4 +1,6 @@
 #include <thread>
+
+#include <filesystem>
 #include <iostream>
 #include <DxLib.h>
 #include "../Lib/File/TMX_File.h"
@@ -16,6 +18,45 @@ UniqueBase GameScene::input(UniqueBase nowScene)
 
 UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
+	auto InitStartTime = [&]() {
+
+		std::ifstream start_time("Login.txt");
+		std::vector<int> timeList;
+		std::string line;
+		Header headerdata{ MesType::NON };
+		start_time.seekg(std::ios::beg);
+		while (!start_time.eof())
+		{
+			std::getline(start_time, line);
+			if (line.size() <= 0)continue;
+
+			timeList.emplace_back(std::stoi(line));
+			std::cout << line << std::endl;
+		}
+
+		int idx = 0;
+		while (idx < timeList.size())
+		{
+			if (static_cast<MesType>(timeList[idx]) == MesType::COUNT_DOWN_GAME)
+			{
+				headerdata.data_[0] = timeList[idx];
+				headerdata.data_[1] = timeList[idx + 1];
+				if (headerdata.mesdata_.length_ == 2)
+				{
+					headerdata.data_[0] = timeList[idx + 2];
+					headerdata.data_[1] = timeList[idx + 3];
+					break;
+				}
+			}
+			idx++;
+		}
+		std::chrono::system_clock clock;
+		std::cout << "ŠJŽnŽžŠÔ:" << std::chrono::duration_cast<std::chrono::milliseconds>(headerdata.start_.time_since_epoch()).count() << std::endl;
+		std::cout << "Œ»ÝŽžŠÔ:" << std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count() << std::endl;
+		
+	};
+
+	std::call_once(once, InitStartTime);
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
 	updateNetWorkModeFunc_[netWorkMode]();
 	
@@ -68,22 +109,28 @@ void GameScene::UpdateOFFLINE()
 
 void GameScene::Network()
 {
-	std::cout << "network" << std::endl;
-	while (isInstance_)
-	{
+	Header headerdata{ MesType::NON };
 
-		// Guest
-		IpNetWorkState->RevUpdate();
-		auto data = IpNetWorkState->GetRevPacket();
-		if (log.is_open() == true)
+	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST)
+	{
+		std::cout << "network" << std::endl;
+		while (isInstance_)
 		{
-			for (auto DATA : data)
+			// Guest
+			IpNetWorkState->RevUpdate();
+			auto data = IpNetWorkState->GetRevPacket();
+			while (data.size() > 0)
 			{
-				std::cout << DATA << std::endl;
-				log << DATA << "\n";
+			
+				headerdata.data_[0] = data[0];
+				headerdata.data_[1] = data[1];
+				data.erase(data.begin());
+				data.erase(data.begin());
+				headerdata.mesdata_.
 			}
 		}
 	}
+
 #ifdef DEBUG
 	while (isInstance_)
 	{
@@ -138,39 +185,10 @@ bool GameScene::Init()
 	}
 
 	bomb_ = Bomb();
-	
-	std::ifstream start_time("Login.txt");
-	std::vector<int> timeList;
-	std::string line;
-	Header headerdata{MesType::NON};
 
-	while (!start_time.eof())
-	{
-		std::getline(start_time, line);
-		timeList.emplace_back(std::stoi(line));
-	}
-
-	int idx = 0;
-	while (idx < timeList.size())
-	{
-		if (static_cast<MesType>(timeList[idx]) == MesType::COUNT_DOWN_GAME)
-		{
-			headerdata.data_[0] = timeList[idx];
-			headerdata.data_[1]= timeList[idx++];
-			if (headerdata.mesdata_.length_ == 2)
-			{
-				headerdata.data_[0]= timeList[idx++];
-				headerdata.data_[1]= timeList[idx++];
-				break;
-			}
-		}
-		idx++;
-	}
-	std::cout<<std::chrono::time_point(headerdata.start)
 	std::thread netWorkThread(&GameScene::Network, this);
 	netWorkThread.detach();
 	log.open("Game.txt", std::ios::beg | std::ios::out);
-
 	std::cout << "-------------‰Šú‰»I—¹---------------" << std::endl;
 	std::cin.get();
 	flame = 0;

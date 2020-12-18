@@ -171,8 +171,7 @@ void Character::AutoUpdate(std::weak_ptr<Map> map)
 void Character::Draw()
 {
 	animcnt_++;
-	DrawBox(posUL_.x, posUL_.y, posDR_.x, posDR_.y, 0xff0000, false);
-	DrawRotaGraph(pos_.x, pos_.y,1,0, HandleData_[animcnt_/20%4][static_cast<int>(moveDir_)], true);
+	DrawExtendGraph(pos_.x, pos_.y, pos_.x + CHAR_WIDTH, pos_.y + CHAR_HEIGHT, HandleData_[animcnt_ / 20 % 4][static_cast<int>(moveDir_)],true);
 }
 
 void Character::AutoMove(std::weak_ptr<Map>&&  map)
@@ -247,8 +246,8 @@ void Character::SetUpdateFunc(std::function<void(std::weak_ptr<Map >)> func)
 
 bool Character::Init()
 {
-	const int width = 5;
-	const int height = 4;
+	const int width = 16;
+	const int height = 16;
 	AdjustPos();
 
 	// Init Graphices handle

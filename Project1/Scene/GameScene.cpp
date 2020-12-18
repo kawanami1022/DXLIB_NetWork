@@ -121,12 +121,46 @@ void GameScene::Network()
 			auto data = IpNetWorkState->GetRevPacket();
 			while (data.size() > 0)
 			{
-			
 				headerdata.data_[0] = data[0];
 				headerdata.data_[1] = data[1];
 				data.erase(data.begin());
 				data.erase(data.begin());
-				headerdata.mesdata_.
+				if (headerdata.mesdata_.type == MesType::POS)
+				{
+					auto id = data.front();
+					data.erase(data.begin());
+					for (auto& CHARACTER_ : character_)
+					{
+						if (CHARACTER_->GetPlID() == id)
+						{
+							
+							CHARACTER_->SetPos(Position2(data[0], data[1]));
+							CHARACTER_->SetDir(static_cast<MoveDir>(data[2]));
+							data.erase(data.begin(), data.begin() + 3);
+							break;
+						}
+					}
+				}
+				if (headerdata.mesdata_.type == MesType::DETH)
+				{
+					for (auto& CHARACTER_ : character_)
+					{
+						auto id = data.front();
+						if (CHARACTER_->GetPlID() == id)
+						{
+							// player‚ğE‚·
+
+
+							data.erase(data.begin());
+							break;
+						}
+					}
+				}
+				if (headerdata.mesdata_.type == MesType::SET_BOM)
+				{
+					data.erase(data.begin(), data.begin() + headerdata.data_[1]);
+				}
+
 			}
 		}
 	}

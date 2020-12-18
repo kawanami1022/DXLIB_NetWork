@@ -109,6 +109,7 @@ void GameScene::UpdateOFFLINE()
 
 void GameScene::Network()
 {
+	//Guest 側の処理
 	Header headerdata{ MesType::NON };
 
 	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST)
@@ -127,6 +128,7 @@ void GameScene::Network()
 				data.erase(data.begin());
 				if (headerdata.mesdata_.type == MesType::POS)
 				{
+					
 					auto id = data.front();
 					data.erase(data.begin());
 					for (auto& CHARACTER_ : character_)
@@ -149,8 +151,7 @@ void GameScene::Network()
 						if (CHARACTER_->GetPlID() == id)
 						{
 							// playerを殺す
-
-
+							CHARACTER_->SetState(CharState::Death);
 							data.erase(data.begin());
 							break;
 						}
@@ -162,7 +163,35 @@ void GameScene::Network()
 				}
 
 			}
+			
+			// playerの送信する
+
+			// playerのIDを取得
+			auto id = IpNetWorkState->GetPlID();
+		
+			headerdata.mesdata_ = { MesType::POS,0,0,4 };		// ヘッダーデータを送信
+			IpNetWorkState->SetSendPacket(headerdata.data_[0]);		// MesType::POS,0,0
+			IpNetWorkState->SetSendPacket(headerdata.data_[1]);		// 4
+			IpNetWorkState->SetSendPacket(id);									// GuestのplayerID送信					
+			for (auto CHARACTER_ : character_)
+			{
+				// playerIDのplayerを探す
+				if (id == CHARACTER_->GetPlID())
+				{
+					
+					auto pos = CHARACTER_->GetPos();				// 座標保存用変数
+					auto dir = CHARACTER_->GetMoveDir();		// 方向保存用変数
+					IpNetWorkState->SetSendPacket(pos.x);			// 座標x:送信
+					IpNetWorkState->SetSendPacket(pos.y);			// 座標y:送信
+					IpNetWorkState->SetSendPacket(static_cast<int>(dir));		// 方向:送信
+				}
+			}
+
+
 		}
+		
+
+
 	}
 
 #ifdef DEBUG
@@ -222,7 +251,6 @@ bool GameScene::Init()
 
 	std::thread netWorkThread(&GameScene::Network, this);
 	netWorkThread.detach();
-	log.open("Game.txt", std::ios::beg | std::ios::out);
 	std::cout << "-------------初期化終了---------------" << std::endl;
 	std::cin.get();
 	flame = 0;

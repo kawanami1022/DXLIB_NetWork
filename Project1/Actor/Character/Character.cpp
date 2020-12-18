@@ -22,9 +22,8 @@ Character::Character()
 
 }
 
-Character::Character(Position2 pos)
+Character::Character(Position2 pos) : Actor(pos)
 {
-	pos_ = pos + 32 / 2;
 	Init();
 }
 
@@ -35,7 +34,10 @@ Character::~Character()
 
 void Character::Update(std::weak_ptr<Map> map)
 {
-	updateFunc_(map);
+	if (state_==CharState::Alive)
+	{
+		updateFunc_(map);
+	}
 }
 
 void Character::DeffUpdate(std::weak_ptr<Map> map)
@@ -79,79 +81,29 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 	std::for_each(inputList.crbegin(), inputList.crend(), [&](auto&& list) {
 		if (process)return;
 		Position2 pos= pos_;
-		Position2 posUL = posUL_;
-		Position2 posDR= posDR_;
-
-
 
 		if (list.second == 0) { return; };
 		if (list.first == InputID::Down)
 		{
-			posUL.y += speed.y;
-			posDR.y += speed.y;
-			pos.y += speed.y;
-			moveDir_ = MoveDir::Down;
-			posList = { {posUL.x, posDR.y},{pos.x, posDR.y }, { posDR.x, posDR.y }};
-			if (!IsPos(posList))
-			{
-				pos_.y = map.lock()->GetTilePos(pos).y + std::abs(pos.y - posDR.y);
-				return;
-			}
-			pos_ = pos;
-			process = true;
-			return;
-
+			MapId(pos);
+			pos_.y += speed.y;
 		}
 		if (list.first == InputID::Up)
 		{
-			posUL.y -= speed.y;
-			posDR.y -= speed.y;
-			pos.y -= speed.y;
-			moveDir_ = MoveDir::Up;
-			posList = { {posUL.x, posUL.y }, { pos.x, posUL.y }, {posDR.x, posUL.y}};
-			if (!IsPos(posList))
-			{
-				pos_.y = map.lock()->GetTilePos(pos).y + std::abs(pos.y - posUL.y);
-				return;
-			}
-			pos_ = pos;
-			process = true;
-			return;
+			MapId(pos);
+			pos_.y -= speed.y;
 		}
 		if (list.first == InputID::Left)
 		{
-			posUL.x -= speed.x;
-			posDR.x -= speed.x;
-			pos.x -= speed.x;
-			moveDir_ = MoveDir::Left;
-			posList = { {posUL.x, pos.y}, {posUL.x, posUL.y},{posUL.x, posDR.y} };
-			if (!IsPos(posList)) 
-			{
-				pos_.x = map.lock()->GetTilePos(Position2(posUL.x,pos.y)).x + TileSize+ std::abs(pos.x - posUL.x);
-				return;
-			};
-			pos_ = pos;
-			process = true;
-			return;
+			MapId(pos);
+			pos_.x -= speed.x;
 		}
 		if (list.first == InputID::Right)
 		{
-			posUL.x += speed.x;
-			posDR.x += speed.x;
-			pos.x += speed.x;
-			moveDir_ = MoveDir::Right;
-			posList = { {posDR.x, pos.y}, {posDR.x, posUL.y},{posDR.x, posDR.y} };
-			if (!IsPos(posList))
-			{
-				pos_.x = map.lock()->GetTilePos(Position2(posDR.x, pos.y)).x  - std::abs(pos.x- posUL.x);
-				return;
-			}
-			pos_ = pos;
-			process = true;
-			return;
+			MapId(pos);
+			pos_.x += speed.x;
 		}
 	});
-	AdjustPos();
 	SendCharData();
 }
 
@@ -171,7 +123,10 @@ void Character::AutoUpdate(std::weak_ptr<Map> map)
 void Character::Draw()
 {
 	animcnt_++;
-	DrawExtendGraph(pos_.x, pos_.y, pos_.x + CHAR_WIDTH, pos_.y + CHAR_HEIGHT, HandleData_[animcnt_ / 20 % 4][static_cast<int>(moveDir_)],true);
+	if (state_ == CharState::Alive)
+	{
+		DrawExtendGraph(pos_.x, pos_.y - 21, pos_.x + CHAR_WIDTH, pos_.y + CHAR_HEIGHT - 21, HandleData_[animcnt_ / 20 % 4][static_cast<int>(moveDir_)], true);
+	}
 }
 
 void Character::AutoMove(std::weak_ptr<Map>&&  map)
@@ -214,7 +169,6 @@ void Character::AutoMove(std::weak_ptr<Map>&&  map)
 		moveDir_ = static_cast<MoveDir>((static_cast<int>(moveDir_) + 1) % (static_cast<int>(MoveDir::Deth)));
 	}
 	else { pos_ = tmpPos[moveDir_].second; };
-	AdjustPos();
 }
 
 bool Character::SendCharData()
@@ -246,9 +200,8 @@ void Character::SetUpdateFunc(std::function<void(std::weak_ptr<Map >)> func)
 
 bool Character::Init()
 {
-	const int width = 16;
-	const int height = 16;
-	AdjustPos();
+	const int width = 5;
+	const int height = 4;
 
 	// Init Graphices handle
 	HandleId_.resize(width * height);
@@ -280,21 +233,14 @@ bool Character::Init()
 	
 	// 旧式のキャラクターのupdate関数の初期化
 	auto mode = IpNetWorkState->GetNetWorkMode();
-	//if (mode == NetWorkMode::GUEST)
-	//{
-	//	InitFunc(0, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1));
-	//}else if
-	//(mode == NetWorkMode::HOST)
-	//{
-	//	InitFunc(1, std::bind(&Character::DeffUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1), std::bind(&Character::NetUpdate, this, std::placeholders::_1));
-	//}
-	//else 
+
 	if (mode == NetWorkMode::OFFLINE) {
 		InitFunc(0, std::bind(&Character::DeffUpdate,this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1), std::bind(&Character::AutoUpdate, this, std::placeholders::_1));
 	}
 	else if (mode == NetWorkMode::GUEST)
 	{
-		updateFunc_ = std::bind(&Character::NetUpdate, this, std::placeholders::_1);
+		auto id = IpNetWorkState->GetPlID(); 
+		updateFunc_ = (id == IpNetWorkState->GetPlID()) ? std::bind(&Character::DeffUpdate, this, std::placeholders::_1) : std::bind(&Character::NetUpdate, this, std::placeholders::_1);
 	}
 	else if (mode == NetWorkMode::HOST)
 	{
@@ -313,6 +259,5 @@ bool Character::Init()
 //@param plPos	playerの位置
 void Character::MatchGridPos(Position2 plPos)
 {
-
 
 }

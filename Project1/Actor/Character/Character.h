@@ -2,10 +2,11 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include <mutex>
 #include "../Actor.h"
 
 constexpr auto CHAR_WIDTH = 32;
-constexpr auto CHAR_HEIGHT = 32;
+constexpr auto CHAR_HEIGHT = 51;
 constexpr auto UNIT_ID_BASE = 5;		// PlayerのiDを5刻みにする
 
 class Map;
@@ -29,6 +30,12 @@ enum class NetWorkMode;
 
 // DEFF (5):入力 自分の場合(相手側からするとNET)
 // NET(10~)  : ネットワーク
+
+enum class CharState :char
+{
+	Alive,
+	Death,
+};
 
 enum class AnimState
 {
@@ -71,7 +78,14 @@ public:
 	void SetPos(Position2 pos)
 	{
 		pos_ = pos;
-		AdjustPos();
+	}
+
+	void SetState(CharState state)
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+		{
+			state_ = state;
+		}
 	}
 
 	void SetDir(MoveDir moveDir)
@@ -96,7 +110,7 @@ public:
 	}
 
 protected:
-	Vector2Tmp<float> speed = { 5.f,5.f };
+	Vector2Tmp<float> speed = { 4.f,4.f };
 	std::vector<int> HandleId_;
 	std::vector<int*> HandleData_;
 
@@ -113,14 +127,12 @@ private:
 	static int Id_;
 	int playerID_;
 	int animcnt_ = 0;
+	std::mutex mtx_;
+	CharState state_=CharState::Alive;
 	bool Init();
 
 	// 位置調整
-	void AdjustPos()
-	{
-		posUL_ = pos_ - Position2(CHAR_WIDTH / 2-4, CHAR_HEIGHT / 2-8);
-		posDR_ = pos_ + Position2(CHAR_WIDTH / 2-4, CHAR_HEIGHT / 2-1);
-	}
+
 	void MatchGridPos(Position2 plPos);
 };
 

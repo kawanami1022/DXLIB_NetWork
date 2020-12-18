@@ -174,7 +174,7 @@ public:
 	{
 		sendPacket_.emplace_back(data);
 	}
-
+	
 	MesPacket GetSendPacket()
 	{
 		return sendPacket_;
@@ -183,7 +183,7 @@ public:
 	// Get playerID_.
 	int GetPlID()
 	{
-		return 0;
+		return playerID_;
 	}
 
 protected:

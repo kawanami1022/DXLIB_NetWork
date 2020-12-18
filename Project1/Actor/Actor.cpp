@@ -5,6 +5,10 @@ Actor::Actor()
 	pos_ = Position2(0, 0);
 }
 
+Actor::Actor(Position2 pos):pos_(pos)
+{
+}
+
 Actor::~Actor()
 {
 }

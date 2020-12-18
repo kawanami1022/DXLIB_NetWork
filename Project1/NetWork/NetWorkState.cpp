@@ -72,19 +72,15 @@ bool NetWorkState::RevUpdate()
 
 bool NetWorkState::SendUpdate(std::pair<int, unsigned int> pairInt)
 {
-	std::thread SendNetWorkThread([&]() {
 
-		if (GetLostNetWork() != -1)
-		{
-			return false;
-		}
+	if (GetLostNetWork() != -1)
+	{
+		return false;
+	}
 
-		NetWorkSend(pairInt.first, sendPacket_.data(), sendPacket_.size() * sizeof(int));
+	NetWorkSend(pairInt.first, sendPacket_.data(), sendPacket_.size() * sizeof(int));
 
-		sendPacket_.clear();
-		return true;
-	});
-	SendNetWorkThread.join();
+	sendPacket_.clear();
 	return true;
 }
 

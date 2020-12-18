@@ -6,6 +6,7 @@ class Actor
 {
 public:
 	Actor();
+	Actor(Position2 pos);
 	~Actor();
 
 	virtual void Update();

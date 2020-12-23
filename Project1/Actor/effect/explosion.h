@@ -13,7 +13,7 @@ class explosion :public Actor
 {
 public:
 	explosion();
-	explosion(Position2);
+	explosion(Position2,int);
 	~explosion();
 
 	void Update();
@@ -28,7 +28,7 @@ public:
 private:
 
 	int ID_;
-
+	int dst_;
 	EXP_STATE state_;
 	std::vector<int*> handle_;
 	std::vector<int> handleData_;

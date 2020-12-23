@@ -8,6 +8,7 @@
 #include <chrono>
 #include "BaseScene.h"
 #include "../Actor/Item/Bomb/Bomb.h"
+#include "../Actor/effect/explosion.h"
 
 class Map;
 class Character;
@@ -32,6 +33,7 @@ public:
 	void Network();
 
 	bool SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet);	// ownerID 親のID selfID 自身のID pos 爆弾を置く位置  sendNet
+	bool SetFire(Position2 pos,int dst);
 	GameScene();
 	~GameScene();
 
@@ -45,5 +47,6 @@ private:
 	std::chrono::system_clock::time_point start_;
 	std::once_flag once;
 	std::vector<std::unique_ptr<Bomb>> bomb_;
+	std::vector<std::unique_ptr<explosion>> fire_;
 };
 

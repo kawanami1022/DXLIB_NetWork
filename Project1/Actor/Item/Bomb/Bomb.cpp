@@ -10,7 +10,7 @@ Bomb::Bomb():time_(0.f),bombState_(BOMB_STATE::COUNT_DOWN)
 	Init();
 }
 
-Bomb::Bomb(Position2 pos):Item(pos), bombState_(BOMB_STATE::COUNT_DOWN)
+Bomb::Bomb(Position2 pos) : Item(pos), bombState_(BOMB_STATE::COUNT_DOWN) 
 {
 	Init();
 }
@@ -22,7 +22,6 @@ Bomb::~Bomb()
 
 void Bomb::Update()
 {
-	
 	auto now = std::chrono::system_clock::now();
 	elapsedTime_ = now.time_since_epoch()- exTime_.time_since_epoch();
 	//	Œ»ÝŽž‚ª”š”­ŽžŠÔ‚æ‚è‘å‚«‚¯‚ê‚Î”š”­v
@@ -33,11 +32,11 @@ void Bomb::Update()
 	{
 		bombState_ = BOMB_STATE::IGNITED;
 	}
-	if (elapsedTime_ >= std::chrono::seconds(1))
+	if (elapsedTime_ >= std::chrono::milliseconds(500))
 	{
 		bombState_ = BOMB_STATE::EXPROSION;
 	}
-	if (elapsedTime_ >= std::chrono::seconds(7))
+	if (elapsedTime_ >= std::chrono::seconds(6))
 	{
 		bombState_ = BOMB_STATE::DETH;
 	}
@@ -76,10 +75,12 @@ void Bomb::Init()
 	
 	pos_ = pos_ / TileSize * TileSize;
 	LoadDivGraph("Image/bomb.png", 14, 2, 7, 20, 20, &handleData_[0], true);
+#ifdef DEBUG
 	for (auto HDLDATA : handleData_)
 	{
 		std::cout << HDLDATA << std::endl;
 	}
+#endif // DEBUG
 	bombState_ = BOMB_STATE::COUNT_DOWN;
 
 	

@@ -135,6 +135,11 @@ inline bool operator==(const Vector2Tmp<T>& vec2, T k)
 {
 	return (vec2.x == k && vec2.y == k);
 }
+template<class T>
+inline bool operator==(const Vector2Tmp<T>& vec2, Vector2Tmp<T> k)
+{
+	return (vec2.x == k.x && vec2.y == k.y);
+}
 
 template<class T>
 inline bool operator!=(Vector2Tmp<T>& vec2, T k)

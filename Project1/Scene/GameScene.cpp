@@ -79,6 +79,10 @@ void GameScene::Draw()
 	{
 		BOMB->Draw();
 	}
+	for (auto& FIRE : fire_)
+	{
+		FIRE->Draw();
+	}
 }
 
 void GameScene::UpdateHost()
@@ -94,15 +98,45 @@ void GameScene::UpdateHost()
 
 void GameScene::UpdateGuest()
 {
+	auto IsFire = [&](std::unique_ptr<Bomb>& bomb) {
+		if (bomb->GetBombState() == BOMB_STATE::IGNITED)
+		{
+			//炎エフェクトが存在するかたしかめる
+			for (auto& FIRE : fire_)
+			{
+				if (FIRE->GetPos() == bomb->GetPos())
+				{
+					return false;
+				}
+			}
+			return	true;
+		}else {return false;}
+	};
+
 
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
 	}
+
 	for (auto& BOMB : bomb_)
 	{
 		BOMB->Update();
+		if (IsFire(BOMB))
+		{
+			SetFire(BOMB->GetPos(), 0);
+		}
+
 	}
+
+	for (auto& FIRE : fire_)
+	{
+		FIRE->Update();
+
+	}
+	
+
+	// 削除する処理
 	for (auto idx = 0; idx < bomb_.size(); idx++)
 	{
 		if (bomb_[idx]->GetBombState() == BOMB_STATE::DETH)
@@ -110,6 +144,15 @@ void GameScene::UpdateGuest()
 			bomb_.erase(bomb_.begin() + idx);
 		}
 	}
+
+	for (auto idx = 0; idx < fire_.size(); idx++)
+	{
+		if (fire_[idx]->GetState() == EXP_STATE::DEAD)
+		{
+			fire_.erase(fire_.begin() + idx);
+		}
+	}
+
 }
 
 void GameScene::UpdateOFFLINE()
@@ -185,53 +228,20 @@ void GameScene::Network()
 				}
 
 			}
-#ifdef DEBUG
-
-
-			// playerの送信する
-
-			// playerのIDを取得
-			auto id = IpNetWorkState->GetPlID();
-		
-			headerdata.mesdata_ = { MesType::POS,0,0,4 };		// ヘッダーデータを送信
-			IpNetWorkState->SetSendPacket(headerdata.data_[0]);		// MesType::POS,0,0
-			IpNetWorkState->SetSendPacket(headerdata.data_[1]);		// 4
-			IpNetWorkState->SetSendPacket(id);									// GuestのplayerID送信					
-			for (auto CHARACTER_ : character_)
-			{
-				// playerIDのplayerを探す
-				if (id == CHARACTER_->GetPlID())
-				{
-					
-					auto pos = CHARACTER_->GetPos();				// 座標保存用変数
-					auto dir = CHARACTER_->GetMoveDir();		// 方向保存用変数
-					IpNetWorkState->SetSendPacket(pos.x);			// 座標x:送信
-					IpNetWorkState->SetSendPacket(pos.y);			// 座標y:送信
-					IpNetWorkState->SetSendPacket(static_cast<int>(dir));		// 方向:送信
-				}
-			}
-			auto netHandle = IpNetWorkState->GetNetWorkHandle().front();
-			IpNetWorkState->SendUpdate(netHandle);
-		
-#endif // DEBUG
 		}
-
-
 	}
-
-#ifdef DEBUG
-	while (isInstance_)
-	{
-
-	}
-
-#endif // !1
 }
 
 
 bool GameScene::SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet)
 {
 	return false;
+}
+
+bool GameScene::SetFire(Position2 pos, int dst)
+{
+	fire_.emplace_back(std::make_unique<explosion>(pos,dst));
+	return true;
 }
 
 GameScene::GameScene()

@@ -2,7 +2,6 @@
 #include <vector>
 #include <chrono>
 #include "../Item.h"
-
 enum class BOMB_STATE
 {
 	COUNT_DOWN,		// ”š”­‘O

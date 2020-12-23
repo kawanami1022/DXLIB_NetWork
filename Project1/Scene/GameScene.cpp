@@ -106,11 +106,38 @@ void GameScene::UpdateGuest()
 			{
 				if (FIRE->GetPos() == bomb->GetPos())
 				{
+
 					return false;
 				}
 			}
 			return	true;
 		}else {return false;}
+	};
+
+	// 2Ç¬à»è„ÇÃâäÇ™ë∂ç›ÇµÇ»Ç¢Ç©ÇΩÇµÇ©ÇﬂÇÈ
+	auto CheckMoreSecFire = [&](Position2 pos,int dst) {
+		for (auto& FIRE : fire_)
+		{
+			if (FIRE->GetPos() == pos)
+			{
+				return false;
+			}
+		}
+		for (auto& FIRE : fire_)
+		{
+			if (FIRE->GetPos() != pos)
+			{
+				std::cout << FIRE->GetPos().x << "," << FIRE->GetPos().y << ":" << pos.x << "," << pos.y << std::endl;
+				if (FIRE->GetDst() != dst)
+				{
+					if (map_->GetMapId(pos) != MAP_ID::BLOCK_INBREAK)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	};
 
 
@@ -131,8 +158,78 @@ void GameScene::UpdateGuest()
 
 	for (auto& FIRE : fire_)
 	{
+
 		FIRE->Update();
 
+		if (FIRE->GetDst() == 0)
+		{
+
+			auto TilePos = FIRE->GetPos() / TileSize;
+
+			if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 1))
+			{
+
+				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1) == true)
+				{
+					SetFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1);
+				}
+				if (CheckMoreSecFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1) == true)
+				{
+					SetFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1);
+				}
+				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1) == true)
+				{
+					SetFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1);
+				}
+				if (CheckMoreSecFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1) == true)
+				{
+					SetFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1);
+				}
+			}
+#ifdef DEBUG
+			if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 2))
+			{
+
+				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2) == true)
+				{
+					SetFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2);
+				}
+				if (CheckMoreSecFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2) == true)
+				{
+					SetFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2);
+				}
+				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2) == true)
+				{
+					SetFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2);
+
+				}
+				if (CheckMoreSecFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2) == true)
+				{
+					SetFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2);
+				}
+			}
+#endif // DEBUG
+		}
+
+#ifdef DEBUG
+
+
+			// è„
+			if (map_->GetMapId(Position2(TilePos.x, TilePos.y - 1))==MAP_ID::NON)
+			{
+
+			}
+
+			// âE
+			
+			// â∫
+			
+			// ç∂
+
+
+#endif // DEBUG
+		}
+		
 	}
 	
 

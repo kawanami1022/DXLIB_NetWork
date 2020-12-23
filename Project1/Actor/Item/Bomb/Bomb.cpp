@@ -17,7 +17,10 @@ Bomb::Bomb(Position2 pos) : Item(pos), bombState_(BOMB_STATE::COUNT_DOWN)
 
 Bomb::~Bomb()
 {
-
+	for (auto& HANDLE : handleData_)
+	{
+		DeleteGraph(HANDLE);
+	}
 }
 
 void Bomb::Update()

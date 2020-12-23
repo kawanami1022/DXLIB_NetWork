@@ -25,7 +25,9 @@ enum class CHAR_ID
 enum class MAP_ID
 {
 	NON,
-	BLOCK
+	BLOCK_BREAK,// ‰ó‚¹‚é
+	BLOCK_INBREAK	//‰ó‚¹‚È‚¢S
+
 };
 
 

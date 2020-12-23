@@ -3,6 +3,8 @@
 #include <vector>
 #include "../Actor.h"
 
+using timePoint = std::chrono::system_clock::time_point;
+
 enum class EXP_STATE
 {
 	ALIVE,
@@ -25,6 +27,16 @@ public:
 		return state_;
 	}
 
+	timePoint::duration GetElTime()
+	{
+		return elapsedTime_;
+	}
+
+	int GetDst()
+	{
+		return dst_;
+	}
+
 private:
 
 	int ID_;
@@ -33,9 +45,9 @@ private:
 	std::vector<int*> handle_;
 	std::vector<int> handleData_;
 
-	std::chrono::system_clock::time_point generateTime_;		// effectê∂ê¨éûä‘
-	std::chrono::system_clock::time_point now;
-	std::chrono::system_clock::time_point::duration elapsedTime_;	// åoâﬂéûä‘
+	timePoint generateTime_;		// effectê∂ê¨éûä‘
+	timePoint now;
+	timePoint::duration elapsedTime_;	// åoâﬂéûä‘
 
 	void Init();
 

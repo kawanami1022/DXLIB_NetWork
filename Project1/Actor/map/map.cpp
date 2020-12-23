@@ -44,7 +44,20 @@ MAP_ID Map::GetMapId(Position2 actorPos)
 	{
 		return MAP_ID::NON;
 	}
-	return MAP_ID::BLOCK;
+	if (tmxFile_->tiledMap_["map"].titleID_[actorPos.x][actorPos.y] == 8)
+	{
+		return MAP_ID::BLOCK_BREAK;
+	}
+
+	if (tmxFile_->tiledMap_["map"].titleID_[actorPos.x][actorPos.y] == 6)
+	{
+		return MAP_ID::BLOCK_INBREAK;
+	}
+	if (tmxFile_->tiledMap_["map"].titleID_[actorPos.x][actorPos.y] == 7)
+	{
+		return MAP_ID::BLOCK_INBREAK;
+	}
+	return MAP_ID::NON;
 }
 
 int Map::GetGridID(Position2 GridPos, std::string Layer)
@@ -100,7 +113,7 @@ bool Map::SponePlayerFlag(Position2 tilePos)
 
 bool Map::IsTurnRight(Position2 actorPos)
 {
-	if (GetMapId(actorPos) == MAP_ID::BLOCK)
+	if (GetMapId(actorPos) == MAP_ID::BLOCK_INBREAK)
 	{
 		return true;
 	}

@@ -1,7 +1,7 @@
 #include <DxLib.h>
 #include "ImageManager.h"
 
-ImageManager ImageManager::hInstance;
+ImageManager* ImageManager::hInstance;
 
 bool ImageManager::LoadTexture(std::string ImageName, std::string FilePath)
 {

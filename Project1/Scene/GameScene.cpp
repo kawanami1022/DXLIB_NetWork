@@ -8,6 +8,7 @@
 #include "../NetWork/NetWorkState.h"
 #include "../Actor/map/map.h"
 #include "../Actor/Character/Character.h"
+#include "../Actor/Item/Item.h"
 #include "GameScene.h"
 
 UniqueBase GameScene::input(UniqueBase nowScene)
@@ -59,7 +60,6 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 	std::call_once(once, InitStartTime);
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
 	updateNetWorkModeFunc_[netWorkMode]();
-	
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
 	Draw();
@@ -75,7 +75,10 @@ void GameScene::Draw()
 	{
 		CHARACTER->Draw();
 	}
-	bomb_.Draw();
+	for (auto &BOMB : bomb_)
+	{
+		BOMB->Draw();
+	}
 }
 
 void GameScene::UpdateHost()
@@ -96,7 +99,17 @@ void GameScene::UpdateGuest()
 	{
 		CHAR->Update(map_);
 	}
-
+	for (auto& BOMB : bomb_)
+	{
+		BOMB->Update();
+	}
+	for (auto idx = 0; idx < bomb_.size(); idx++)
+	{
+		if (bomb_[idx]->GetBombState() == BOMB_STATE::DETH)
+		{
+			bomb_.erase(bomb_.begin() + idx);
+		}
+	}
 }
 
 void GameScene::UpdateOFFLINE()
@@ -159,11 +172,22 @@ void GameScene::Network()
 				}
 				if (headerdata.mesdata_.type == MesType::SET_BOM)
 				{
+					bomb_.emplace_back(std::make_unique<Bomb>(Position2(data[2], data[3])));
+					// long longŒ^ ”š’eÝ’uŽžŠÔ
+					Header start = { MesType::SET_BOM };
+					start.data_[0] = data[5];
+					start.data_[1] = data[6];
+					bomb_.back()->SetSetTime(start.start_);
+					// ”š”­ŽžŠÔ
+					bomb_.back()->SetExTime(data[4]);
+
 					data.erase(data.begin(), data.begin() + headerdata.data_[1]);
 				}
 
 			}
-			
+#ifdef DEBUG
+
+
 			// player‚Ì‘—M‚·‚é
 
 			// player‚ÌID‚ðŽæ“¾
@@ -186,10 +210,11 @@ void GameScene::Network()
 					IpNetWorkState->SetSendPacket(static_cast<int>(dir));		// •ûŒü:‘—M
 				}
 			}
-
-
-		}
+			auto netHandle = IpNetWorkState->GetNetWorkHandle().front();
+			IpNetWorkState->SendUpdate(netHandle);
 		
+#endif // DEBUG
+		}
 
 
 	}
@@ -203,6 +228,11 @@ void GameScene::Network()
 #endif // !1
 }
 
+
+bool GameScene::SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet)
+{
+	return false;
+}
 
 GameScene::GameScene()
 {
@@ -227,16 +257,22 @@ bool GameScene::Init()
 	IpNetWorkState->ClearRevPacket();
 	IpNetWorkState->ClearSendPacket();
 	std::cout << "-------------ClearPacket---------------" << std::endl;
+	auto playerMax= IpNetWorkState->GetPIMax();
+	auto tmpCharCnt = 0;
 	for (unsigned int y = 0; y < map_->GetMapSize().y; y++)
 	{
+		if (tmpCharCnt >= playerMax){break;}
 		for (unsigned int x = 0; x < map_->GetMapSize().x; x++)
 		{
+			if (tmpCharCnt >= playerMax){break;}
+
 			Position2 TilePos = Position2(x, y);
 			if (map_->GetGridID(TilePos, "character")==4)
 			{
 				try
 				{
 					character_.emplace_back(std::make_unique<Character>(TilePos * TileSize));
+					tmpCharCnt++;
 				}
 				catch (std::out_of_range& e)
 				{
@@ -245,9 +281,8 @@ bool GameScene::Init()
 				}
 			}
 		}
-	}
 
-	bomb_ = Bomb();
+	}
 
 	std::thread netWorkThread(&GameScene::Network, this);
 	netWorkThread.detach();

@@ -32,7 +32,6 @@ public:
 	void Network();
 
 	bool SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet);	// ownerID 親のID selfID 自身のID pos 爆弾を置く位置  sendNet
-	//void DrawOwnScreen();
 	GameScene();
 	~GameScene();
 
@@ -42,9 +41,9 @@ private:
 	std::shared_ptr<Map> map_;
 	CharacterList character_;
 	bool Init();
-	Bomb bomb_;
 	std::unordered_map< NetWorkMode, std::function<void()>> updateNetWorkModeFunc_;
 	std::chrono::system_clock::time_point start_;
 	std::once_flag once;
+	std::vector<std::unique_ptr<Bomb>> bomb_;
 };
 

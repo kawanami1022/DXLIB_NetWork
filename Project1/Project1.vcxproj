@@ -160,6 +160,7 @@
     <ClInclude Include="Actor\Character\Character.h" />
     <ClInclude Include="Actor\Item\Bomb\Bomb.h" />
     <ClInclude Include="Actor\Item\Item.h" />
+    <ClInclude Include="Actor\effect\explosion.h" />
     <ClInclude Include="Manager\ImageManager.h" />
     <ClInclude Include="Lib\Constraint\cast.h" />
     <ClInclude Include="Lib\Constraint\constraint.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="Actor\Character\Character.cpp" />
     <ClCompile Include="Actor\Item\Item.cpp" />
     <ClCompile Include="Actor\Item\Bomb\Bomb.cpp" />
+    <ClCompile Include="Actor\effect\explosion.cpp" />
     <ClCompile Include="Manager\ImageManager.cpp" />
     <ClCompile Include="Lib\Math\math.cpp" />
     <ClCompile Include="Actor\map\map.cpp" />

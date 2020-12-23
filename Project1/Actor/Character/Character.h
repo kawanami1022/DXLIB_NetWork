@@ -84,7 +84,7 @@ public:
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
 		{
-			state_ = state;
+			charState_ = state;
 		}
 	}
 
@@ -128,7 +128,7 @@ private:
 	int playerID_;
 	int animcnt_ = 0;
 	std::mutex mtx_;
-	CharState state_=CharState::Alive;
+	CharState charState_=CharState::Alive;
 	bool Init();
 
 	// ˆÊ’u’²®

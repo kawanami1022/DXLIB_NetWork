@@ -14,7 +14,19 @@ class ImageManager
 public:
 	static ImageManager& GethInstance()
 	{
-		return hInstance;
+		Create();
+		return *hInstance;
+	}
+	static void Create()
+	{
+		if (hInstance == nullptr)
+		{
+			hInstance = new ImageManager();
+		}
+	}
+	static void Destroy()
+	{
+		delete hInstance;
 	}
 
 	bool LoadTexture(std::string ImageName, std::string FilePath);
@@ -25,8 +37,7 @@ private:
 	std::unordered_map<std::string, std::string> fileName_;
 	std::unordered_map<std::string, pairImageHandle> imageHandle_;
 
-
-	static ImageManager hInstance;
+	static ImageManager *hInstance;
 	ImageManager();
 	~ImageManager();
 };

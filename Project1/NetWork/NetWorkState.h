@@ -186,6 +186,10 @@ public:
 		return playerID_;
 	}
 
+	int GetPIMax()
+	{
+		return playerMax_;
+	}
 protected:
 
 	// •Ï”éŒ¾

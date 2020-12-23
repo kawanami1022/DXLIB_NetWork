@@ -34,7 +34,7 @@ Character::~Character()
 
 void Character::Update(std::weak_ptr<Map> map)
 {
-	if (state_==CharState::Alive)
+	if (charState_ ==CharState::Alive)
 	{
 		updateFunc_(map);
 	}
@@ -123,7 +123,7 @@ void Character::AutoUpdate(std::weak_ptr<Map> map)
 void Character::Draw()
 {
 	animcnt_++;
-	if (state_ == CharState::Alive)
+	if (charState_ == CharState::Alive)
 	{
 		DrawExtendGraph(pos_.x, pos_.y - 21, pos_.x + CHAR_WIDTH, pos_.y + CHAR_HEIGHT - 21, HandleData_[animcnt_ / 20 % 4][static_cast<int>(moveDir_)], true);
 	}

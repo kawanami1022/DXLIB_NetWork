@@ -1,6 +1,10 @@
 #include "Item.h"
 
-Item::Item()
+Item::Item():Actor()
+{
+}
+
+Item::Item(Position2 pos):Actor(pos)
 {
 }
 

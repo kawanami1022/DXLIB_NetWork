@@ -1,5 +1,4 @@
 #include <thread>
-
 #include <filesystem>
 #include <iostream>
 #include <DxLib.h>
@@ -9,6 +8,8 @@
 #include "../Actor/map/map.h"
 #include "../Actor/Character/Character.h"
 #include "../Actor/Item/Item.h"
+#include "ResultScene.h"
+#include "CrossOver.h"
 #include "GameScene.h"
 
 UniqueBase GameScene::input(UniqueBase nowScene)
@@ -59,7 +60,13 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 
 	std::call_once(once, InitStartTime);
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
+	// ƒV[ƒ“‘@ˆÛ
 	updateNetWorkModeFunc_[netWorkMode]();
+	if (changeScene_)
+	{
+		auto nextScene = std::make_unique<ResultScene>();
+		nowScene = std::make_unique<CrossOver>(std::move(nowScene), std::move(nextScene));
+	}
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
 	Draw();
@@ -247,6 +254,8 @@ void GameScene::UpdateGuest()
 		
 	}
 	
+	
+
 
 	// íœ‚·‚éˆ—
 	for (auto idx = 0; idx < bomb_.size(); idx++)
@@ -279,6 +288,7 @@ void GameScene::UpdateGuest()
 		}
 
 	}
+
 }
 
 void GameScene::UpdateOFFLINE()
@@ -334,7 +344,7 @@ void GameScene::Network()
 						{
 							// player‚ğE‚·
 							CHARACTER_->SetState(CharState::Death);
-							data.erase(data.begin()+id);
+							data.erase(data.begin()+id/5);
 							break;
 						}
 					}
@@ -351,6 +361,16 @@ void GameScene::Network()
 					bomb_.back()->SetExTime(data[4]);
 
 					data.erase(data.begin(), data.begin() + headerdata.data_[1]);
+				}
+
+				if (headerdata.mesdata_.type == MesType::RESULT)
+				{
+					IpNetWorkState->SetResult(data[0]);
+					IpNetWorkState->SetResult(data[1]);
+					IpNetWorkState->SetResult(data[2]);
+					IpNetWorkState->SetResult(data[3]);
+					IpNetWorkState->SetResult(data[4]);
+					changeScene_ = true;
 				}
 
 			}
@@ -375,7 +395,7 @@ bool GameScene::SetFire(Position2 pos, int dst)
 	return true;
 }
 
-GameScene::GameScene()
+GameScene::GameScene():changeScene_(false)
 {
 	std::cout << "-------------GameScene---------------" << std::endl;
 	Init();

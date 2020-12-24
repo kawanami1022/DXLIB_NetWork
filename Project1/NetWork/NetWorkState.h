@@ -45,7 +45,7 @@ enum class MesType :char
 	POS,						// ゲーム中のデータ											{MesType ヘッダー,ID,x,y,Dir}
 	SET_BOM,				// ボムを配置													{MesType ヘッダー,設置したキャラのID,爆弾自体のID,x,y,int 型　爆発までの時間(3秒),long long型 爆弾設置時間,}
 	DETH,					// 死亡																{MesType ヘッダー,自分のID}
-	RESULT,				// 
+	RESULT,				// 結果																{MesType ヘッダー,ID,ID,ID,ID,ID,}		
 	LOST,					// ネットワーク切断時に生成(ホストは自分のネットワークにセットする)				{MesType ヘッダー}
 	MAX
 };
@@ -164,6 +164,23 @@ public:
 	{
 		revPacket_.emplace_back(data);
 	}
+	
+	void SetResult(int id)
+	{
+		for (auto& RESULT : result_)
+		{
+			if (RESULT == -1)
+			{
+				RESULT = id;
+				break;
+			}
+		}
+	}
+
+	std::array<int, 5> GetResult()
+	{
+		return result_;
+	}
 
 	MesPacket GetRevPacket()
 	{
@@ -209,6 +226,8 @@ protected:
 	
 	MesPacket revPacket_;
 	MesPacket sendPacket_;
+
+	std::array<int,5> result_;
 
 	int playerID_;
 	int playerMax_;

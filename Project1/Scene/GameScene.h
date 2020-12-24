@@ -48,5 +48,6 @@ private:
 	std::once_flag once;
 	std::vector<std::unique_ptr<Bomb>> bomb_;
 	std::vector<std::unique_ptr<explosion>> fire_;
+	bool changeScene_=false;
 };
 

@@ -30,6 +30,10 @@ NetWorkState::NetWorkState()
 	timer_ = std::make_unique<Timer>();
 	mesData_.sendID = 0;
 
+	for (auto& RESULT : result_)
+	{
+		RESULT = -1;
+	}
 }
 
 NetWorkState::~NetWorkState()

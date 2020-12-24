@@ -166,6 +166,7 @@
     <ClInclude Include="Lib\Constraint\constraint.h" />
     <ClInclude Include="Lib\Math\math.h" />
     <ClInclude Include="Actor\map\map.h" />
+    <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\CrossOver.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="input\controller.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="Manager\ImageManager.cpp" />
     <ClCompile Include="Lib\Math\math.cpp" />
     <ClCompile Include="Actor\map\map.cpp" />
+    <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\CrossOver.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="input\controller.cpp" />

@@ -178,6 +178,7 @@ bool Character::SendCharData()
 
 	std::vector<int> sendData =
 	{ static_cast<int>(MesType::POS),
+		4,
 		playerID_,
 		pos_.x,
 		pos_.y,
@@ -240,7 +241,7 @@ bool Character::Init()
 	else if (mode == NetWorkMode::GUEST)
 	{
 		auto id = IpNetWorkState->GetPlID(); 
-		updateFunc_ = (id == IpNetWorkState->GetPlID()) ? std::bind(&Character::DeffUpdate, this, std::placeholders::_1) : std::bind(&Character::NetUpdate, this, std::placeholders::_1);
+		updateFunc_ = (playerID_ == IpNetWorkState->GetPlID()) ? std::bind(&Character::DeffUpdate, this, std::placeholders::_1) : std::bind(&Character::NetUpdate, this, std::placeholders::_1);
 	}
 	else if (mode == NetWorkMode::HOST)
 	{

@@ -26,11 +26,11 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 		std::string line;
 		Header headerdata{ MesType::NON };
 		start_time.seekg(std::ios::beg);
+
 		while (!start_time.eof())
 		{
 			std::getline(start_time, line);
 			if (line.size() <= 0)continue;
-
 			timeList.emplace_back(std::stoi(line));
 			std::cout << line << std::endl;
 		}
@@ -88,7 +88,6 @@ void GameScene::Draw()
 void GameScene::UpdateHost()
 {
 
-
 	for (auto CHAR : character_)
 	{
 		CHAR->Update(map_);
@@ -139,7 +138,6 @@ void GameScene::UpdateGuest()
 		}
 		return false;
 	};
-
 
 	for (auto CHAR : character_)
 	{
@@ -271,7 +269,7 @@ void GameScene::UpdateGuest()
 		for (auto idx=0;idx<character_.size();idx++)
 		{
 			Header header{ MesType::DETH,0,0,1 };
-			if (character_[idx]->GetPos() / TileSize == FIRE->GetPos() / TileSize)
+			if (character_[idx]->GetPos() / TileSize == FIRE->GetPos() / TileSize|| character_[idx]->GetDRPos() / TileSize == FIRE->GetPos() / TileSize)
 			{
 				IpNetWorkState->SetSendPacket(header.data_[0]);
 				IpNetWorkState->SetSendPacket(header.data_[1]);
@@ -304,7 +302,7 @@ void GameScene::Network()
 			// Guest
 			IpNetWorkState->RevUpdate();
 			auto data = IpNetWorkState->GetRevPacket();
-			while (data.size() > 0)
+			while (data.size() > 2)
 			{
 				headerdata.data_[0] = data[0];
 				headerdata.data_[1] = data[1];

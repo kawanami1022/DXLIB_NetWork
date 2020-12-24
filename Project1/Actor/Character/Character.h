@@ -108,7 +108,10 @@ public:
 	{
 		return playerID_;
 	}
-
+	Position2 GetDRPos()
+	{
+		return Position2(pos_.x + 32, pos_.y + 32);
+	}
 protected:
 	Vector2Tmp<float> speed = { 4.f,4.f };
 	std::vector<int> HandleId_;

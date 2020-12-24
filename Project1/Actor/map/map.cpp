@@ -120,3 +120,8 @@ bool Map::IsTurnRight(Position2 actorPos)
 	return false;
 }
 
+void Map::setMapId(Position2 pos, int id)
+{
+	tmxFile_->tiledMap_["map"].titleID_[pos.x][pos.y] = id;
+}
+

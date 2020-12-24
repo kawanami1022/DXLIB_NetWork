@@ -172,44 +172,61 @@ void GameScene::UpdateGuest()
 				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1) == true)
 				{
 					SetFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1);
+					map_->setMapId(Position2(TilePos.x, TilePos.y - 1), 0);
 				}
 				if (CheckMoreSecFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1) == true)
 				{
 					SetFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1);
+					map_->setMapId(Position2(TilePos.x + 1, TilePos.y), 0);
 				}
 				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1) == true)
 				{
 					SetFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1);
+					map_->setMapId(Position2(TilePos.x, TilePos.y + 1), 0);
 				}
 				if (CheckMoreSecFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1) == true)
 				{
 					SetFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1);
+					map_->setMapId(Position2(TilePos.x - 1, TilePos.y), 0);
 				}
 			}
 #ifdef DEBUG
+
+
 			if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 2))
 			{
+				if (map_->GetMapId(Position2(TilePos.x, TilePos.y - 2)) == MAP_ID::BLOCK_BREAK|| map_->GetMapId(Position2(TilePos.x, TilePos.y - 2)) == MAP_ID::BLOCK_INBREAK)
+				{
 
-				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2) == true)
-				{
-					SetFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2);
+					if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2) == true)
+					{
+						SetFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2);
+					}
 				}
-				if (CheckMoreSecFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2) == true)
+				if (map_->GetMapId(Position2(TilePos.x + 2, TilePos.y)) == MAP_ID::BLOCK_BREAK || map_->GetMapId(Position2(TilePos.x + 2, TilePos.y)) == MAP_ID::BLOCK_INBREAK)
 				{
-					SetFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2);
+					if (CheckMoreSecFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2) == true)
+					{
+						SetFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2);
+					}
 				}
-				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2) == true)
+				if (map_->GetMapId(Position2(TilePos.x, TilePos.y + 2)) == MAP_ID::BLOCK_BREAK || map_->GetMapId(Position2(TilePos.x, TilePos.y + 2)) == MAP_ID::BLOCK_INBREAK)
 				{
-					SetFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2);
+					if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2) == true)
+					{
+						SetFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2);
 
+					}
 				}
-				if (CheckMoreSecFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2) == true)
+				if (map_->GetMapId(Position2(TilePos.x - 2, TilePos.y)) == MAP_ID::BLOCK_BREAK || map_->GetMapId(Position2(TilePos.x - 2, TilePos.y)) == MAP_ID::BLOCK_INBREAK)
 				{
-					SetFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2);
+					if (CheckMoreSecFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2) == true)
+					{
+						SetFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2);
+					}
 				}
 			}
 #endif // DEBUG
-		}
 
 #ifdef DEBUG
 
@@ -249,7 +266,21 @@ void GameScene::UpdateGuest()
 			fire_.erase(fire_.begin() + idx);
 		}
 	}
+	for (auto& FIRE : fire_)
+	{
+		for (auto idx=0;idx<character_.size();idx++)
+		{
+			Header header{ MesType::DETH,0,0,1 };
+			if (character_[idx]->GetPos() / TileSize == FIRE->GetPos() / TileSize)
+			{
+				IpNetWorkState->SetSendPacket(header.data_[0]);
+				IpNetWorkState->SetSendPacket(header.data_[1]);
+				IpNetWorkState->SetSendPacket(character_[idx]->GetPlID());
+				character_.erase(character_.begin() + idx);
+			}
+		}
 
+	}
 }
 
 void GameScene::UpdateOFFLINE()
@@ -305,7 +336,7 @@ void GameScene::Network()
 						{
 							// player‚ðŽE‚·
 							CHARACTER_->SetState(CharState::Death);
-							data.erase(data.begin());
+							data.erase(data.begin()+id);
 							break;
 						}
 					}
@@ -325,6 +356,10 @@ void GameScene::Network()
 				}
 
 			}
+			if (IpNetWorkState->GetSendPacket().size() > 0)
+			{
+				IpNetWorkState->SendUpdate(IpNetWorkState->GetNetWorkHandle().front());
+			}
 		}
 	}
 }
@@ -338,6 +373,7 @@ bool GameScene::SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet)
 bool GameScene::SetFire(Position2 pos, int dst)
 {
 	fire_.emplace_back(std::make_unique<explosion>(pos,dst));
+
 	return true;
 }
 

@@ -46,6 +46,8 @@ public:
 
 	bool SponePlayerFlag(Position2 tilePos);
 	bool IsTurnRight(Position2 actorPos);
+
+	void setMapId(Position2,int);
 private:
 	std::shared_ptr< File::TMX_File> tmxFile_;
 	std::shared_ptr<int[]> tileHandle_;

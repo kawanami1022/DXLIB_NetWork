@@ -1,6 +1,7 @@
 #include <thread>
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
 #include <DxLib.h>
 #include "../Lib/File/TMX_File.h"
 #include "../NetWork/NetWork.h"
@@ -14,6 +15,30 @@
 
 UniqueBase GameScene::input(UniqueBase nowScene)
 {
+	// îöíeê›íu
+	Header header{ MesType::NON };
+	for (auto& CHARACTER : character_)
+	{
+		if (CHARACTER->GetSetBb())
+		{
+			bomb_.emplace_back(std::make_unique<Bomb>(CHARACTER->GetPos()));
+			if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST)
+			{
+				header.mesdata_ = { MesType::SET_BOM ,0,0,7 };
+				IpNetWorkState->SetSendPacket(header.data_[0]);
+				IpNetWorkState->SetSendPacket(7);
+				IpNetWorkState->SetSendPacket(CHARACTER->GetPlID());
+				IpNetWorkState->SetSendPacket(bomb_.size());
+				IpNetWorkState->SetSendPacket(CHARACTER->GetPos().x);
+				IpNetWorkState->SetSendPacket(CHARACTER->GetPos().y);
+				IpNetWorkState->SetSendPacket(3);
+				header.start_ = bomb_.back()->GetSetTime();
+				IpNetWorkState->SetSendPacket(header.data_[0]);
+				IpNetWorkState->SetSendPacket(header.data_[1]);
+				std::cout <<"bombÇÃselfID:"<< CHARACTER->GetPlID() + bomb_.size() << std::endl;
+			}
+		}
+	}
 	return nowScene;
 
 }
@@ -233,42 +258,23 @@ void GameScene::UpdateGuest()
 			}
 #endif // DEBUG
 
-#ifdef DEBUG
-
-
-			// è„
-			if (map_->GetMapId(Position2(TilePos.x, TilePos.y - 1))==MAP_ID::NON)
-			{
-
-			}
-
-			// âE
-			
-			// â∫
-			
-			// ç∂
-
-
-#endif // DEBUG
 		}
 		
 	}
-	
-	
 
 
 	// çÌèúÇ∑ÇÈèàóù
-	for (auto idx = 0; idx < bomb_.size(); idx++)
-	{
-		if (bomb_[idx]->GetBombState() == BOMB_STATE::DETH)
-		{
-			bomb_.erase(bomb_.begin() + idx);
-		}
-	}
+	auto bomb = std::remove_if(bomb_.begin(), bomb_.end(), [&](std::unique_ptr<Bomb>& bomb) {
+		return (bomb->GetBombState() == BOMB_STATE::DETH);
+	});
+	bomb_.erase(bomb, bomb_.end());
+	bomb_.shrink_to_fit();
+
 
 	for (auto idx = 0; idx < fire_.size(); idx++)
 	{
 		if (fire_[idx]->GetState() == EXP_STATE::DEAD)
+	
 		{
 			fire_.erase(fire_.begin() + idx);
 		}
@@ -359,7 +365,23 @@ void GameScene::Network()
 					bomb_.back()->SetSetTime(start.start_);
 					// îöî≠éûä‘
 					bomb_.back()->SetExTime(data[4]);
-
+					std::ofstream bomb("Bomb.txt", std::ios::out|std::ios::end);
+					bomb.seekp(std::ios::end);
+					bomb << std::endl;
+					bomb << data[0] << std::endl;
+					bomb << data[1] << std::endl;
+					bomb << data[2] << std::endl;
+					bomb << data[3] << std::endl;
+					bomb << data[4] << std::endl;
+					bomb << data[5] << std::endl;
+					bomb << data[6] << std::endl;
+					std::cout << data[0] << std::endl;
+					std::cout << data[1] << std::endl;
+					std::cout << data[2] << std::endl;
+					std::cout << data[3] << std::endl;
+					std::cout << data[4] << std::endl;
+					std::cout << data[5] << std::endl;
+					std::cout << data[6] << std::endl;
 					data.erase(data.begin(), data.begin() + headerdata.data_[1]);
 				}
 

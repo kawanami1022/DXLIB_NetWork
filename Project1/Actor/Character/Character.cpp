@@ -13,6 +13,7 @@
 #include "../../Scene/BaseScene.h"
 #include "../../Scene/GameScene.h"
 #include "../map/map.h"
+#include "../Item/Bomb/Bomb.h"
 #include "Character.h"
 int Character::Id_ = 0;
 
@@ -66,44 +67,72 @@ void Character::DeffUpdate(std::weak_ptr<Map> map)
 	};
 	std::vector<Position2> posList;
 
-	auto IsPos = [&](std::vector<Position2> list) {
-		for (auto POS_LIST : list)
+	auto IsPos = [&](Position2 pos) {
+		if (MapId(pos) != MAP_ID::NON)
 		{
-			if (MapId(POS_LIST) != MAP_ID::NON)
-			{
-				return false;
-			}
+			return false;
 		}
 		return true;
 	};
-
+	Position2 pos = pos_;
 	bool process = false;	// true:ˆ—‚ðŒp‘±‚³‚¹‚é
 	std::for_each(inputList.crbegin(), inputList.crend(), [&](auto&& list) {
 		if (process)return;
-		Position2 pos= pos_;
+	
 
 		if (list.second == 0) { return; };
 		if (list.first == InputID::Down)
 		{
-			MapId(pos);
-			pos_.y += speed.y;
+			if (IsPos(pos) && IsPos(Position2(pos + TileSize -1)))
+			{
+				pos.y += speed.y;
+				pos.x = (pos.x + TileSize/2) / TileSize * TileSize;
+				moveDir_ = MoveDir::Down;
+				process = true;
+			}
 		}
 		if (list.first == InputID::Up)
 		{
-			MapId(pos);
-			pos_.y -= speed.y;
+			if (IsPos(pos) && IsPos(Position2(pos + TileSize -1)))
+			{
+				pos.y -= speed.y;
+				pos.x = (pos.x + TileSize / 2) / TileSize * TileSize;
+				moveDir_ = MoveDir::Up;
+				process = true;
+			}
 		}
 		if (list.first == InputID::Left)
 		{
-			MapId(pos);
-			pos_.x -= speed.x;
+			if (IsPos(pos)&& IsPos(Position2(pos + TileSize -1)))
+			{
+				pos.x -= speed.x;
+				pos.y = (pos.y+ TileSize / 2) / TileSize * TileSize;
+				moveDir_ = MoveDir::Left;
+				process = true;
+			}
 		}
 		if (list.first == InputID::Right)
 		{
-			MapId(pos);
-			pos_.x += speed.x;
+			if (IsPos(pos)&& IsPos(Position2(pos+ TileSize -1)))
+			{
+				pos.x += speed.x;
+				pos.y = (pos.y + TileSize / 2) / TileSize * TileSize;
+				moveDir_ = MoveDir::Right;
+				process = true;
+			}
 		}
 	});
+	if (IsPos(pos) && IsPos(Position2(pos + TileSize - 1)))
+	{
+		pos_ = pos;
+	}
+
+	setBomb_ = false;
+	if (controller_->push(InputID::SetBomb))
+	{
+		setBomb_ = true;
+	}
+
 	SendCharData();
 }
 
@@ -127,6 +156,7 @@ void Character::Draw()
 	{
 		DrawExtendGraph(pos_.x, pos_.y - 21, pos_.x + CHAR_WIDTH, pos_.y + CHAR_HEIGHT - 21, HandleData_[animcnt_ / 20 % 4][static_cast<int>(moveDir_)], true);
 	}
+	DrawBox(pos_.x, pos_.y, pos_.x + 32, pos_.y + 32, 0x00ff00,false);
 }
 
 void Character::AutoMove(std::weak_ptr<Map>&&  map)

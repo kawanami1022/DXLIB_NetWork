@@ -1,18 +1,27 @@
 #include <iostream>
 #include <cmath>
 #include <DxLib.h>
+#include "../../../NetWork/NetWork.h"
+#include "../../../NetWork/NetWorkState.h"
 #include "../../../Manager/ImageManager.h"
 #include "Bomb.h"
 #include "../../map/map.h"
 
+int Bomb::ID_ = 0;
+
 Bomb::Bomb():time_(0.f),bombState_(BOMB_STATE::COUNT_DOWN)
 {
+	ID_ += 1;
 	Init();
 }
 
-Bomb::Bomb(Position2 pos) : Item(pos), bombState_(BOMB_STATE::COUNT_DOWN) 
+Bomb::Bomb(Position2 pos) : Item(pos), bombState_(BOMB_STATE::COUNT_DOWN)
 {
+	ID_ += 1;
+	std::cout << "----------------------setBomb----------------------" << std::endl;
+
 	Init();
+
 }
 
 Bomb::~Bomb()
@@ -85,6 +94,7 @@ void Bomb::Init()
 	}
 #endif // DEBUG
 	bombState_ = BOMB_STATE::COUNT_DOWN;
-
-	
+	setTime_= std::chrono::system_clock::now();
+	exTime_ = setTime_+std::chrono::seconds(3);
+	elapsedTime_= setTime_.time_since_epoch() - exTime_.time_since_epoch();
 }

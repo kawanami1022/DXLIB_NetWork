@@ -41,6 +41,10 @@ public:
 	{
 		setTime_ = setTime;
 	}
+	std::chrono::system_clock::time_point GetSetTime()
+	{
+		return setTime_;
+	}
 
 	std::chrono::system_clock::time_point::duration GetElapsedTime()
 	{
@@ -56,6 +60,7 @@ private:
 	std::chrono::system_clock::time_point exTime_;		// ”š”­
 	std::chrono::system_clock::time_point setTime_;
 	std::chrono::system_clock::time_point::duration elapsedTime_;	// Œo‰ßŽžŠÔ
+	static int ID_;
 	void Init();
 };
 

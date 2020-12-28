@@ -8,7 +8,7 @@
 constexpr auto CHAR_WIDTH = 32;
 constexpr auto CHAR_HEIGHT = 51;
 constexpr auto UNIT_ID_BASE = 5;		// Player‚ÌiD‚ğ5‚İ‚É‚·‚é
-
+class Bomb;
 class Map;
 struct controller;
 enum class NetWorkMode;
@@ -112,6 +112,12 @@ public:
 	{
 		return Position2(pos_.x + 32, pos_.y + 32);
 	}
+	// œ`*‚ğ’u‚­
+	bool GetSetBb()
+	{
+		return setBomb_;
+	}
+
 protected:
 	Vector2Tmp<float> speed = { 4.f,4.f };
 	std::vector<int> HandleId_;
@@ -126,12 +132,14 @@ protected:
 	std::unordered_map<NetWorkMode,std::function<void()>> InitFunc;
 	std::function<void(std::weak_ptr<Map >)> updateFunc_=nullptr;
 	std::weak_ptr<Map> map_;
+
 private:
 	static int Id_;
 	int playerID_;
 	int animcnt_ = 0;
 	std::mutex mtx_;
 	CharState charState_=CharState::Alive;
+	bool setBomb_;
 	bool Init();
 
 	// ˆÊ’u’²®

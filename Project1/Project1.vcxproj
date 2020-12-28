@@ -166,7 +166,6 @@
     <ClInclude Include="Lib\Constraint\constraint.h" />
     <ClInclude Include="Lib\Math\math.h" />
     <ClInclude Include="Actor\map\map.h" />
-    <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\CrossOver.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="input\controller.h" />
@@ -184,6 +183,7 @@
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="Manager\SceneMng.h" />
     <ClInclude Include="Scene\LoginScene.h" />
+    <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Time\Time.h" />
     <ClInclude Include="Scene\Transion.h" />
     <ClInclude Include="Lib\Vector2\Vector2.h" />
@@ -199,7 +199,6 @@
     <ClCompile Include="Manager\ImageManager.cpp" />
     <ClCompile Include="Lib\Math\math.cpp" />
     <ClCompile Include="Actor\map\map.cpp" />
-    <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Scene\CrossOver.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="input\controller.cpp" />
@@ -216,6 +215,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Manager\SceneMng.cpp" />
     <ClCompile Include="Scene\LoginScene.cpp" />
+    <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Time\Time.cpp" />
     <ClCompile Include="Scene\Transion.cpp" />
     <ClCompile Include="Lib\Vector2\Vector2.cpp" />

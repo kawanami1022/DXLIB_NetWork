@@ -3,12 +3,12 @@
 #include "../map/map.h"
 #include "explosion.h"
 
-explosion::explosion():Actor()
+explosion::explosion():Actor(),dir_(Dir::Down)
 {
 	Init();
 }
 
-explosion::explosion(Position2 pos,int dst):Actor(pos),dst_(dst)
+explosion::explosion(Position2 pos, int dst, Dir dir):Actor(pos), dst_(dst), dir_(dir)
 {
 	Init();
 }

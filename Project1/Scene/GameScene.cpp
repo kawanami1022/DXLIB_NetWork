@@ -181,7 +181,7 @@ void GameScene::UpdateGuest()
 		BOMB->Update();
 		if (IsFire(BOMB))
 		{
-			SetFire(BOMB->GetPos(), 0);
+			SetFire(BOMB->GetPos(), 0, Dir::Center_);
 		}
 
 	}
@@ -198,68 +198,31 @@ void GameScene::UpdateGuest()
 
 			if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 1))
 			{
-
 				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1) == true)
 				{
-					SetFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1);
+					SetFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1,Dir::Up );
 					map_->setMapId(Position2(TilePos.x, TilePos.y - 1), 0);
 				}
 				if (CheckMoreSecFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1) == true)
 				{
-					SetFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1);
+					SetFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1, Dir::Right);
 					map_->setMapId(Position2(TilePos.x + 1, TilePos.y), 0);
 				}
 				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1) == true)
 				{
-					SetFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1);
+					SetFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1, Dir::Down);
 					map_->setMapId(Position2(TilePos.x, TilePos.y + 1), 0);
 				}
 				if (CheckMoreSecFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1) == true)
 				{
-					SetFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1);
+					SetFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1, Dir::Left);
 					map_->setMapId(Position2(TilePos.x - 1, TilePos.y), 0);
 				}
 			}
-#ifdef DEBUG
-
-
-			if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 2))
-			{
-				if (map_->GetMapId(Position2(TilePos.x, TilePos.y - 2)) == MAP_ID::BLOCK_BREAK|| map_->GetMapId(Position2(TilePos.x, TilePos.y - 2)) == MAP_ID::BLOCK_INBREAK)
-				{
-
-					if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2) == true)
-					{
-						SetFire(Position2(TilePos.x, TilePos.y - 2) * TileSize, 2);
-					}
-				}
-				if (map_->GetMapId(Position2(TilePos.x + 2, TilePos.y)) == MAP_ID::BLOCK_BREAK || map_->GetMapId(Position2(TilePos.x + 2, TilePos.y)) == MAP_ID::BLOCK_INBREAK)
-				{
-					if (CheckMoreSecFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2) == true)
-					{
-						SetFire(Position2(TilePos.x + 2, TilePos.y) * TileSize, 2);
-					}
-				}
-				if (map_->GetMapId(Position2(TilePos.x, TilePos.y + 2)) == MAP_ID::BLOCK_BREAK || map_->GetMapId(Position2(TilePos.x, TilePos.y + 2)) == MAP_ID::BLOCK_INBREAK)
-				{
-					if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2) == true)
-					{
-						SetFire(Position2(TilePos.x, TilePos.y + 2) * TileSize, 2);
-
-					}
-				}
-				if (map_->GetMapId(Position2(TilePos.x - 2, TilePos.y)) == MAP_ID::BLOCK_BREAK || map_->GetMapId(Position2(TilePos.x - 2, TilePos.y)) == MAP_ID::BLOCK_INBREAK)
-				{
-					if (CheckMoreSecFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2) == true)
-					{
-						SetFire(Position2(TilePos.x - 2, TilePos.y) * TileSize, 2);
-					}
-				}
-			}
-#endif // DEBUG
-
 		}
-		
+		if (FIRE->GetDst() == 1)
+		{
+		}
 	}
 
 
@@ -270,15 +233,12 @@ void GameScene::UpdateGuest()
 	bomb_.erase(bomb, bomb_.end());
 	bomb_.shrink_to_fit();
 
+	auto fire = std::remove_if(fire_.begin(), fire_.end(), [&](std::unique_ptr<explosion>& fire) {
+		return (fire->GetState() == EXP_STATE::DEAD);
+		});
+	fire_.erase(fire, fire_.end());
+	fire_.shrink_to_fit();
 
-	for (auto idx = 0; idx < fire_.size(); idx++)
-	{
-		if (fire_[idx]->GetState() == EXP_STATE::DEAD)
-	
-		{
-			fire_.erase(fire_.begin() + idx);
-		}
-	}
 	for (auto& FIRE : fire_)
 	{
 		for (auto idx=0;idx<character_.size();idx++)
@@ -290,6 +250,7 @@ void GameScene::UpdateGuest()
 				IpNetWorkState->SetSendPacket(header.data_[1]);
 				IpNetWorkState->SetSendPacket(character_[idx]->GetPlID());
 				character_.erase(character_.begin() + idx);
+				character_.shrink_to_fit();
 			}
 		}
 
@@ -365,6 +326,7 @@ void GameScene::Network()
 					bomb_.back()->SetSetTime(start.start_);
 					// ”š”­ŽžŠÔ
 					bomb_.back()->SetExTime(data[4]);
+#ifdef DEBUG
 					std::ofstream bomb("Bomb.txt", std::ios::out|std::ios::end);
 					bomb.seekp(std::ios::end);
 					bomb << std::endl;
@@ -382,6 +344,7 @@ void GameScene::Network()
 					std::cout << data[4] << std::endl;
 					std::cout << data[5] << std::endl;
 					std::cout << data[6] << std::endl;
+#endif // DEBUG
 					data.erase(data.begin(), data.begin() + headerdata.data_[1]);
 				}
 
@@ -410,9 +373,9 @@ bool GameScene::SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet)
 	return false;
 }
 
-bool GameScene::SetFire(Position2 pos, int dst)
+bool GameScene::SetFire(Position2 pos, int dst, Dir dir)
 {
-	fire_.emplace_back(std::make_unique<explosion>(pos,dst));
+	fire_.emplace_back(std::make_unique<explosion>(pos,dst, dir));
 
 	return true;
 }

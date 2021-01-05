@@ -8,7 +8,7 @@ explosion::explosion():Actor(),dir_(Dir::Down)
 	Init();
 }
 
-explosion::explosion(Position2 pos, int dst, Dir dir):Actor(pos), dst_(dst), dir_(dir)
+explosion::explosion(Position2 pos, int dst, Dir dir):Actor(pos), dst_(dst), dir_(dir),isGenerate_(false)
 {
 	Init();
 }
@@ -22,11 +22,12 @@ void explosion::Update()
 	now= std::chrono::system_clock::now();
 	elapsedTime_ = now - generateTime_;
 
+
 	if (elapsedTime_ >= std::chrono::milliseconds(1000/6*7))
 	{
 		state_ = EXP_STATE::DEAD;
 	}
-
+	
 }
 
 void explosion::Draw()
@@ -50,4 +51,9 @@ void explosion::Init()
 
 	pos_ = pos_ / TileSize * TileSize;
 	state_ = EXP_STATE::ALIVE;
+
+	if (dst_ >= 2)
+	{
+		isGenerate_ = true;
+	}
 }

@@ -43,9 +43,24 @@ public:
 		return elapsedTime_;
 	}
 
+	Dir GetDir()
+	{
+		return dir_;
+	}
+
 	int GetDst()
 	{
 		return dst_;
+	}
+
+	void SetIsGenerate(bool isGenerate)
+	{
+		isGenerate_ = isGenerate;
+	}
+
+	bool GetGenerate()
+	{
+		return isGenerate_;
 	}
 
 private:
@@ -53,7 +68,7 @@ private:
 	int ID_;
 	int dst_;
 	Dir dir_;
-	bool isGenerate_;	// エフェクト生成
+	bool isGenerate_;	// エフェクト生成 true:生成済み
 	EXP_STATE state_;
 	std::vector<int*> handle_;
 	std::vector<int> handleData_;

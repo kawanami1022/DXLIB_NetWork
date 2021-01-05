@@ -145,31 +145,6 @@ void GameScene::UpdateGuest()
 		}else {return false;}
 	};
 
-	// 2つ以上の炎が存在しないかたしかめる
-	auto CheckMoreSecFire = [&](Position2 pos,int dst) {
-		for (auto& FIRE : fire_)
-		{
-			if (FIRE->GetPos() == pos)
-			{
-				return false;
-			}
-		}
-		for (auto& FIRE : fire_)
-		{
-			if (FIRE->GetPos() != pos)
-			{
-				std::cout << FIRE->GetPos().x << "," << FIRE->GetPos().y << ":" << pos.x << "," << pos.y << std::endl;
-				if (FIRE->GetDst() != dst)
-				{
-					if (map_->GetMapId(pos) != MAP_ID::BLOCK_INBREAK)
-					{
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	};
 
 	for (auto CHAR : character_)
 	{
@@ -179,6 +154,7 @@ void GameScene::UpdateGuest()
 	for (auto& BOMB : bomb_)
 	{
 		BOMB->Update();
+
 		if (IsFire(BOMB))
 		{
 			SetFire(BOMB->GetPos(), 0, Dir::Center_);
@@ -186,45 +162,47 @@ void GameScene::UpdateGuest()
 
 	}
 
+	std::unordered_map<Dir, bool>	generateFire = { {Dir::Down,false},{Dir::Left,false},{Dir::Right,false},{Dir::Up,false} };
+
 	for (auto& FIRE : fire_)
 	{
 
 		FIRE->Update();
+		auto TilePos = FIRE->GetPos() / TileSize;
 
-		if (FIRE->GetDst() == 0)
+		if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 1))
 		{
-
-			auto TilePos = FIRE->GetPos() / TileSize;
-
-			if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 1))
+			if (FIRE->GetDst() == 0)
 			{
-				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1) == true)
+				if (FIRE->GetGenerate() == false && FIRE->GetDir() == Dir::Center_)
 				{
-					SetFire(Position2(TilePos.x, TilePos.y - 1) * TileSize, 1,Dir::Up );
-					map_->setMapId(Position2(TilePos.x, TilePos.y - 1), 0);
+					auto checkPos = Position2(TilePos.x, TilePos.y - 1);
+					SetFire(checkPos * TileSize, 1, Dir::Up);
+
+					checkPos = Position2(TilePos.x + 1, TilePos.y);
+					SetFire(checkPos * TileSize, 1, Dir::Right);
+
+					checkPos = Position2(TilePos.x, TilePos.y + 1);
+					SetFire(checkPos * TileSize, 1, Dir::Down);
+
+					checkPos = Position2(TilePos.x - 1, TilePos.y);
+					SetFire(checkPos * TileSize, 1, Dir::Left);
+					fire_.front()->SetIsGenerate(true);
+					break;
 				}
-				if (CheckMoreSecFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1) == true)
+			}
+			else if (FIRE->GetGenerate() == false&&FIRE->GetDst() == 1) {
+				for (auto& GENFIRE : generateFire)
 				{
-					SetFire(Position2(TilePos.x + 1, TilePos.y) * TileSize, 1, Dir::Right);
-					map_->setMapId(Position2(TilePos.x + 1, TilePos.y), 0);
-				}
-				if (CheckMoreSecFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1) == true)
-				{
-					SetFire(Position2(TilePos.x, TilePos.y + 1) * TileSize, 1, Dir::Down);
-					map_->setMapId(Position2(TilePos.x, TilePos.y + 1), 0);
-				}
-				if (CheckMoreSecFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1) == true)
-				{
-					SetFire(Position2(TilePos.x - 1, TilePos.y) * TileSize, 1, Dir::Left);
-					map_->setMapId(Position2(TilePos.x - 1, TilePos.y), 0);
+					if (GENFIRE.first == FIRE->GetDir())
+					{
+						GENFIRE.second = true;
+					}
 				}
 			}
 		}
-		if (FIRE->GetDst() == 1)
-		{
-		}
+		
 	}
-
 
 	// 削除する処理
 	auto bomb = std::remove_if(bomb_.begin(), bomb_.end(), [&](std::unique_ptr<Bomb>& bomb) {
@@ -375,7 +353,16 @@ bool GameScene::SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet)
 
 bool GameScene::SetFire(Position2 pos, int dst, Dir dir)
 {
-	fire_.emplace_back(std::make_unique<explosion>(pos,dst, dir));
+	if (map_->GetMapId(pos) != MAP_ID::BLOCK_INBREAK)
+	{
+		fire_.emplace_back(std::make_unique<explosion>(pos, dst, dir));
+		map_->setMapId(pos/TileSize, 0);
+		// 壊せるブロックの場合炎のエフェクトは新規生成させない
+		if (map_->GetMapId(pos) == MAP_ID::BLOCK_BREAK)
+		{
+			fire_.back()->SetIsGenerate(true);
+		}
+	}
 
 	return true;
 }

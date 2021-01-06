@@ -359,6 +359,7 @@ void GameScene::UpdateOFFLINE()
 					if (GENFIRE.first == FIRE->GetDir())
 					{
 						GENFIRE.second.first = true;
+						
 					}
 				}
 			}
@@ -402,6 +403,7 @@ void GameScene::UpdateOFFLINE()
 
 
 						SetFire(GenPos * TileSize, 2, GENFIRE.first);
+						fire_[i]->SetIsGenerate(true);
 						FirePos /= TileSize;
 					}
 				}

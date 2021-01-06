@@ -8,7 +8,7 @@ explosion::explosion():Actor(),dir_(Dir::Down)
 	Init();
 }
 
-explosion::explosion(Position2 pos, int dst, Dir dir):Actor(pos), dst_(dst), dir_(dir),isGenerate_(false)
+explosion::explosion(Position2 pos, int dst,Dir dir):Actor(pos), dst_(dst), dir_(dir),isGenerate_(false)
 {
 	Init();
 }

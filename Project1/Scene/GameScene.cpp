@@ -130,159 +130,16 @@ void GameScene::UpdateHost()
 
 void GameScene::UpdateGuest()
 {
-	auto IsFire = [&](std::unique_ptr<Bomb>& bomb) {
-		if (bomb->GetBombState() == BOMB_STATE::IGNITED)
-		{
-			//炎エフェクトが存在するかたしかめる
-			for (auto& FIRE : fire_)
-			{
-				if (FIRE->GetPos() == bomb->GetPos())
-				{
-
-					return false;
-				}
-			}
-			return	true;
-		}else {return false;}
-	};
-
-
-	for (auto CHAR : character_)
-	{
-		CHAR->Update(map_);
-	}
-
-	for (auto& BOMB : bomb_)
-	{
-		BOMB->Update();
-
-		if (IsFire(BOMB))
-		{
-			SetFire(BOMB->GetPos(), 0, Dir::Center_);
-		}
-
-	}
-	// 生成用のmap
-	std::unordered_map<Dir, std::pair<bool, Position2>>	generateFire = 
-	{ {Dir::Down,PairIsPos(false,Position2(0,0))}, 
-		{Dir::Left,PairIsPos(false,Position2(0,0))},
-		{Dir::Up,PairIsPos(false,Position2(0,0))},
-		{Dir::Right,PairIsPos(false,Position2(0,0))},
-	};
-
-	for (auto& FIRE : fire_)
-	{
-
-		FIRE->Update();
-		auto TilePos = FIRE->GetPos() / TileSize;
-		auto firePosId = map_->GetGridID(TilePos, "map");
-		if (FIRE->GetElTime() > std::chrono::milliseconds(1000 / 7 * 1))
-		{
-			if (FIRE->GetDst() == 0)
-			{
-				if (FIRE->GetGenerate() == false && FIRE->GetDir() == Dir::Center_)
-				{
-				
-					auto checkPos = Position2(TilePos.x, TilePos.y - 1);
-					SetFire(checkPos * TileSize, 1, Dir::Up);
-
-					checkPos = Position2(TilePos.x + 1, TilePos.y);
-					SetFire(checkPos * TileSize, 1, Dir::Right);
-
-					checkPos = Position2(TilePos.x, TilePos.y + 1);
-					SetFire(checkPos * TileSize, 1, Dir::Down);
-
-					checkPos = Position2(TilePos.x - 1, TilePos.y);
-					SetFire(checkPos * TileSize, 1, Dir::Left);
-
-					fire_.front()->SetIsGenerate(true);
-					break;
-				}
-			}
-			else if (FIRE->GetGenerate() == false&&FIRE->GetDst() == 1) {
-				for (auto& GENFIRE : generateFire)
-				{
-					if (GENFIRE.first == FIRE->GetDir())
-					{
-						GENFIRE.second.first = true;
-					}
-				}
-			}
-		}
-		
-	}
-
-	
-	// 2つめの炎を生成
-	for (int i = 0; i < fire_.size(); i++)
-	{
-		auto TilePos = fire_[i]->GetPos() / TileSize;
-		if (fire_[i]->GetDst() == 1)
-		{
-			for (auto& GENFIRE : generateFire)
-			{
-				auto FirePos = fire_[i]->GetPos();
-				// 炎精製用フラグの方向と炎の方向
-				if (!fire_[i]->GetGenerate())
-				{
-
-					if (GENFIRE.first == fire_[i]->GetDir()&& GENFIRE.second.first == true)
-					{
-						//炎生成用座標
-						auto GenPos = FirePos/TileSize;
-
-						if (GENFIRE.first == Dir::Up)
-						{
-							GenPos.y--;
-						}
-						else if(GENFIRE.first == Dir::Right)
-						{
-							GenPos.x++;
-						}
-						else if(GENFIRE.first == Dir::Down)
-						{
-							GenPos.y++;
-						}
-						else if (GENFIRE.first == Dir::Left)
-						{
-							GenPos.x--;
-						};
-
-					
-						SetFire(GenPos * TileSize, 2, GENFIRE.first);
-						fire_[i]->SetIsGenerate(true);
-						FirePos /= TileSize;
-					}
-				}
-			}
-		}
-	}
-	// 削除する処理
-	auto bomb = std::remove_if(bomb_.begin(), bomb_.end(), [&](std::unique_ptr<Bomb>& bomb) {
-
-		return (bomb->GetBombState() == BOMB_STATE::DETH);
-	});
-	bomb_.erase(bomb, bomb_.end());
-	bomb_.shrink_to_fit();
-
-	auto fire = std::remove_if(fire_.begin(), fire_.end(), [&](std::unique_ptr<explosion>& fire) {
-		auto pos = fire->GetPos();
-		if (fire->GetState() == EXP_STATE::DEAD)
-		{
-			map_->setMapId(pos / TileSize, 0);
-		}
-		return (fire->GetState() == EXP_STATE::DEAD);
-		});
-	fire_.erase(fire, fire_.end());
-	fire_.shrink_to_fit();
-
-
-
+	ComUpdate();
 }
 
 void GameScene::UpdateOFFLINE()
 {
+	ComUpdate();
+}
 
+void GameScene::ComUpdate()
+{
 	auto IsFire = [&](std::unique_ptr<Bomb>& bomb) {
 		if (bomb->GetBombState() == BOMB_STATE::IGNITED)
 		{
@@ -359,12 +216,13 @@ void GameScene::UpdateOFFLINE()
 					if (GENFIRE.first == FIRE->GetDir())
 					{
 						GENFIRE.second.first = true;
-						
 					}
 				}
 			}
 		}
+
 	}
+
 
 	// 2つめの炎を生成
 	for (int i = 0; i < fire_.size(); i++)
@@ -410,9 +268,9 @@ void GameScene::UpdateOFFLINE()
 			}
 		}
 	}
-
 	// 削除する処理
 	auto bomb = std::remove_if(bomb_.begin(), bomb_.end(), [&](std::unique_ptr<Bomb>& bomb) {
+
 		return (bomb->GetBombState() == BOMB_STATE::DETH);
 		});
 	bomb_.erase(bomb, bomb_.end());
@@ -424,26 +282,11 @@ void GameScene::UpdateOFFLINE()
 		{
 			map_->setMapId(pos / TileSize, 0);
 		}
-
 		return (fire->GetState() == EXP_STATE::DEAD);
 		});
 	fire_.erase(fire, fire_.end());
 	fire_.shrink_to_fit();
 
-	for (auto& FIRE : fire_)
-	{
-		for (auto idx = 0; idx < character_.size(); idx++)
-		{
-			Header header{ MesType::DETH,0,0,1 };
-			if (character_[idx]->GetPos() / TileSize == FIRE->GetPos() / TileSize || character_[idx]->GetDRPos() / TileSize == FIRE->GetPos() / TileSize)
-			{
-
-				character_.erase(character_.begin() + idx);
-				character_.shrink_to_fit();
-			}
-		}
-
-	}
 
 }
 
@@ -592,7 +435,7 @@ bool GameScene::Init()
 	IpNetWorkState->ClearRevPacket();
 	IpNetWorkState->ClearSendPacket();
 	std::cout << "-------------ClearPacket---------------" << std::endl;
-	auto playerMax= (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST) ? IpNetWorkState->GetPIMax():1;
+	auto playerMax= (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST) ? IpNetWorkState->GetPIMax():5;
 	auto tmpCharCnt = 0;
 	for (unsigned int y = 0; y < map_->GetMapSize().y; y++)
 	{

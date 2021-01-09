@@ -59,11 +59,11 @@ bool File::TMX_File::load_TMX(std::string FilePos)
 
 	if (!opened)
 	{
-		std::cout << "tmx file open failed!" << std::endl;
+		//std::cout << "tmx file open failed!" << std::endl;
 		return false;
 	}
 	else {
-		std::cout << "tmx file open succeed!" << std::endl;
+		//std::cout << "tmx file open succeed!" << std::endl;
 	}
 
 	auto Escape = [&]() {if (FileStream.eof()) { return false; }return true; };

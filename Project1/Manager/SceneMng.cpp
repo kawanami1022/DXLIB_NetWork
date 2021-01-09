@@ -19,7 +19,7 @@ int SceneMng::Run()
 		return -1;				// エラーが起きたら直ちに終了
 	}
 
-	std::cout << "DXLib初期化" << std::endl;
+	//std::cout << "DXLib初期化" << std::endl;
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。

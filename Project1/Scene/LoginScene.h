@@ -5,7 +5,7 @@
 #include "BaseScene.h"
 
 enum class UpdateMode;
-
+class KeyBordInput;
 
 class Timer;
 using UpdateMapFunc = std::unordered_map<UpdateMode, std::function<void(UniqueBase&)>>;
@@ -49,15 +49,21 @@ private:
 	UpdateMapFunc updateFunc_;
 	DrawMapFunc DrawFunc_;
 	
+	std::unique_ptr<KeyBordInput> keybord_;
+
 	int screen_size_x=800;
 	int screen_size_y=600;
 
 	int pos_x=300;
 	int pos_y=300;
+
 	Vector2Tmp<int> circlePos_;
 
 	int Handle;
 	int CirlcleHandle_ = 0;
+	std::array<int,3> setNetWorkHandle_;
 
+	std::array<char,UCHAR_MAX> keyIdNow_;
+	std::array<char, UCHAR_MAX> keyIdOld_;
 };
 

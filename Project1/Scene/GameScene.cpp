@@ -414,7 +414,7 @@ bool GameScene::SetFire(Position2 pos, int dst, Dir dir)
 
 GameScene::GameScene():changeScene_(false)
 {
-	std::cout << "-------------GameScene---------------" << std::endl;
+	//std::cout << "-------------GameScene---------------" << std::endl;
 	Init();
 }
 
@@ -425,16 +425,16 @@ GameScene::~GameScene()
 
 bool GameScene::Init()
 {
-	std::cout << "-------------初期化開始---------------" << std::endl;
+	//std::cout << "-------------初期化開始---------------" << std::endl;
 	map_=std::make_shared<Map>();
 	updateNetWorkModeFunc_ = 
 	{ { NetWorkMode::OFFLINE,std::bind(&GameScene::UpdateOFFLINE,this) },
 	{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
 	{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
-	std::cout << "-------------MapClass---------------" << std::endl;
+	//std::cout << "-------------MapClass---------------" << std::endl;
 	IpNetWorkState->ClearRevPacket();
 	IpNetWorkState->ClearSendPacket();
-	std::cout << "-------------ClearPacket---------------" << std::endl;
+	//std::cout << "-------------ClearPacket---------------" << std::endl;
 	auto playerMax= (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST) ? IpNetWorkState->GetPIMax():5;
 	auto tmpCharCnt = 0;
 	for (unsigned int y = 0; y < map_->GetMapSize().y; y++)
@@ -464,8 +464,7 @@ bool GameScene::Init()
 
 	std::thread netWorkThread(&GameScene::Network, this);
 	netWorkThread.detach();
-	std::cout << "-------------初期化終了---------------" << std::endl;
-	std::cin.get();
+	//std::cout << "-------------初期化終了---------------" << std::endl;
 	flame = 0;
 	return false;
 }

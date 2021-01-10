@@ -177,13 +177,7 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 
 void LoginScene::SetHostIP(UniqueBase& scene)
 {
-	keybord_->Update();
-	if (keyIdNow_[KEY_INPUT_RETURN])
-	{
-		keybord_->GetInputString();
-	}
-#ifdef DEBUG
-	std::cout << "---------SetHostIP----------" << std::endl;
+	//std::cout << "---------SetHostIP----------" << std::endl;
 	IPDATA hostIp = { 0,0,0,0 };
 	std::string ip, data; std::stringstream ssIp;
 	ActiveState activeState_;
@@ -193,27 +187,29 @@ void LoginScene::SetHostIP(UniqueBase& scene)
 		return atoi(data.c_str());
 	};
 
-	std::cout << "GUESTに設定されてます" << std::endl;
-	std::cout << "IPアドレスを入力してください" << std::endl;
-	std::cin >> ip;
-	// ipに入力された情報をhostIpに入れる
-	ssIp << ip;
+	keybord_->Update();
+	if (keyIdNow_[KEY_INPUT_RETURN])
+	{
+		ip.assign(keybord_->GetInputString());
+		ssIp << ip;
 
-	hostIp.d1 = GetIpNum();
-	hostIp.d2 = GetIpNum();
-	hostIp.d3 = GetIpNum();
-	hostIp.d4 = GetIpNum();
+		hostIp.d1 = GetIpNum();
+		hostIp.d2 = GetIpNum();
+		hostIp.d3 = GetIpNum();
+		hostIp.d4 = GetIpNum();
 
-	std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "に設定されました!" << std::endl;
-	activeState_ = IpNetWork->ConnectHost(hostIp);
-	if (activeState_== ActiveState::Init){
-		std::cout << "接続成功!" << std::endl;
-		mode_ = UpdateMode::StartInit;
-	}else{
-		std::cout << "接続失敗!" << std::endl;
-		mode_ = UpdateMode::SetHostIP;}
-#endif // DEBUG
-
+		std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "に設定されました!" << std::endl;
+		activeState_ = IpNetWork->ConnectHost(hostIp);
+		if (activeState_ == ActiveState::Init) {
+			std::cout << "接続成功!" << std::endl;
+			mode_ = UpdateMode::StartInit;
+		}
+		else {
+			std::cout << "接続失敗!" << std::endl;
+			mode_ = UpdateMode::SetHostIP;
+			keybord_->Reset();
+		}
+	}
 }
 
 void LoginScene::StartInit(UniqueBase& scene)

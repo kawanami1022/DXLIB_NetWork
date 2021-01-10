@@ -20,7 +20,7 @@ std::string KeyBordInput::GetInputString()
 {
 	std::string inputString;
 	GetKeyInputString(inputString.data(), inputHandle_);
-	return inputString;
+	return inputString.data();
 }
 
 void KeyBordInput::Update()
@@ -40,6 +40,13 @@ void KeyBordInput::Draw()
 	DrawString(drawStrPos_.x, drawStrPos_.y, "IpƒAƒhƒŒƒX“ü—Í‚µ‚Ä‚­‚¾‚³‚¢:", GetColor(255, 255, 255));
 	DrawKeyInputString(drawStrPos_.x+15*16, drawStrPos_.y, inputHandle_);
 	//DrawString(0, 32, inputString_.data(), GetColor(255, 255, 255));
+}
+
+void KeyBordInput::Reset()
+{
+	inputHandle_ = MakeKeyInput(300, true, true, FALSE);
+	SetActiveKeyInput(inputHandle_);
+	SetIMEInputStringMaxLength(20);
 }
 
 void KeyBordInput::Init()

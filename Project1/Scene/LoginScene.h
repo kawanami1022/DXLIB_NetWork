@@ -63,7 +63,6 @@ private:
 	int CirlcleHandle_ = 0;
 	std::array<int,3> setNetWorkHandle_;
 
-	std::array<char,UCHAR_MAX> keyIdNow_;
-	std::array<char, UCHAR_MAX> keyIdOld_;
+
 };
 

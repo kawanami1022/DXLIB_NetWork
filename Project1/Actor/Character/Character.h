@@ -118,6 +118,11 @@ public:
 		return setBomb_;
 	}
 
+	CharState GetCharaState()
+	{
+		return charState_;
+	}
+
 protected:
 	Vector2Tmp<float> speed = { 4.f,4.f };
 	std::vector<int> HandleId_;

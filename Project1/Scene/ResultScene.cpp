@@ -1,3 +1,6 @@
+#include <DxLib.h>
+#include "LoginScene.h"
+#include "CrossOver.h"
 #include "ResultScene.h"
 
 ResultScene::ResultScene()
@@ -15,6 +18,15 @@ UniqueBase ResultScene::input(UniqueBase nowScene)
 
 UniqueBase ResultScene::UpDate(UniqueBase nowScene)
 {
+	std::memcpy(&keyIdNow_, &keyIdOld_, UCHAR_MAX);
+	GetHitKeyStateAll(keyIdNow_.data());
+
+	if (keyIdOld_[KEY_INPUT_RETURN]==1)
+	{
+		auto nextScene = std::make_unique<LoginScene>();
+		nowScene = std::make_unique<CrossOver>(std::move(nowScene), std::move(nextScene));
+	}
+
 	SetDrawScreen(screenSrcID_);
 	ClsDrawScreen();
 	Draw();

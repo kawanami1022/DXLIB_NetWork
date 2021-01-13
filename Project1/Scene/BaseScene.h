@@ -31,9 +31,13 @@ protected:
 	int screen_;
 	bool isInstance_ = true;
 	// “ü—ÍŒn
+	std::array<char, UCHAR_MAX> keyIdNow_;
+	std::array<char, UCHAR_MAX> keyIdOld_;
+
 	// ‰æ‘œ
 	std::shared_ptr< File::TMX_File> tmxFile_;
 	std::ofstream log;
+
 private:
 };
 

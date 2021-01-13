@@ -157,6 +157,26 @@ void GameScene::ComUpdate()
 		else { return false; }
 	};
 
+	auto IsHitFire = [&](Character* player)
+	{
+			auto plPos = player->GetPos();
+			plPos /=TileSize;
+		for (auto& FIRE : fire_)
+		{
+			auto firePos=FIRE->GetPos();
+
+			firePos /= TileSize;
+			if (plPos == firePos)
+			{
+				player->SetState(CharState::Death);
+			}
+
+#ifdef DEBUG
+			
+#endif // DEBUG
+		}
+	};
+
 
 	for (auto CHAR : character_)
 	{
@@ -269,7 +289,36 @@ void GameScene::ComUpdate()
 		}
 	}
 	// íœ‚·‚éˆ—
-	auto bomb = std::remove_if(bomb_.begin(), bomb_.end(), [&](std::unique_ptr<Bomb>& bomb) {
+
+	for (auto& CHARACTER : character_)
+	{
+		IsHitFire(CHARACTER.get());
+	}
+
+	auto chara = std::remove_if(character_.begin(), character_.end(),
+		[&](std::shared_ptr<Character>& chara) {
+		bool isRemove = (chara->GetCharaState() == CharState::Death);
+
+		auto mode = IpNetWorkState->GetNetWorkMode();
+		if (mode ==NetWorkMode::GUEST)
+		{
+			if (isRemove)
+			{
+				Header header{ MesType::DETH ,0,0,1 };
+				//{MesType ƒwƒbƒ_[,©•ª‚ÌID}
+				std::vector<int> data = { header.data_[0],header.data_[1],chara->GetPlID() };
+				for (auto DATA : data)
+				{IpNetWorkState->SetSendPacket(DATA);}
+			}
+		}
+
+		return (chara->GetCharaState() == CharState::Death);
+		});
+	character_.erase(chara, character_.end());
+	character_.shrink_to_fit();
+
+	auto bomb = std::remove_if(bomb_.begin(), bomb_.end(),
+		[&](std::unique_ptr<Bomb>& bomb) {
 
 		return (bomb->GetBombState() == BOMB_STATE::DETH);
 		});

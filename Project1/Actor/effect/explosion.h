@@ -76,7 +76,7 @@ private:
 	timePoint generateTime_;		// effect¶¬ŠÔ
 	timePoint now;
 	timePoint::duration elapsedTime_;	// Œo‰ßŠÔ
-
+	std::vector<int> angle_;
 	void Init();
 
 };

@@ -416,6 +416,7 @@ void NetWorkState::ClearRevPacket()
 void NetWorkState::ClearSendPacket()
 {
 	sendPacket_.clear();
+	sendPacket_.shrink_to_fit();
 }
 
 

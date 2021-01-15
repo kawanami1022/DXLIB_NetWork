@@ -16,6 +16,8 @@
 
 UniqueBase GameScene::input(UniqueBase nowScene)
 {
+	auto playerID = IpNetWorkState->GetPlID();
+
 	// ”š’eİ’u
 	Header header{ MesType::NON };
 	for (auto& CHARACTER : character_)
@@ -25,10 +27,11 @@ UniqueBase GameScene::input(UniqueBase nowScene)
 			bomb_.emplace_back(std::make_unique<Bomb>(CHARACTER->GetPos()));
 			if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST)
 			{
+				IpNetWorkState->ClearSendPacket();
 				header.mesdata_ = { MesType::SET_BOM ,0,0,7 };
 				IpNetWorkState->SetSendPacket(header.data_[0]);
 				IpNetWorkState->SetSendPacket(7);
-				IpNetWorkState->SetSendPacket(CHARACTER->GetPlID());
+				IpNetWorkState->SetSendPacket(playerID);
 				IpNetWorkState->SetSendPacket(bomb_.size());
 				IpNetWorkState->SetSendPacket(CHARACTER->GetPos().x);
 				IpNetWorkState->SetSendPacket(CHARACTER->GetPos().y);
@@ -304,11 +307,15 @@ void GameScene::ComUpdate()
 		{
 			if (isRemove)
 			{
-				Header header{ MesType::DETH ,0,0,1 };
+				if (IpNetWorkState->GetPlID() == chara->GetPlID())
+				{
+
+					Header header{ MesType::DETH ,0,0,1 };
 				//{MesType ƒwƒbƒ_[,©•ª‚ÌID}
 				std::vector<int> data = { header.data_[0],header.data_[1],chara->GetPlID() };
 				for (auto DATA : data)
 				{IpNetWorkState->SetSendPacket(DATA);}
+				}
 			}
 		}
 
@@ -384,7 +391,7 @@ void GameScene::Network()
 						{
 							// player‚ğE‚·
 							CHARACTER_->SetState(CharState::Death);
-							data.erase(data.begin()+id/5);
+							data.erase(data.begin());
 							break;
 						}
 					}

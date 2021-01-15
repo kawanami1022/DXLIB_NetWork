@@ -21,7 +21,7 @@ UniqueBase ResultScene::UpDate(UniqueBase nowScene)
 	std::memcpy(&keyIdNow_, &keyIdOld_, UCHAR_MAX);
 	GetHitKeyStateAll(keyIdNow_.data());
 
-	if (keyIdOld_[KEY_INPUT_RETURN]==1)
+	if (keyIdNow_[KEY_INPUT_RETURN])
 	{
 		auto nextScene = std::make_unique<LoginScene>();
 		nowScene = std::make_unique<CrossOver>(std::move(nowScene), std::move(nextScene));

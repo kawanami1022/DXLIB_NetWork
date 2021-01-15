@@ -11,6 +11,8 @@ explosion::explosion():Actor(),dir_(Dir::Down)
 explosion::explosion(Position2 pos, int dst,Dir dir):Actor(pos), dst_(dst), dir_(dir),isGenerate_(false)
 {
 	Init();
+
+
 }
 
 explosion::~explosion()
@@ -21,7 +23,7 @@ void explosion::Update()
 {
 	now= std::chrono::system_clock::now();
 	elapsedTime_ = now - generateTime_;
-
+	
 
 	if (elapsedTime_ >= std::chrono::milliseconds(1000/6*7))
 	{
@@ -32,8 +34,8 @@ void explosion::Update()
 
 void explosion::Draw()
 {
-
-	DrawExtendGraph(pos_.x, pos_.y, pos_.x + 32, pos_.y + 32, handle_[0][0], true);
+	DrawRotaGraph(pos_.x + 16, pos_.y + 16, 1.6, angle_[static_cast<int>(dir_)]*DX_PI_F/ 180, handle_[0][dst_],true);
+	//DrawExtendGraph(pos_.x, pos_.y, pos_.x + 32, pos_.y + 32, handle_[0][dst_], true);
 
 }
 
@@ -56,4 +58,5 @@ void explosion::Init()
 	{
 		isGenerate_ = true;
 	}
+	angle_ = {0,90,180,0,270 };
 }

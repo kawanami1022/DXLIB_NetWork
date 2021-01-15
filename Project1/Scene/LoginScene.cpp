@@ -272,7 +272,7 @@ void LoginScene::StartInitDraw()
 
 void LoginScene::PlayDraw()
 {
-
+	
 	DrawGraph(pos_x, pos_y, Handle, true);
 	
 }

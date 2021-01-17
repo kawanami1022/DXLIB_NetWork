@@ -148,6 +148,7 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 	if (netWorkMode == NetWorkMode::HOST)
 	{
 		//std::cout << "HOST‚Éİ’è‚³‚ê‚Ä‚Ü‚·" << std::endl;
+		
 		mode_ = UpdateMode::StartInit;
 	}
 	else if (netWorkMode == NetWorkMode::GUEST)
@@ -214,14 +215,30 @@ void LoginScene::SetHostIP(UniqueBase& scene)
 
 void LoginScene::StartInit(UniqueBase& scene)
 {
+	auto mode = IpNetWorkState->GetNetWorkMode();
+	auto now = std::chrono::system_clock::now();	// Host‚Ìê‡Œ»İ‚ğæ“¾‚·‚é
 	//std::cout << "---------StartInit-----------" << std::endl;
 	// ‰æ‘œ“Ç‚İ‚İ
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 
 //	std::cout << Handle << std::endl;
+	if (mode == NetWorkMode::HOST)
+	{
 
-
-	mode_ = UpdateMode::Play;
+		if (IpNetWorkState->GetisSetSendStart())
+		{
+			if (IpNetWorkState->GetStartTime() <= now)
+			{
+				IpNetWorkState->CreateThreadMpdt(mode);
+				mode_ = UpdateMode::Play;
+			}
+		}
+		return;
+	}
+	else
+	{
+		mode_ = UpdateMode::Play;
+	}
 }
 
 void LoginScene::Play(UniqueBase& scene)
@@ -236,6 +253,7 @@ void LoginScene::Play(UniqueBase& scene)
 
 	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
 	{
+
 			//IpNetWorkState->SetNetWorkState(ActiveState::Stanby);
 			//std::cout << "-----------StanbyMode----------" << std::endl;
 	}

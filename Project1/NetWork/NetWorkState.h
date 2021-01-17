@@ -206,6 +206,17 @@ public:
 	{
 		return playerMax_;
 	}
+
+	std::chrono::system_clock::time_point GetStartTime()
+	{
+		return startTime_;
+	}
+
+	bool GetisSetSendStart()
+	{
+		return isSetSendStart_;
+	}
+
 protected:
 
 	// 変数宣言
@@ -232,11 +243,13 @@ protected:
 	int playerMax_=1;
 
 	long long time_;
-
+	bool isSetSendStart_;		// true: 開始時刻生成済み
+	std::chrono::system_clock::time_point startTime_;
+	
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;
 	std::unique_ptr<Timer> timer_;
 	std::shared_ptr<File::TMX_File> tmxFile_ = nullptr;
-
+	
 	// 関数
 	virtual void UpdateFuncNon();	
 	virtual void UpdateFuncWait();	// 接続待機状態(ホスト用)

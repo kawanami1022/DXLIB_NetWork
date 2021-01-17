@@ -9,12 +9,13 @@
 
 HostNetWorkState::HostNetWorkState()
 {
-
+    
     auto succeed = PreparationListenNetWork(portNum_);
     if (succeed==0) { active_ = ActiveState::Wait; }
     std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
     playerMax_ = 1;
     mesData_.sendID = 0;
+    isSetSendStart_ = false;
 }
 
 HostNetWorkState::~HostNetWorkState()
@@ -74,8 +75,25 @@ void HostNetWorkState::UpdateFuncWait()
         {
             SetSendPacket(DATA);
         }
+        data.clear();
         SendUpdate(netHandle.back());
-
+        if (!isSetSendStart_)
+        {
+            startTime_ = std::chrono::system_clock::now() + std::chrono::seconds(30);//15秒後の開始時刻を取得する
+            isSetSendStart_ = true;
+        }
+        header={ MesType::COUNT_DOWN_ROOM,0,0,2};
+        data = { header.data_[0],header.data_[1] };
+        header.start_ = startTime_;
+        data.emplace_back(header.data_[0]);
+        data.emplace_back(header.data_[1]);
+        for (auto& DATA : data)
+        {
+            SetSendPacket(DATA);
+        }
+        SendUpdate(netHandle.back());
+        //COUNT_DOWN_GAME,		//全員の初期化完了ごのゲーム開始時間 {MesType ヘッダー,longlong 時間}
+        
         active_ = ActiveState::Init;
     }
 
@@ -83,12 +101,10 @@ void HostNetWorkState::UpdateFuncWait()
 
 void HostNetWorkState::UpdateFuncInit()
 {
-    std::thread func([&]() {SendMessageData(netHandle.back().first); });
 
     std::cout << "初期化完了 !    Stanby状態に移動" << std::endl;
     if (CheckNetWork(netHandle.back().first))
     {
-        func.join();
         std::cout << "-------------waitに戻る---------------" << std::endl;
     }
     else

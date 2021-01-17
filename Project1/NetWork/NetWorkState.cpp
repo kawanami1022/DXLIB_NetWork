@@ -29,7 +29,6 @@ NetWorkState::NetWorkState()
 
 	timer_ = std::make_unique<Timer>();
 	mesData_.sendID = 0;
-
 	for (auto& RESULT : result_)
 	{
 		RESULT = -1;
@@ -161,6 +160,7 @@ bool NetWorkState::SendMessageData(int netHandle)
 	unsigned int dataSize=0;
 	unsigned int sendDataLength = 0;
 	Header headerdata{ MesType::STANBY_GUEST };
+
 #ifdef DEBUG
 	// debug display's variables
 	while (1)
@@ -259,7 +259,6 @@ bool NetWorkState::SendMessageData(int netHandle)
 			continue;
 		}
 	} while (GetNetWorkDataLength(netHandle));
-
 
 	return true;
 }

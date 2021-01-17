@@ -236,11 +236,8 @@ void LoginScene::Play(UniqueBase& scene)
 
 	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
 	{
-		if (CheckHitKey(KEY_INPUT_SPACE) == 1)
-		{
-			IpNetWorkState->SetNetWorkState(ActiveState::Stanby);
-			std::cout << "-----------StanbyMode----------" << std::endl;
-		}
+			//IpNetWorkState->SetNetWorkState(ActiveState::Stanby);
+			//std::cout << "-----------StanbyMode----------" << std::endl;
 	}
 
 	if (IpNetWorkState->GetNetWorkMode() ==NetWorkMode::OFFLINE)

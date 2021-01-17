@@ -6,13 +6,14 @@
 #include "NetWork.h"
 #include "HostNetWorkState.h"
 #include "../Actor/Character/Character.h"
+
 HostNetWorkState::HostNetWorkState()
 {
 
     auto succeed = PreparationListenNetWork(portNum_);
     if (succeed==0) { active_ = ActiveState::Wait; }
     std::cout << static_cast<int>(active_) << "    " << portNum_<<"     ";
-  
+    playerMax_ = 1;
     mesData_.sendID = 0;
 }
 
@@ -60,9 +61,21 @@ void HostNetWorkState::UpdateFuncWait()
     auto handle = GetNewAcceptNetWork();
     if (handle !=-1)
     {
+
         playerID_ += UNIT_ID_BASE;
+        playerMax_++;
         netHandle.emplace_back(std::make_pair(handle,playerID_));
         std::cout << "Ú‘±‚³‚ê‚Ä‚Ü‚·" << std::endl;
+        // ID‚ð‘—M‚·‚é
+        Header header{ MesType::ID,0,0,2 };
+
+        std::vector<int> data = { header.data_[0],header.data_[1],playerID_,playerMax_ };
+        for (auto& DATA : data)
+        {
+            SetSendPacket(DATA);
+        }
+        SendUpdate(netHandle.back());
+
         active_ = ActiveState::Init;
     }
 
@@ -93,7 +106,6 @@ void HostNetWorkState::UpdateFuncStanby()
     auto SendData=[&]() {
         for (auto NetHandle : netHandle)
         {
-            std::cout << "STANBY_HOST‚ð‘—M‚µ‚Ü‚·------" << std::endl;
             NetWorkSend(NetHandle.first, &header, sizeof(MesHeader));
         }
         sendStanbyFlag = false;

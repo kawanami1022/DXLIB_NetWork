@@ -162,8 +162,6 @@ bool NetWorkState::SendMessageData(int netHandle)
 	unsigned int sendDataLength = 0;
 	Header headerdata{ MesType::STANBY_GUEST };
 #ifdef DEBUG
-
-
 	// debug display's variables
 	while (1)
 	{

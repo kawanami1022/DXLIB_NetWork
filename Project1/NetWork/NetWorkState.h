@@ -136,7 +136,6 @@ public:
 	{
 		netHandle.emplace_back(std::make_pair(handle,playerID_));
 		playerID_++;
-		playerMax_ = playerID_;
 	}
 
 	void SetTMXData(std::shared_ptr<File::TMX_File> tmxdata)
@@ -230,7 +229,7 @@ protected:
 	std::array<int,5> result_;
 
 	int playerID_;
-	int playerMax_;
+	int playerMax_=1;
 
 	long long time_;
 

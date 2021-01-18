@@ -11,6 +11,7 @@
 #include "LoginScene.h"
 #include "GameScene.h"
 #include "CrossOver.h"
+#include "OrgTrgScene.h"
 #include "../Time/Time.h"
 
 LoginScene::LoginScene():BaseScene()
@@ -153,9 +154,16 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 	}
 	else if (netWorkMode == NetWorkMode::GUEST)
 	{
+		std::string line;
 		//std::cout << "GUESTに設定されてます" << std::endl;
 		IpNetWorkState->CreateThreadMpdt(netWorkMode);
 		mode_ = UpdateMode::SetHostIP;
+		std::ifstream file("ini/hostIP.txt", std::ios::in);
+		while (!file.eof())
+		{
+			std::getline(file, line);
+			ipAdress_.emplace_back(line);
+		}
 	}
 	else if (netWorkMode == NetWorkMode::OFFLINE)
 	{
@@ -201,9 +209,16 @@ void LoginScene::SetHostIP(UniqueBase& scene)
 
 		std::cout << "HOSTのIPアドレス	:" << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "に設定されました!" << std::endl;
 		activeState_ = IpNetWork->ConnectHost(hostIp);
+
+
 		if (activeState_ == ActiveState::Init) {
 			std::cout << "接続成功!" << std::endl;
 			mode_ = UpdateMode::StartInit;
+			// Ipアドレス保存
+			std::fstream file("ini/hostIP.txt", std::ios::out|std::ios::app);
+			file << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4);
+
+
 		}
 		else {
 			std::cout << "接続失敗!" << std::endl;
@@ -248,20 +263,21 @@ void LoginScene::Play(UniqueBase& scene)
 		std::thread network(&LoginScene::NetWork, this);
 		network.detach();
 		auto nextScene = std::make_unique<GameScene>();
-		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
+		scene = std::make_unique<OrgTrgScene>(std::move(scene), std::move(nextScene));
 	}
 
 	if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
 	{
-
 			//IpNetWorkState->SetNetWorkState(ActiveState::Stanby);
 			//std::cout << "-----------StanbyMode----------" << std::endl;
+		auto nextScene = std::make_unique<GameScene>();
+		scene = std::make_unique<OrgTrgScene>(std::move(scene), std::move(nextScene));
 	}
 
 	if (IpNetWorkState->GetNetWorkMode() ==NetWorkMode::OFFLINE)
 	{
 		auto nextScene = std::make_unique<GameScene>();
-		scene = std::make_unique<CrossOver>(std::move(scene), std::move(nextScene));
+		scene = std::make_unique<OrgTrgScene>(std::move(scene), std::move(nextScene));
 	}
 
 }
@@ -275,8 +291,12 @@ void LoginScene::SetNetWorkDraw()
 
 void LoginScene::SetHostIPDraw()
 {
-
-
+	auto height_ = 50;
+	for (auto IP : ipAdress_)
+	{
+		height_ += 16;
+		DrawFormatString(0, height_, 0xffffff, "%s", IP.c_str());
+	}
 	keybord_->Draw();
 
 }

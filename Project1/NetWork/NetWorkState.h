@@ -244,6 +244,7 @@ protected:
 
 	long long time_;
 	bool isSetSendStart_;		// true: ŠJn¶¬Ï‚İ
+	std::chrono::system_clock::time_point roomTime_;
 	std::chrono::system_clock::time_point startTime_;
 	
 	std::unordered_map< MesType, std::function<void(void)>> updateMesType_;

@@ -79,14 +79,17 @@ void HostNetWorkState::UpdateFuncWait()
         SendUpdate(netHandle.back());
         if (!isSetSendStart_)
         {
-            startTime_ = std::chrono::system_clock::now() + std::chrono::seconds(30);//15秒後の開始時刻を取得する
+            roomTime_ = std::chrono::system_clock::now();//15秒後の開始時刻を取得する
+            startTime_ = std::chrono::system_clock::now()+ std::chrono::seconds(15);//15秒後の開始時刻を取得する
             isSetSendStart_ = true;
         }
+
         header={ MesType::COUNT_DOWN_ROOM,0,0,2};
         data = { header.data_[0],header.data_[1] };
-        header.start_ = startTime_;
+        header.start_ = roomTime_;
         data.emplace_back(header.data_[0]);
         data.emplace_back(header.data_[1]);
+
         for (auto& DATA : data)
         {
             SetSendPacket(DATA);

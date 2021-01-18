@@ -184,6 +184,7 @@
     <ClInclude Include="Scene\BaseScene.h" />
     <ClInclude Include="Manager\SceneMng.h" />
     <ClInclude Include="Scene\LoginScene.h" />
+    <ClInclude Include="Scene\OrgTrgScene.h" />
     <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Time\Time.h" />
     <ClInclude Include="Scene\Transion.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Manager\SceneMng.cpp" />
     <ClCompile Include="Scene\LoginScene.cpp" />
+    <ClCompile Include="Scene\OrgTrgScene.cpp" />
     <ClCompile Include="Scene\ResultScene.cpp" />
     <ClCompile Include="Time\Time.cpp" />
     <ClCompile Include="Scene\Transion.cpp" />

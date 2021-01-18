@@ -62,7 +62,7 @@ private:
 	int Handle;
 	int CirlcleHandle_ = 0;
 	std::array<int,3> setNetWorkHandle_;
-
+	std::vector<std::string> ipAdress_;
 
 };
 

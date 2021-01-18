@@ -98,8 +98,11 @@ void NetWorkState::CreateThreadMpdt(NetWorkMode mode)
 
 	if (mode == NetWorkMode::HOST)
 	{
-		std::thread sendData([&]() {NetWorkState::SendMessageData(netHandle.back().first); });
-		sendData.detach();
+		for (auto NetHandle : netHandle)
+		{
+			std::thread sendData([&]() {NetWorkState::SendMessageData(NetHandle.first); });
+			sendData.detach();
+		}
 	}
 }
 
@@ -161,17 +164,23 @@ bool NetWorkState::SendMessageData(int netHandle)
 	unsigned int sendDataLength = 0;
 	Header headerdata{ MesType::STANBY_GUEST };
 
-#ifdef DEBUG
+	if (tmxFile_ == nullptr)
+	{
+		std::cout << "tmxdataが読み込めません" << std::endl;
+		tmxFile_->load_TMX("map.tmx");
+	}
+	//TMX_SIZE,		{ MesType ヘッダー,縦サイズ,横サイズ,レイヤー数}
+	headerdata = {MesType::TMX_SIZE,0,0,3};
+	std::vector<int> data = { headerdata.data_[0],headerdata.data_[1], tmxFile_->height_,tmxFile_->width_,static_cast<int>(tmxFile_->nextlayerid_)-1};
+
+	NetWorkSend(netHandle, &data, sizeof(int) * data.size());
+	data.clear();
+	//	{MesType ヘッダー,データ}
+
 	// debug display's variables
 	while (1)
 	{
 
-		if (tmxFile_ == nullptr)
-		{
-			std::cout << "tmxdataが読み込めません" << std::endl;
-			tmxFile_->load_TMX("map.tmx");
-			continue;
-		}
 
 		std::memset(&mesData_, 0, sizeof(MesHeader));
 
@@ -248,17 +257,10 @@ bool NetWorkState::SendMessageData(int netHandle)
 		break;
 		// debug display
 	};
-#endif // DEBUG
 
-	do
-	{
-		if (tmxFile_ == nullptr)
-		{
-			std::cout << "tmxdataが読み込めません" << std::endl;
-			tmxFile_->load_TMX("map.tmx");
-			continue;
-		}
-	} while (GetNetWorkDataLength(netHandle));
+
+	
+
 
 	return true;
 }

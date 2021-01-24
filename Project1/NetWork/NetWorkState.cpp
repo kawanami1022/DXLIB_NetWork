@@ -175,9 +175,71 @@ bool NetWorkState::SendMessageData(int netHandle)
 
 	NetWorkSend(netHandle, &data, sizeof(int) * data.size());
 	data.clear();
-	//	{MesType ヘッダー,データ}
 
+	// 送信用mapdata作成
+	//	{MesType ヘッダー,データ}
+	// mapdata挿入
+	for (auto Name : tmxFile_->name_)
+	{
+		for (int y = 0; y < tmxFile_->height_; y++)
+		{
+			for (int x = 0; x < tmxFile_->width_; x++)
+			{
+				mapId.push_back(tmxFile_->tiledMap_[Name].titleID_[x][y]);
+			}
+		}
+	}
+	auto mapdata = 0;
+	while (mapId.size() > 0)
+	{
+		mapdata = 0;
+		for (unsigned int i = 0; i < 8; i++)
+		{
+			//std::cout << std::hex << mapdata << ":" << std::endl;
+			mapdata |= mapId.front();
+			mapId.erase(mapId.begin());
+			if (i != (8 - 1))mapdata <<= 4;
+			if (!(mapId.size() > 0))
+			{
+				break;
+			}
+		}
+		std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
+		dataPacket_.push_back(mapdata);
+	}
+
+
+	// 送信データ長を求める
+	File::GetLineString(1, &linestring, "ini/setting.txt");		// 調査用文字列を取得する
+	// 一回の送信に使えるデータ長を求める
+	dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length")) / sizeof(int);
+	std::cout << "dataSize:		" << dataSize << std::endl;
+	auto idx = 0;
+	do {
+		headerdata.mesdata_ = { MesType::TMX_DATA,
+											dataPacket_.size() > dataSize ? static_cast<unsigned char>(1) : static_cast<unsigned char>(0),		// 1:次のデータが存在
+											static_cast<unsigned short>(idx),
+											dataPacket_.size() > dataSize ? static_cast<int>(dataSize) : static_cast<int>(dataPacket_.size()) };
+		idx++;
+
+		data.emplace_back(headerdata.data_[0]);
+		data.emplace_back(headerdata.data_[1]);
+
+
+		int inputIdx = 0;
+		while (headerdata.mesdata_.length_> data.size()*sizeof(int))
+		{
+			data.emplace_back(dataPacket_[inputIdx]);
+			dataPacket_.erase(dataPacket_.begin());
+			inputIdx++;
+		}
+		std::cout << "---------------データを送信します---------------" << std::endl;
+		NetWorkSend(netHandle, data.data(), data.size() * sizeof(int));
+		data.clear();
+	} while (dataPacket_.size() > 0);
+	dataPacket_.clear();
 	// debug display's variables
+#ifdef DEBUG
 	while (1)
 	{
 
@@ -258,7 +320,7 @@ bool NetWorkState::SendMessageData(int netHandle)
 		// debug display
 	};
 
-
+#endif
 	
 
 
@@ -288,9 +350,7 @@ bool NetWorkState::ReservMessageData()
 		if (headerdata.mesdata_.type == MesType::COUNT_DOWN_ROOM)
 		{
 			std::cout << "-------------COUNT_DOWN_ROOM-------------" << std::endl;
-
-			NetWorkRecv(netHandle.front().first, &headerdata.data_[0], sizeof(int));
-			NetWorkRecv(netHandle.front().first, &headerdata.data_[1], sizeof(int));
+			NetWorkRecv(netHandle.front().first, &headerdata.start_, sizeof(std::chrono::system_clock::time_point));
 			std::cout << "時間:" << std::chrono::system_clock::to_time_t(headerdata.start_) << std::endl;
 		}
 		if (headerdata.mesdata_.type == (MesType::ID))
@@ -386,7 +446,8 @@ bool NetWorkState::ReservMessageData()
 		if (!ofs) {
 			std::cout << "入力失敗!" << std::endl;
 		}
-		ofs << std::hex << revData << "\n";
+		std::cout << revData << std::endl;
+		ofs << std::hex << revData << std::endl;
 #endif
 
 	} while (headerdata.mesdata_.type != MesType::STANBY_HOST);

@@ -1,6 +1,6 @@
 #pragma once
 #include "Transion.h"
-constexpr auto INTERVAL_FLAME = 20;
+constexpr auto INTERVAL_FLAME = 5;
 
 enum class DRAW_STATE
 {

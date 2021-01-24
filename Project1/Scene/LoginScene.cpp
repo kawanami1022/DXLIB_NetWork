@@ -212,11 +212,23 @@ void LoginScene::SetHostIP(UniqueBase& scene)
 
 
 		if (activeState_ == ActiveState::Init) {
+			bool isInputStr = true;
 			std::cout << "接続成功!" << std::endl;
 			mode_ = UpdateMode::StartInit;
 			// Ipアドレス保存
-			std::fstream file("ini/hostIP.txt", std::ios::out|std::ios::app);
-			file << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4);
+			for (auto IP : ipAdress_)
+			{
+				// 重複文字列が存在するばあい
+				if (IP == keybord_->GetInputString())
+				{
+					isInputStr = false;
+				}
+			}
+			if (isInputStr)
+			{
+				std::fstream file("ini/hostIP.txt", std::ios::out|std::ios::app);
+				file << (unsigned int)(hostIp.d1) << "." << (unsigned int)(hostIp.d2) << "." << (unsigned int)(hostIp.d3) << "." << (unsigned int)(hostIp.d4) << "\n";
+			}
 
 
 		}

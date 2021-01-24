@@ -398,6 +398,9 @@ void GameScene::Network()
 				}
 				if (headerdata.mesdata_.type == MesType::SET_BOM)
 				{
+					if (data.size() >=7)
+					{
+
 					bomb_.emplace_back(std::make_unique<Bomb>(Position2(data[2], data[3])));
 					// long longŒ^ ”š’eİ’uŠÔ
 					Header start = { MesType::SET_BOM };
@@ -426,16 +429,20 @@ void GameScene::Network()
 					std::cout << data[6] << std::endl;
 #endif // DEBUG
 					data.erase(data.begin(), data.begin() + headerdata.data_[1]);
+					}
 				}
 
 				if (headerdata.mesdata_.type == MesType::RESULT)
 				{
-					IpNetWorkState->SetResult(data[0]);
-					IpNetWorkState->SetResult(data[1]);
-					IpNetWorkState->SetResult(data[2]);
-					IpNetWorkState->SetResult(data[3]);
-					IpNetWorkState->SetResult(data[4]);
-					changeScene_ = true;
+					if (data.size() >= headerdata.data_[1])
+					{
+						IpNetWorkState->SetResult(data[0]);
+						IpNetWorkState->SetResult(data[1]);
+						IpNetWorkState->SetResult(data[2]);
+						IpNetWorkState->SetResult(data[3]);
+						IpNetWorkState->SetResult(data[4]);
+					}
+						changeScene_ = true;
 				}
 
 			}

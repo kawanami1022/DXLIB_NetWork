@@ -62,6 +62,9 @@ void HostNetWorkState::UpdateFuncWait()
     auto handle = GetNewAcceptNetWork();
     if (handle !=-1)
     {
+ 
+        // PlayerID‚ğ‘—M‚µ‚Ä‚İ‚é
+
 
         playerID_ += UNIT_ID_BASE;
         playerMax_++;

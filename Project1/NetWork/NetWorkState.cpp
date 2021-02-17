@@ -164,6 +164,9 @@ bool NetWorkState::SendMessageData(int netHandle)
 	unsigned int sendDataLength = 0;
 	Header headerdata{ MesType::STANBY_GUEST };
 
+	// PlayerIDを送信してみる
+	headerdata = { MesType::ID,0,0,3 };
+
 	if (tmxFile_ == nullptr)
 	{
 		std::cout << "tmxdataが読み込めません" << std::endl;
@@ -212,117 +215,21 @@ bool NetWorkState::SendMessageData(int netHandle)
 	// 送信データ長を求める
 	File::GetLineString(1, &linestring, "ini/setting.txt");		// 調査用文字列を取得する
 	// 一回の送信に使えるデータ長を求める
-	dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length")) / sizeof(int);
+	dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length"));
 	std::cout << "dataSize:		" << dataSize << std::endl;
 	auto idx = 0;
 	do {
 		headerdata.mesdata_ = { MesType::TMX_DATA,
-											dataPacket_.size() > dataSize ? static_cast<unsigned char>(1) : static_cast<unsigned char>(0),		// 1:次のデータが存在
-											static_cast<unsigned short>(idx),
-											dataPacket_.size() > dataSize ? static_cast<int>(dataSize) : static_cast<int>(dataPacket_.size()) };
-		idx++;
-
-		data.emplace_back(headerdata.data_[0]);
-		data.emplace_back(headerdata.data_[1]);
-
-
-		int inputIdx = 0;
-		while (headerdata.mesdata_.length_> data.size()*sizeof(int))
-		{
-			data.emplace_back(dataPacket_[inputIdx]);
-			dataPacket_.erase(dataPacket_.begin());
-			inputIdx++;
-		}
-		std::cout << "---------------データを送信します---------------" << std::endl;
-		NetWorkSend(netHandle, data.data(), data.size() * sizeof(int));
-		data.clear();
-	} while (dataPacket_.size() > 0);
-	dataPacket_.clear();
-	// debug display's variables
-#ifdef DEBUG
-	while (1)
-	{
-
-
-		std::memset(&mesData_, 0, sizeof(MesHeader));
-
-		// substruction's mapId
-		for (auto Name : tmxFile_->name_)
-		{
-			for (int y = 0; y < tmxFile_->height_; y++)
-			{
-				for (int x = 0; x < tmxFile_->width_; x++)
-				{
-					mapId.push_back(tmxFile_->tiledMap_[Name].titleID_[x][y]);
-				}
-			}
-		}
-
-
-		auto mapdata = 0;
-		while (mapId.size() > 0)
-		{
-			mapdata = 0;
-			for (unsigned int i = 0; i < 8; i++)
-			{
-				//std::cout << std::hex << mapdata << ":" << std::endl;
-				mapdata |= mapId.front();
-				mapId.erase(mapId.begin());
-				if (i != (8 - 1))mapdata <<= 4;
-				if (!(mapId.size() > 0))
-				{
-					break;
-				}
-			}
-
-			std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
-			dataPacket_.push_back(mapdata);
-		}
-
-		// 送信データ長を求める
-		File::GetLineString(1, &linestring, "ini/setting.txt");		// 調査用文字列を取得する
-		dataSize = std::stoi(strmanip::ExtractTheStrDblQt(linestring, "byte length")) / sizeof(int);
-		std::cout << "dataSize:		" << dataSize << std::endl;
-
-		//dataPacketの添え字[0]:TMXSIZE	[1]:TMXDATAを送る
-		Header headerdata{ MesType::TMX_SIZE,0,0,1 };
+										0,		// 1:次のデータが存在
+							static_cast<unsigned short>(idx),
+							static_cast<int>(dataPacket_.size())};
 		dataPacket_.insert(dataPacket_.begin(), headerdata.data_[0]);
-		headerdata.mesdata_ = { MesType::TMX_DATA,0,0,static_cast<int>(dataPacket_.size()) - 1 };
-		dataPacket_.insert(dataPacket_.begin() + 1, headerdata.data_[0]);
-		dataPacket_.insert(dataPacket_.begin() + 2, headerdata.data_[1]);
+		dataPacket_.insert(dataPacket_.begin()+1, headerdata.data_[1]);
 
-
-		std::cout << "これからデータを送信します" << std::endl;
-		timer_->StartMesurement();
-
-		int sendLength = 0;
-		do {
-			// 送信用のデータの長さを求める
-			sendLength = (dataSize - MESHEADER_INT < dataPacket_.size()) ?
-				dataSize - MESHEADER_INT : dataPacket_.size() - MESHEADER_INT;
-
-			// 次のデータが存在するのか確かめる
-			headerdata.mesdata_.next = dataPacket_.size() > dataSize ? 1 : 0;
-			dataPacket_[1] = headerdata.data_[0];
-
-			// int型のマップデータ格納変数が0になるまで処理する
-			auto flag = NetWorkSend(netHandle, dataPacket_.data(), sizeof(MesPacket) * (sendLength + MESHEADER_INT));
-			dataPacket_.erase(dataPacket_.begin() + MESHEADER_INT, dataPacket_.begin() + MESHEADER_INT + sendLength);
-			headerdata.mesdata_.sendID++;
-		} while (dataPacket_.size() > MESHEADER_INT);
+		std::cout << "---------------データを送信します---------------" << std::endl;
+		NetWorkSend(netHandle, dataPacket_.data(), dataPacket_.size() * sizeof(int));
 		dataPacket_.clear();
-
-
-		std::cout << "計測時間:" << std::dec << timer_->IntervalMesurement().count() << std::endl;
-		std::cout << std::endl;
-
-		break;
-		// debug display
-	};
-
-#endif
-	
-
+	} while (dataPacket_.size() > 0);
 
 	return true;
 }

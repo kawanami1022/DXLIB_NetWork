@@ -1,0 +1,54 @@
+□□□COUNT_DOWN_ROOM受信
+
+□□ID:0
+□□HDL:671154176
+
+□□□プレイヤーID受信
+□□ID:0
+□□HDL:671154176
+キャラID：5 / プレイヤー総数：2
+
+□□□TMX_SIZEのデータ部サイズ:1
+□□□TMXの横のマス数:21
+□□□TMXの縦のマス数:17
+□□□TMXのレイヤー数:4
+
+□□□TMXデータの受信完了
+
+□□□TMXの横のマス数:21
+□□□TMXの縦のマス数:17
+□□□TMXのレイヤー数:4
+
+経過時間1634mico
+相手側の初期化情報送信完了を受信
+データ長0の103データ受信
+□□□STANBY_HOST受信
+□□ID:0
+□□HDL:671154176
+プレイ状態に移行
+ホストに開始合図を送信
+画像ファイルの読み込み
+
+□□□COUNT_DOWN_GAME受信
+
+□□□ゲーム開始カウントダウン受信
+
+□□ID:0
+version : [1.4]
+tiledversion : [1.4.2]
+orientation : [orthogonal□□HDL:671154176
+]
+renderorder : [right-down]
+width : [21]
+height : [17]
+tilewidth : [32]
+tileheight : [32]
+infinite : [0]
+nextlayerid : [5]
+nextobjectid : [1]
+画像ファイルの読み込み
+Playerを生成
+画像ファイルの読み込み
+Playerを生成
+TransitionSceneの生成
+TransitionSceneの終了

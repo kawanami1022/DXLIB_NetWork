@@ -39,6 +39,7 @@ void LoginScene::Init()
 
 	IpNetWork;
 	keybord_ = std::make_unique<KeyBordInput>();
+
 	// ŠÖ”‰Šú‰»
 	mode_ = UpdateMode::SetNetWork;
 	updateFunc_ = { { UpdateMode::SetNetWork,std::bind(&LoginScene::SetNetWork,this,std::placeholders::_1) },
@@ -96,14 +97,6 @@ void LoginScene::Draw()
 
 void LoginScene::SetNetWork(UniqueBase& scene)
 {
-#ifdef DEBUG
-
-
-	std::cout << "---------SetNetWork----------" << std::endl;
-	auto ipData = IpNetWork->GetIP();
-	std::cout << (int)(ipData.d1) << '.' << (int)(ipData.d2) << '.' << (int)(ipData.d3) << '.' << (int)(ipData.d4) << std::endl;
-
-#endif // DEBUG
 	
 	auto inputNum = 0;
 	auto netWorkMode = NetWorkMode::MAX;
@@ -122,34 +115,8 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 			break;
 		}
 	}
-
-#ifdef DEBUG
-
-
-	std::cout << "•¶š—ñ‚ğ•\¦‚µ‚Ä‚­‚¾‚³‚¢ OFFLINE:1 HOST:2 GUEST:3" << std::endl;
-	std::cin >> inputNum;
-
-	for (int mode = 0; mode < (int)(NetWorkMode::MAX); mode++)
-	{
-		if (inputNum == mode)
-		{
-			IpNetWork->SetNetWorkMode((NetWorkMode)(mode));
-			netWorkMode = IpNetWork->GetNetWorkMode();
-			break;
-		}
-		if (mode == (int)(NetWorkMode::MAX))
-		{
-
-		}
-	}
-
-#endif // DEBUG
-
-
 	if (netWorkMode == NetWorkMode::HOST)
 	{
-		//std::cout << "HOST‚Éİ’è‚³‚ê‚Ä‚Ü‚·" << std::endl;
-		
 		mode_ = UpdateMode::StartInit;
 	}
 	else if (netWorkMode == NetWorkMode::GUEST)
@@ -244,14 +211,11 @@ void LoginScene::StartInit(UniqueBase& scene)
 {
 	auto mode = IpNetWorkState->GetNetWorkMode();
 	auto now = std::chrono::system_clock::now();	// Host‚Ìê‡Œ»İ‚ğæ“¾‚·‚é
-	//std::cout << "---------StartInit-----------" << std::endl;
 	// ‰æ‘œ“Ç‚İ‚İ
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 
-//	std::cout << Handle << std::endl;
 	if (mode == NetWorkMode::HOST)
 	{
-
 		if (IpNetWorkState->GetisSetSendStart())
 		{
 			if (IpNetWorkState->GetStartTime() <= now)

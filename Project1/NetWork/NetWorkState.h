@@ -42,7 +42,7 @@ enum class MesType :char
 	COUNT_DOWN_GAME,			//全員の初期化完了ごのゲーム開始時間 {MesType ヘッダー,longlong 時間}
 	TMX_SIZE,					//	{ MesType ヘッダー,縦サイズ,横サイズ,レイヤー数}
 	TMX_DATA,					//	{MesType ヘッダー,データ}
-	POS,						// ゲーム中のデータ											{MesType ヘッダー,ID,x,y,Dir}
+	POS,						// ゲーム中のデータ		{MesType ヘッダー,ID,x,y,Dir}
 	SET_BOM,				// ボムを配置	{MesType ヘッダー,設置したキャラのID,爆弾自体のID,x,y,int 型　爆発までの時間(3秒),long long型 爆弾設置時間,}
 	DETH,					// 死亡	{MesType ヘッダー,自分のID}
 	RESULT,				// 結果	{MesType ヘッダー,ID,ID,ID,ID,ID,}		

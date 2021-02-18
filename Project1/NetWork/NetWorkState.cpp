@@ -156,17 +156,21 @@ ActiveState NetWorkState::ConnectHost(IPDATA hostIP)
 
 bool NetWorkState::SendMessageData(int netHandle)
 {
+	std::cout << "-------------SendMessageData------------" << std::endl;
 	std::vector<int> mapId;	// tmxFile's tiledmap 
 	short sendNum = 0;
 	unsigned int intSendCount = 0;
 	std::string linestring;
 	unsigned int dataSize=0;
 	unsigned int sendDataLength = 0;
+	std::vector<int> data;
 	Header headerdata{ MesType::STANBY_GUEST };
 
 	// PlayerIDを送信してみる
-	headerdata = { MesType::ID,0,0,3 };
-
+	headerdata = { MesType::ID,0,0,2 };
+	data = { headerdata.data_[0],headerdata.data_[1],5,2 };
+	NetWorkSend(netHandle,&data, sizeof(int) * data.size());
+	data.clear();
 	if (tmxFile_ == nullptr)
 	{
 		std::cout << "tmxdataが読み込めません" << std::endl;
@@ -174,7 +178,7 @@ bool NetWorkState::SendMessageData(int netHandle)
 	}
 	//TMX_SIZE,		{ MesType ヘッダー,縦サイズ,横サイズ,レイヤー数}
 	headerdata = {MesType::TMX_SIZE,0,0,3};
-	std::vector<int> data = { headerdata.data_[0],headerdata.data_[1], tmxFile_->height_,tmxFile_->width_,static_cast<int>(tmxFile_->nextlayerid_)-1};
+	data = { headerdata.data_[0],headerdata.data_[1], tmxFile_->height_,tmxFile_->width_,static_cast<int>(tmxFile_->nextlayerid_)-1};
 
 	NetWorkSend(netHandle, &data, sizeof(int) * data.size());
 	data.clear();

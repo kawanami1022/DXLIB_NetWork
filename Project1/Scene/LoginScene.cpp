@@ -60,6 +60,7 @@ void LoginScene::Init()
 
 	tmxFile_ = std::make_unique<File::TMX_File>();
 	log.open("Login.txt");
+
 }
 
 UniqueBase LoginScene::input(UniqueBase nowScene)
@@ -72,7 +73,10 @@ UniqueBase LoginScene::UpDate(UniqueBase nowScene)
 {
 	std::memcpy(&keyIdNow_, &keyIdOld_, UCHAR_MAX);
 	GetHitKeyStateAll(keyIdNow_.data());
-	IpNetWork->Update();
+	if (IpNetWork->GetNetWorkMode() == NetWorkMode::GUEST)
+	{
+		IpNetWork->Update();
+	}
 	
 	updateFunc_[mode_](nowScene);
 	SetDrawScreen(screenSrcID_);
@@ -100,6 +104,9 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 	
 	auto inputNum = 0;
 	auto netWorkMode = NetWorkMode::MAX;
+	auto NetWorkUpdate = [&]() {
+		IpNetWork->Update();
+	};
 
 	std::unordered_map<int, NetWorkMode> inputId_ =
 	{ {KEY_INPUT_1,NetWorkMode::OFFLINE},
@@ -118,10 +125,14 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 	if (netWorkMode == NetWorkMode::HOST)
 	{
 		mode_ = UpdateMode::StartInit;
+
+		std::thread update{ NetWorkUpdate };
+		update.detach();
 	}
 	else if (netWorkMode == NetWorkMode::GUEST)
 	{
 		std::string line;
+
 		//std::cout << "GUEST‚Éİ’è‚³‚ê‚Ä‚Ü‚·" << std::endl;
 		IpNetWorkState->CreateThreadMpdt(netWorkMode);
 		mode_ = UpdateMode::SetHostIP;
@@ -130,6 +141,7 @@ void LoginScene::SetNetWork(UniqueBase& scene)
 		{
 			std::getline(file, line);
 			ipAdress_.emplace_back(line);
+
 		}
 	}
 	else if (netWorkMode == NetWorkMode::OFFLINE)
@@ -210,7 +222,10 @@ void LoginScene::SetHostIP(UniqueBase& scene)
 void LoginScene::StartInit(UniqueBase& scene)
 {
 	auto mode = IpNetWorkState->GetNetWorkMode();
+
 	auto now = std::chrono::system_clock::now();	// Host‚Ìê‡Œ»İ‚ğæ“¾‚·‚é
+	//std::cout << "--------StartInit---------"<<std::endl;
+
 	// ‰æ‘œ“Ç‚İ‚İ
 	Handle = LoadGraph("Image/PURPLE_Puyo.png");
 
@@ -218,8 +233,10 @@ void LoginScene::StartInit(UniqueBase& scene)
 	{
 		if (IpNetWorkState->GetisSetSendStart())
 		{
+			std::cout << "--------GetisSetSendStart---------" << std::endl;
 			if (IpNetWorkState->GetStartTime() <= now)
 			{
+				std::cout << "--------CreateThreadMpdt---------" << std::endl;
 				IpNetWorkState->CreateThreadMpdt(mode);
 				mode_ = UpdateMode::Play;
 			}

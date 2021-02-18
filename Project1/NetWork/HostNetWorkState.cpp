@@ -59,13 +59,17 @@ void HostNetWorkState::UpdateFuncNon()
 
 void HostNetWorkState::UpdateFuncWait()
 {
-    auto handle = GetNewAcceptNetWork();
+    auto Ip=IpNetWork->GetIP();
+    auto handle = -1;
+    std::cout << (int)Ip.d1 << (int)Ip.d2 << (int)Ip.d3 << (int)Ip.d4 << std::endl;
+    while (handle == -1)
+    {
+        handle = GetNewAcceptNetWork();
+    }
     if (handle !=-1)
     {
  
         // PlayerID‚ğ‘—M‚µ‚Ä‚İ‚é
-
-
         playerID_ += UNIT_ID_BASE;
         playerMax_++;
         netHandle.emplace_back(std::make_pair(handle,playerID_));
@@ -107,7 +111,7 @@ void HostNetWorkState::UpdateFuncWait()
 
 void HostNetWorkState::UpdateFuncInit()
 {
-
+   
     std::cout << "‰Šú‰»Š®—¹ !    Stanbyó‘Ô‚ÉˆÚ“®" << std::endl;
     if (CheckNetWork(netHandle.back().first))
     {
@@ -153,7 +157,6 @@ void HostNetWorkState::UpdateFuncStanby()
         {
             sendStanbyFlag = true;
         }
-        
     }
 
 }

@@ -49,6 +49,7 @@ void File::Tiled_Map::DebugDisplayTile()
 
 bool File::TMX_File::load_TMX(std::string FilePos)
 {
+
 	std::string lineString;
 	std::stringstream ss;
 	auto filePos = 0;
@@ -214,4 +215,9 @@ void File::TMX_File::DisplayTiledMap()
 	{
 		this->tiledMap_[Name].DebugDisplayTile();
 	}
+}
+
+File::TMX_File::TMX_File():
+	mode_(ReadTmxMode::INIT), encoding(""), orthogonal(""), nextlayerid_(0), width_(0), height_(0), tilewidth_(0), tileheight_(0)
+{
 }

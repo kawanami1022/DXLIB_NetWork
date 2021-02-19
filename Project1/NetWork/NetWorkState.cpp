@@ -169,19 +169,33 @@ bool NetWorkState::SendMessageData(int netHandle)
 	// PlayerIDを送信してみる
 	headerdata = { MesType::ID,0,0,2 };
 	data = { headerdata.data_[0],headerdata.data_[1],5,2 };
-	NetWorkSend(netHandle,&data, sizeof(int) * data.size());
+	if(NetWorkSend(netHandle, data.data(), sizeof(int) * data.size()))
+	{
+		std::cout << "接続成功!" << std::endl;
+	}
 	data.clear();
 	if (tmxFile_ == nullptr)
 	{
 		std::cout << "tmxdataが読み込めません" << std::endl;
+		tmxFile_ = std::make_unique<File::TMX_File>();
 		tmxFile_->load_TMX("map.tmx");
 	}
+
 	//TMX_SIZE,		{ MesType ヘッダー,縦サイズ,横サイズ,レイヤー数}
 	headerdata = {MesType::TMX_SIZE,0,0,3};
 	data = { headerdata.data_[0],headerdata.data_[1], tmxFile_->height_,tmxFile_->width_,static_cast<int>(tmxFile_->nextlayerid_)-1};
 
-	NetWorkSend(netHandle, &data, sizeof(int) * data.size());
+	if(NetWorkSend(netHandle, data.data(), sizeof(int) * data.size()))
+	{
+		std::cout << "接続成功!" << std::endl;
+	}
 	data.clear();
+	if (tmxFile_ == nullptr)
+	{
+		tmxFile_ = std::make_unique<File::TMX_File>();
+		std::cout << "tmxdataが読み込めません" << std::endl;
+		tmxFile_->load_TMX("map.tmx");
+	}
 
 	// 送信用mapdata作成
 	//	{MesType ヘッダー,データ}
@@ -231,7 +245,10 @@ bool NetWorkState::SendMessageData(int netHandle)
 		dataPacket_.insert(dataPacket_.begin()+1, headerdata.data_[1]);
 
 		std::cout << "---------------データを送信します---------------" << std::endl;
-		NetWorkSend(netHandle, dataPacket_.data(), dataPacket_.size() * sizeof(int));
+		if(NetWorkSend(netHandle, dataPacket_.data(), dataPacket_.size() * sizeof(int)))
+		{
+			std::cout << "接続成功!" << std::endl;
+		}
 		dataPacket_.clear();
 	} while (dataPacket_.size() > 0);
 

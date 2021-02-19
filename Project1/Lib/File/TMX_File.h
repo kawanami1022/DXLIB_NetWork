@@ -46,6 +46,7 @@ namespace File
 
 		bool load_TMX(std::string FilePos);
 		void DisplayTiledMap();
+		TMX_File();
 	};
 
 }

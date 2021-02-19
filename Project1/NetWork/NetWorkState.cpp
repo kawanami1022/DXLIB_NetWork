@@ -20,12 +20,12 @@ NetWorkState::NetWorkState()
 	active_ = ActiveState::Non;
 	input_.moveDir = 0;
 	activeFunc_ = { 
-				{ActiveState::Non,std::bind(&NetWorkState::UpdateFuncNon,this)},
-				{ActiveState::Wait,std::bind(&NetWorkState::UpdateFuncWait,this)},
-				{ActiveState::Init,std::bind(&NetWorkState::UpdateFuncInit,this)},
-				{ActiveState::Stanby,std::bind(&NetWorkState::UpdateFuncStanby,this)},
-				{ActiveState::Play,std::bind(&NetWorkState::UpdateFuncPlay,this)},
-				{ActiveState::OFFLINE,std::bind(&NetWorkState::UpdateFuncOFFLINE,this)} };
+	{ActiveState::Non,std::bind(&NetWorkState::UpdateFuncNon,this)},
+	{ActiveState::Wait,std::bind(&NetWorkState::UpdateFuncWait,this)},
+	{ActiveState::Init,std::bind(&NetWorkState::UpdateFuncInit,this)},
+	{ActiveState::Stanby,std::bind(&NetWorkState::UpdateFuncStanby,this)},
+	{ActiveState::Play,std::bind(&NetWorkState::UpdateFuncPlay,this)},
+	{ActiveState::OFFLINE,std::bind(&NetWorkState::UpdateFuncOFFLINE,this)} };
 
 	timer_ = std::make_unique<Timer>();
 	mesData_.sendID = 0;
@@ -221,13 +221,16 @@ bool NetWorkState::SendMessageData(ListInt netHandle)
 		for (unsigned int i = 0; i < 8; i++)
 		{
 			//std::cout << std::hex << mapdata << ":" << std::endl;
-			mapdata |= mapId.front();
+
+
+			mapdata |= mapId.front()<<4;
 			mapId.erase(mapId.begin());
-			if (i != (8 - 1))mapdata <<= 4;
+			//if (i != (8 - 1))mapdata <<= 4;
 			if (!(mapId.size() > 0))
 			{
 				break;
 			}
+
 		}
 		std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
 		dataPacket_.push_back(mapdata);
@@ -260,6 +263,8 @@ bool NetWorkState::SendMessageData(ListInt netHandle)
 	} while (dataPacket_.size() > 0);
 
 	headerdata.mesdata_ = { MesType::STANBY_HOST,0,0,0 };
+	dataPacket_.emplace_back(headerdata.data_[0]);
+	dataPacket_.emplace_back(headerdata.data_[1]);
 	for (auto& NETHANDLE : netHandle)
 	{
 		if (NetWorkSend(NETHANDLE.first, dataPacket_.data(), dataPacket_.size() * sizeof(int)))
@@ -317,7 +322,8 @@ bool NetWorkState::ReservMessageData()
 			//横サイズ,縦サイズ,レイヤー数
 			unionData uniondata{ 0,0,0,0 };
 			uniondata.idata = revData;
-			std::cout << "横サイズ"  << static_cast<int>(uniondata.cdata[0]) <<  "  縦サイズ:" << static_cast<int>(uniondata.cdata[1]) << std::endl;
+			std::cout << "横サイズ"  << static_cast<int>(uniondata.cdata[0]) <<
+				"  縦サイズ:" << static_cast<int>(uniondata.cdata[1]) << std::endl;
 			std::cout << "レイヤー数" << static_cast<int>(uniondata.cdata[2])<<std::endl;
 
 			tmxFile_->nextlayerid_ = uniondata.cdata[2];

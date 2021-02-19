@@ -233,7 +233,7 @@ void LoginScene::StartInit(UniqueBase& scene)
 	{
 		if (IpNetWorkState->GetisSetSendStart())
 		{
-			std::cout << "--------GetisSetSendStart---------" << std::endl;
+			//std::cout << "--------GetisSetSendStart---------" << std::endl;
 			if (IpNetWorkState->GetStartTime() <= now)
 			{
 				std::cout << "--------CreateThreadMpdt---------" << std::endl;

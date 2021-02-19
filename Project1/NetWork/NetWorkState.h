@@ -105,7 +105,7 @@ public:
 	virtual bool SendUpdate(std::pair<int, unsigned int>);
 	virtual void CreateThreadMpdt(NetWorkMode mode);
 	ActiveState ConnectHost(IPDATA hostIP);
-	bool SendMessageData(int netHandle);
+	bool SendMessageData(ListInt netHandle);
 	bool ReservMessageData();
 	void ClearDataPacket();
 	void ClearRevPacket();

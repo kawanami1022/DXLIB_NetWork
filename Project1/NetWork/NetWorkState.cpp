@@ -220,10 +220,7 @@ bool NetWorkState::SendMessageData(ListInt netHandle)
 		mapdata = 0;
 		for (unsigned int i = 0; i < 8; i++)
 		{
-			//std::cout << std::hex << mapdata << ":" << std::endl;
-
-
-			mapdata |= mapId.front()<<4;
+			mapdata |= mapId.front()<<4*i;
 			mapId.erase(mapId.begin());
 			//if (i != (8 - 1))mapdata <<= 4;
 			if (!(mapId.size() > 0))

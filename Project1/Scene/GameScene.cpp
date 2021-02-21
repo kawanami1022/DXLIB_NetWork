@@ -123,12 +123,7 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
-
-	for (auto CHAR : character_)
-	{
-		CHAR->Update(map_);
-	}
-
+	ComUpdate();
 }
 
 void GameScene::UpdateGuest()
@@ -174,9 +169,6 @@ void GameScene::ComUpdate()
 				player->SetState(CharState::Death);
 			}
 
-#ifdef DEBUG
-			
-#endif // DEBUG
 		}
 	};
 
@@ -450,6 +442,13 @@ void GameScene::Network()
 			{
 				IpNetWorkState->SendUpdate(IpNetWorkState->GetNetWorkHandle().front());
 			}
+		}
+	}
+	else if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
+	{
+		if (IpNetWorkState->GetSendPacket().size() > 0)
+		{
+			IpNetWorkState->SendUpdate(IpNetWorkState->GetNetWorkHandle().front());
 		}
 	}
 }

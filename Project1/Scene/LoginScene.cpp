@@ -317,8 +317,11 @@ void LoginScene::NetWork()
 		{
 			for (auto DATA : data)
 			{
+#ifdef DEBUG
 				std::cout << DATA << std::endl;
 				log << DATA << "\n";
+#endif // DEBUG
+
 			}
 		}
 	}

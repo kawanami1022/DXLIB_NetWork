@@ -155,8 +155,12 @@ void Character::Draw()
 	if (charState_ == CharState::Alive)
 	{
 		DrawExtendGraph(pos_.x, pos_.y - 21, pos_.x + CHAR_WIDTH, pos_.y + CHAR_HEIGHT - 21, HandleData_[animcnt_ / 20 % 4][static_cast<int>(moveDir_)], true);
+		DrawFormatString(pos_.x, pos_.y, 0xffffff, "%d", playerID_);
 	}
-	DrawBox(pos_.x, pos_.y, pos_.x + 32, pos_.y + 32, 0x00ff00,false);
+	if (playerID_ == IpNetWorkState->GetPlID())
+	{
+		DrawBox(pos_.x, pos_.y, pos_.x + 32, pos_.y + 32, 0x00ff00,false);
+	}
 }
 
 void Character::AutoMove(std::weak_ptr<Map>&&  map)

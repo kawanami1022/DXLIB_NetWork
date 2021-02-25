@@ -17,7 +17,7 @@
 UniqueBase GameScene::input(UniqueBase nowScene)
 {
 	auto playerID = IpNetWorkState->GetPlID();
-
+	auto mode_ = IpNetWorkState->GetNetWorkMode();
 	// ”š’eÝ’u
 	Header header{ MesType::NON };
 	for (auto& CHARACTER : character_)
@@ -25,7 +25,7 @@ UniqueBase GameScene::input(UniqueBase nowScene)
 		if (CHARACTER->GetSetBb())
 		{
 			bomb_.emplace_back(std::make_unique<Bomb>(CHARACTER->GetPos()));
-			if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST)
+			if (mode_ != NetWorkMode::OFFLINE)
 			{
 				IpNetWorkState->ClearSendPacket();
 				header.mesdata_ = { MesType::SET_BOM ,0,0,7 };
@@ -366,7 +366,7 @@ void GameScene::Network()
 					{
 						if (CHARACTER_->GetPlID() == id)
 						{
-							
+							if (data.size() < 3)break;
 							CHARACTER_->SetPos(Position2(data[0], data[1]));
 							CHARACTER_->SetDir(static_cast<MoveDir>(data[2]));
 							data.erase(data.begin(), data.begin() + 3);
@@ -440,15 +440,31 @@ void GameScene::Network()
 			}
 			if (IpNetWorkState->GetSendPacket().size() > 0)
 			{
+				// Guest
+				IpNetWorkState->RevUpdate();
+				auto data = IpNetWorkState->GetRevPacket();
 				IpNetWorkState->SendUpdate(IpNetWorkState->GetNetWorkHandle().front());
 			}
 		}
 	}
 	else if (IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
 	{
-		if (IpNetWorkState->GetSendPacket().size() > 0)
+		while (isInstance_)
 		{
-			IpNetWorkState->SendUpdate(IpNetWorkState->GetNetWorkHandle().front());
+			// Guest
+			IpNetWorkState->RevUpdate();
+			auto data = IpNetWorkState->GetRevPacket();
+			// player‚ª1”C‚É‚È‚Á‚½‚çresult ‚ð‘—‚é
+			if (character_.size()<=1)
+			{
+				headerdata.mesdata_ = { MesType::RESULT,0,0 ,5 };
+
+			}
+			for (auto networkList : IpNetWorkState->GetNetWorkHandle())
+			{
+
+				IpNetWorkState->SendUpdate(networkList);
+			}
 		}
 	}
 }
@@ -497,7 +513,10 @@ bool GameScene::Init()
 	IpNetWorkState->ClearRevPacket();
 	IpNetWorkState->ClearSendPacket();
 	//std::cout << "-------------ClearPacket---------------" << std::endl;
-	auto playerMax= (IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST) ? IpNetWorkState->GetPIMax():5;
+	auto playerMax= 
+		(IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST||
+		IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST) 
+		? IpNetWorkState->GetPIMax():5;
 	auto tmpCharCnt = 0;
 	for (unsigned int y = 0; y < map_->GetMapSize().y; y++)
 	{

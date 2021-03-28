@@ -3,7 +3,7 @@
 
 BaseScene::BaseScene()
 {
-	screenSrcID_ = MakeScreen(800, 600,true);
+	screenSrcID_ = MakeScreen(800, 600, true);
 }
 
 BaseScene::~BaseScene()
@@ -19,5 +19,3 @@ void BaseScene::DrawOwnScreen()
 {
 	DrawGraph(0, 0, screenSrcID_, true);
 }
-
-

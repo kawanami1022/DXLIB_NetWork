@@ -36,7 +36,7 @@ UniqueBase ResultScene::UpDate(UniqueBase nowScene)
 void ResultScene::Draw()
 {
 	auto idx = 0;
-	auto result=IpNetWorkState->GetResult();
+	auto result = IpNetWorkState->GetResult();
 	for (auto RESULT : result)
 	{
 		DrawFormatString(0, idx * 16, 0xffffff, "ID:%d", RESULT);

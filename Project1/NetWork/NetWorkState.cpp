@@ -53,6 +53,7 @@ bool NetWorkState::Update()
 bool NetWorkState::RevUpdate()
 {
 	revPacket_.clear();
+	revPacket_.shrink_to_fit();
 	if (GetLostNetWork() != -1)
 	{
 		std::cout << "Ú‘±‚ªØ‚ê‚Ä‚Ü‚·!" << std::endl;

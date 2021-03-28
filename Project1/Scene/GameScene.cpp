@@ -12,6 +12,7 @@
 #include "ResultScene.h"
 #include "CrossOver.h"
 #include "GameScene.h"
+#include "OrgTrgScene.h"
 #define		PairIsPos	std::make_pair<bool,Position2>
 
 UniqueBase GameScene::input(UniqueBase nowScene)
@@ -39,18 +40,16 @@ UniqueBase GameScene::input(UniqueBase nowScene)
 				header.start_ = bomb_.back()->GetSetTime();
 				IpNetWorkState->SetSendPacket(header.data_[0]);
 				IpNetWorkState->SetSendPacket(header.data_[1]);
-				std::cout <<"bombのselfID:"<< CHARACTER->GetPlID() + bomb_.size() << std::endl;
+				std::cout << "bombのselfID:" << CHARACTER->GetPlID() + bomb_.size() << std::endl;
 			}
 		}
 	}
 	return nowScene;
-
 }
 
 UniqueBase GameScene::UpDate(UniqueBase nowScene)
 {
 	auto InitStartTime = [&]() {
-
 		std::ifstream start_time("Login.txt");
 		std::vector<int> timeList;
 		std::string line;
@@ -84,8 +83,13 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 		std::chrono::system_clock clock;
 		std::cout << "開始時間:" << std::chrono::duration_cast<std::chrono::milliseconds>(headerdata.start_.time_since_epoch()).count() << std::endl;
 		std::cout << "現在時間:" << std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count() << std::endl;
-		
 	};
+
+	if (character_.size() <= 1)
+	{
+		auto nextScene = std::make_unique<ResultScene>();
+		nowScene = std::make_unique<OrgTrgScene>(std::move(nowScene), std::move(nextScene));
+	}
 
 	std::call_once(once, InitStartTime);
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
@@ -111,7 +115,7 @@ void GameScene::Draw()
 	{
 		CHARACTER->Draw();
 	}
-	for (auto &BOMB : bomb_)
+	for (auto& BOMB : bomb_)
 	{
 		BOMB->Draw();
 	}
@@ -146,7 +150,6 @@ void GameScene::ComUpdate()
 			{
 				if (FIRE->GetPos() == bomb->GetPos())
 				{
-
 					return false;
 				}
 			}
@@ -157,21 +160,19 @@ void GameScene::ComUpdate()
 
 	auto IsHitFire = [&](Character* player)
 	{
-			auto plPos = player->GetPos();
-			plPos /=TileSize;
+		auto plPos = player->GetPos();
+		plPos /= TileSize;
 		for (auto& FIRE : fire_)
 		{
-			auto firePos=FIRE->GetPos();
+			auto firePos = FIRE->GetPos();
 
 			firePos /= TileSize;
 			if (plPos == firePos)
 			{
 				player->SetState(CharState::Death);
 			}
-
 		}
 	};
-
 
 	for (auto CHAR : character_)
 	{
@@ -186,7 +187,6 @@ void GameScene::ComUpdate()
 		{
 			SetFire(BOMB->GetPos(), 0, Dir::Center_);
 		}
-
 	}
 	// 生成用のmap
 	std::unordered_map<Dir, std::pair<bool, Position2>>	generateFire =
@@ -198,7 +198,6 @@ void GameScene::ComUpdate()
 
 	for (auto& FIRE : fire_)
 	{
-
 		FIRE->Update();
 		auto TilePos = FIRE->GetPos() / TileSize;
 		auto firePosId = map_->GetGridID(TilePos, "map");
@@ -208,7 +207,6 @@ void GameScene::ComUpdate()
 			{
 				if (FIRE->GetGenerate() == false && FIRE->GetDir() == Dir::Center_)
 				{
-
 					auto checkPos = Position2(TilePos.x, TilePos.y - 1);
 					SetFire(checkPos * TileSize, 1, Dir::Up);
 
@@ -235,9 +233,7 @@ void GameScene::ComUpdate()
 				}
 			}
 		}
-
 	}
-
 
 	// 2つめの炎を生成
 	for (int i = 0; i < fire_.size(); i++)
@@ -251,7 +247,6 @@ void GameScene::ComUpdate()
 				// 炎精製用フラグの方向と炎の方向
 				if (!fire_[i]->GetGenerate())
 				{
-
 					if (GENFIRE.first == fire_[i]->GetDir() && GENFIRE.second.first == true)
 					{
 						//炎生成用座標
@@ -274,7 +269,6 @@ void GameScene::ComUpdate()
 							GenPos.x--;
 						};
 
-
 						SetFire(GenPos * TileSize, 2, GENFIRE.first);
 						fire_[i]->SetIsGenerate(true);
 						FirePos /= TileSize;
@@ -292,34 +286,34 @@ void GameScene::ComUpdate()
 
 	auto chara = std::remove_if(character_.begin(), character_.end(),
 		[&](std::shared_ptr<Character>& chara) {
-		bool isRemove = (chara->GetCharaState() == CharState::Death);
+			bool isRemove = (chara->GetCharaState() == CharState::Death);
 
-		auto mode = IpNetWorkState->GetNetWorkMode();
-		if (mode ==NetWorkMode::GUEST)
-		{
-			if (isRemove)
+			auto mode = IpNetWorkState->GetNetWorkMode();
+			if (mode == NetWorkMode::GUEST)
 			{
-				if (IpNetWorkState->GetPlID() == chara->GetPlID())
+				if (isRemove)
 				{
-
-					Header header{ MesType::DETH ,0,0,1 };
-				//{MesType ヘッダー,自分のID}
-				std::vector<int> data = { header.data_[0],header.data_[1],chara->GetPlID() };
-				for (auto DATA : data)
-				{IpNetWorkState->SetSendPacket(DATA);}
+					if (IpNetWorkState->GetPlID() == chara->GetPlID())
+					{
+						Header header{ MesType::DETH ,0,0,1 };
+						//{MesType ヘッダー,自分のID}
+						std::vector<int> data = { header.data_[0],header.data_[1],chara->GetPlID() };
+						for (auto DATA : data)
+						{
+							IpNetWorkState->SetSendPacket(DATA);
+						}
+					}
 				}
 			}
-		}
 
-		return (chara->GetCharaState() == CharState::Death);
+			return (chara->GetCharaState() == CharState::Death);
 		});
 	character_.erase(chara, character_.end());
 	character_.shrink_to_fit();
 
 	auto bomb = std::remove_if(bomb_.begin(), bomb_.end(),
 		[&](std::unique_ptr<Bomb>& bomb) {
-
-		return (bomb->GetBombState() == BOMB_STATE::DETH);
+			return (bomb->GetBombState() == BOMB_STATE::DETH);
 		});
 	bomb_.erase(bomb, bomb_.end());
 	bomb_.shrink_to_fit();
@@ -334,8 +328,6 @@ void GameScene::ComUpdate()
 		});
 	fire_.erase(fire, fire_.end());
 	fire_.shrink_to_fit();
-
-
 }
 
 void GameScene::Network()
@@ -359,7 +351,6 @@ void GameScene::Network()
 				data.erase(data.begin());
 				if (headerdata.mesdata_.type == MesType::POS)
 				{
-					
 					auto id = data.front();
 					data.erase(data.begin());
 					for (auto& CHARACTER_ : character_)
@@ -390,37 +381,36 @@ void GameScene::Network()
 				}
 				if (headerdata.mesdata_.type == MesType::SET_BOM)
 				{
-					if (data.size() >=7)
+					if (data.size() >= 7)
 					{
-
-					bomb_.emplace_back(std::make_unique<Bomb>(Position2(data[2], data[3])));
-					// long long型 爆弾設置時間
-					Header start = { MesType::SET_BOM };
-					start.data_[0] = data[5];
-					start.data_[1] = data[6];
-					bomb_.back()->SetSetTime(start.start_);
-					// 爆発時間
-					bomb_.back()->SetExTime(data[4]);
+						bomb_.emplace_back(std::make_unique<Bomb>(Position2(data[2], data[3])));
+						// long long型 爆弾設置時間
+						Header start = { MesType::SET_BOM };
+						start.data_[0] = data[5];
+						start.data_[1] = data[6];
+						bomb_.back()->SetSetTime(start.start_);
+						// 爆発時間
+						bomb_.back()->SetExTime(data[4]);
 #ifdef DEBUG
-					std::ofstream bomb("Bomb.txt", std::ios::out|std::ios::end);
-					bomb.seekp(std::ios::end);
-					bomb << std::endl;
-					bomb << data[0] << std::endl;
-					bomb << data[1] << std::endl;
-					bomb << data[2] << std::endl;
-					bomb << data[3] << std::endl;
-					bomb << data[4] << std::endl;
-					bomb << data[5] << std::endl;
-					bomb << data[6] << std::endl;
-					std::cout << data[0] << std::endl;
-					std::cout << data[1] << std::endl;
-					std::cout << data[2] << std::endl;
-					std::cout << data[3] << std::endl;
-					std::cout << data[4] << std::endl;
-					std::cout << data[5] << std::endl;
-					std::cout << data[6] << std::endl;
+						std::ofstream bomb("Bomb.txt", std::ios::out | std::ios::end);
+						bomb.seekp(std::ios::end);
+						bomb << std::endl;
+						bomb << data[0] << std::endl;
+						bomb << data[1] << std::endl;
+						bomb << data[2] << std::endl;
+						bomb << data[3] << std::endl;
+						bomb << data[4] << std::endl;
+						bomb << data[5] << std::endl;
+						bomb << data[6] << std::endl;
+						std::cout << data[0] << std::endl;
+						std::cout << data[1] << std::endl;
+						std::cout << data[2] << std::endl;
+						std::cout << data[3] << std::endl;
+						std::cout << data[4] << std::endl;
+						std::cout << data[5] << std::endl;
+						std::cout << data[6] << std::endl;
 #endif // DEBUG
-					data.erase(data.begin(), data.begin() + headerdata.data_[1]);
+						data.erase(data.begin(), data.begin() + headerdata.data_[1]);
 					}
 				}
 
@@ -434,9 +424,8 @@ void GameScene::Network()
 						IpNetWorkState->SetResult(data[3]);
 						IpNetWorkState->SetResult(data[4]);
 					}
-						changeScene_ = true;
+					changeScene_ = true;
 				}
-
 			}
 			if (IpNetWorkState->GetSendPacket().size() > 0)
 			{
@@ -451,24 +440,73 @@ void GameScene::Network()
 	{
 		while (isInstance_)
 		{
+			std::vector<int> datalist;
 			// Guest
-			IpNetWorkState->RevUpdate();
-			auto data = IpNetWorkState->GetRevPacket();
+			auto pairNetHandle = IpNetWorkState->GetNetWorkHandle();
+			for (auto pairNetHandle : IpNetWorkState->GetNetWorkHandle())
+			{
+				auto length = GetNetWorkDataLength(pairNetHandle.first);
+
+				while (length > 0)
+				{
+					length = GetNetWorkDataLength(pairNetHandle.first);
+					int data = 0;
+					NetWorkRecv(pairNetHandle.first, &data, sizeof(int));
+					datalist.emplace_back(data);
+				}
+			}
+			while (datalist.size() > 2)
+			{
+				headerdata.data_[0] = datalist[0];
+				headerdata.data_[1] = datalist[1];
+				datalist.erase(datalist.begin());
+				datalist.erase(datalist.begin());
+				if (headerdata.mesdata_.type == MesType::POS)
+				{
+					auto id = datalist.front();
+					datalist.erase(datalist.begin());
+					for (auto& CHARACTER_ : character_)
+					{
+						if (CHARACTER_->GetPlID() == id)
+						{
+							if (datalist.size() < 3)break;
+							CHARACTER_->SetPos(Position2(datalist[0], datalist[1]));
+							CHARACTER_->SetDir(static_cast<MoveDir>(datalist[2]));
+							datalist.erase(datalist.begin(), datalist.begin() + 3);
+							break;
+						}
+					}
+				}
+				if (headerdata.mesdata_.type == MesType::SET_BOM)
+				{
+					if (datalist.size() >= 7)
+					{
+						bomb_.emplace_back(std::make_unique<Bomb>(Position2(datalist[2], datalist[3])));
+						// long long型 爆弾設置時間
+						Header start = { MesType::SET_BOM };
+						start.data_[0] = datalist[5];
+						start.data_[1] = datalist[6];
+						bomb_.back()->SetSetTime(start.start_);
+						// 爆発時間
+						bomb_.back()->SetExTime(datalist[4]);
+						datalist.erase(datalist.begin(), datalist.begin() + headerdata.data_[1]);
+					}
+				}
+			}
+
 			// playerが1任になったらresult を送る
-			if (character_.size()<=1)
+			if (character_.size() <= 1)
 			{
 				headerdata.mesdata_ = { MesType::RESULT,0,0 ,5 };
-
 			}
+
 			for (auto networkList : IpNetWorkState->GetNetWorkHandle())
 			{
-
 				IpNetWorkState->SendUpdate(networkList);
 			}
 		}
 	}
 }
-
 
 bool GameScene::SetBomb(int ownerID, int selfID, Vector2 pos, bool sendNet)
 {
@@ -490,7 +528,7 @@ bool GameScene::SetFire(Position2 pos, int dst, Dir dir)
 	return true;
 }
 
-GameScene::GameScene():changeScene_(false)
+GameScene::GameScene() :changeScene_(false)
 {
 	//std::cout << "-------------GameScene---------------" << std::endl;
 	Init();
@@ -504,8 +542,8 @@ GameScene::~GameScene()
 bool GameScene::Init()
 {
 	//std::cout << "-------------初期化開始---------------" << std::endl;
-	map_=std::make_shared<Map>();
-	updateNetWorkModeFunc_ = 
+	map_ = std::make_shared<Map>();
+	updateNetWorkModeFunc_ =
 	{ { NetWorkMode::OFFLINE,std::bind(&GameScene::UpdateOFFLINE,this) },
 	{ NetWorkMode::HOST,std::bind(&GameScene::UpdateHost,this) },
 	{ NetWorkMode::GUEST,std::bind(&GameScene::UpdateGuest,this) } };
@@ -513,20 +551,20 @@ bool GameScene::Init()
 	IpNetWorkState->ClearRevPacket();
 	IpNetWorkState->ClearSendPacket();
 	//std::cout << "-------------ClearPacket---------------" << std::endl;
-	auto playerMax= 
-		(IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST||
-		IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST) 
-		? IpNetWorkState->GetPIMax():5;
+	auto playerMax =
+		(IpNetWorkState->GetNetWorkMode() == NetWorkMode::GUEST ||
+			IpNetWorkState->GetNetWorkMode() == NetWorkMode::HOST)
+		? IpNetWorkState->GetPIMax() : 5;
 	auto tmpCharCnt = 0;
 	for (unsigned int y = 0; y < map_->GetMapSize().y; y++)
 	{
-		if (tmpCharCnt >= playerMax){break;}
+		if (tmpCharCnt >= playerMax) { break; }
 		for (unsigned int x = 0; x < map_->GetMapSize().x; x++)
 		{
-			if (tmpCharCnt >= playerMax){break;}
+			if (tmpCharCnt >= playerMax) { break; }
 
 			Position2 TilePos = Position2(x, y);
-			if (map_->GetGridID(TilePos, "character")==4)
+			if (map_->GetGridID(TilePos, "character") == 4)
 			{
 				try
 				{
@@ -540,7 +578,6 @@ bool GameScene::Init()
 				}
 			}
 		}
-
 	}
 
 	std::thread netWorkThread(&GameScene::Network, this);

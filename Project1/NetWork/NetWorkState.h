@@ -5,10 +5,12 @@
 #include <thread>
 #include <utility>
 #include <chrono>
+#include <vector>
 #include <DxLib.h>
 #include "../input/controller.h"
 #include "../input/Pad.h"
 #include "../input/keyInput.h"
+
 
 constexpr	auto MTU = 1454;
 constexpr auto MESHEADER_INT = 3;
@@ -19,6 +21,7 @@ namespace File {
 }
 
 class Timer;
+class Character;
 enum class ActiveState;
 struct MesHeader;
 union unionData;
@@ -31,6 +34,7 @@ using MesPacket = std::vector<int>;
 using RevPacket = std::pair<MesType, std::vector<int>>;
 using MesPacketList = std::vector<int>;
 using ListInt = std::list<std::pair<int, unsigned int>>;		//int ネットハンドル:unsigned int :プレーヤーID
+using CharacterList = std::vector<std::shared_ptr<Character>>;
 
 enum class MesType :char
 {
@@ -164,17 +168,9 @@ public:
 		revPacket_.emplace_back(data);
 	}
 	
-	void SetResult(int id)
-	{
-		for (auto& RESULT : result_)
-		{
-			if (RESULT == -1)
-			{
-				RESULT = id;
-				break;
-			}
-		}
-	}
+	void SetResult(int id, CharacterList players);
+	void SetResult(int id);
+
 
 	std::array<int, 5> GetResult()
 	{

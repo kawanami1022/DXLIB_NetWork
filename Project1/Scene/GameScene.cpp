@@ -85,12 +85,6 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 		std::cout << "Œ»İŠÔ:" << std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count() << std::endl;
 	};
 
-	if (character_.size() <= 1)
-	{
-		auto nextScene = std::make_unique<ResultScene>();
-		nowScene = std::make_unique<OrgTrgScene>(std::move(nowScene), std::move(nextScene));
-	}
-
 	std::call_once(once, InitStartTime);
 	auto netWorkMode = IpNetWork->GetNetWorkMode();
 	// ƒV[ƒ“‘@ˆÛ
@@ -170,6 +164,7 @@ void GameScene::ComUpdate()
 			if (plPos == firePos)
 			{
 				player->SetState(CharState::Death);
+				IpNetWorkState->SetResult(player->GetPlID(), character_);
 			}
 		}
 	};
@@ -277,6 +272,25 @@ void GameScene::ComUpdate()
 			}
 		}
 	}
+#ifdef DEBUG
+
+
+	// player‚ª1”C‚É‚È‚Á‚½‚çresult ‚ğ‘—‚é
+	if (character_.size() <= 1)
+	{
+		Header headerdata;
+		std::vector<int> data;
+		headerdata.mesdata_ = { MesType::RESULT,0,0 ,5 };
+		data = { headerdata.data_[0],
+			headerdata.data_[1],-1,-1,-1,-1,-1 };
+		for (auto handle : IpNetWorkState->GetNetWorkHandle())
+		{
+			NetWorkSend(handle.first, data.data(), data.size() * sizeof(int));
+		}
+		changeScene_ = true;
+	}
+#endif // DEBUG
+
 	// íœ‚·‚éˆ—
 
 	for (auto& CHARACTER : character_)
@@ -494,11 +508,6 @@ void GameScene::Network()
 				}
 			}
 
-			// player‚ª1”C‚É‚È‚Á‚½‚çresult ‚ğ‘—‚é
-			if (character_.size() <= 1)
-			{
-				headerdata.mesdata_ = { MesType::RESULT,0,0 ,5 };
-			}
 
 			for (auto networkList : IpNetWorkState->GetNetWorkHandle())
 			{

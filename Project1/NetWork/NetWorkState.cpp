@@ -111,6 +111,23 @@ ActiveState NetWorkState::GetActive(void)
 	return active_;
 }
 
+void NetWorkState::SetResult(int id, CharacterList players)
+{
+		result_[players.size() - 1] = id;
+}
+
+void NetWorkState::SetResult(int id)
+{
+	for (auto& RESULT : result_)
+	{
+		if (RESULT == -1)
+		{
+			RESULT = id;
+			break;
+		}
+	}
+}
+
 void NetWorkState::UpdateFuncNon()
 {
 }
@@ -230,7 +247,7 @@ bool NetWorkState::SendMessageData(ListInt netHandle)
 			}
 
 		}
-		std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
+		//std::cout << "送信用データ:" << std::hex << mapdata << std::endl;
 		dataPacket_.push_back(mapdata);
 	}
 
@@ -332,7 +349,8 @@ bool NetWorkState::ReservMessageData()
 				TILED_MAP.second.titleData_.resize(uniondata.cdata[0] * uniondata.cdata[1]);
 				for (unsigned int idx = 0; idx < TILED_MAP.second.width_; idx++)
 				{
-					TILED_MAP.second.titleID_.emplace_back(&TILED_MAP.second.titleData_[idx * TILED_MAP.second.height_]);
+					TILED_MAP.second.titleID_.emplace_back(
+						&TILED_MAP.second.titleData_[idx * TILED_MAP.second.height_]);
 				}
 			}
 		}
@@ -350,7 +368,7 @@ bool NetWorkState::ReservMessageData()
 			for(unsigned int idx= pdSize;idx<tmpPacketData.size();idx++)
 			{
 				NetWorkRecv(netHandle.front().first, &tmpPacketData[idx], sizeof(int));
-				std::cout << std::hex << tmpPacketData[idx] << std::endl;
+				//std::cout << std::hex << tmpPacketData[idx] << std::endl;
 			}
 		}
 
@@ -358,10 +376,12 @@ bool NetWorkState::ReservMessageData()
 		{
 			std::cout << "-------------STANBY_HOST-------------" << std::endl;
 			int id;
+#ifdef DEBUG
 			for (auto TILED_MAP : tmpPacketData)
 			{
 				std::cout << std::hex << TILED_MAP << std::endl;
 			}
+#endif // DEBUG
 			id = 0;
 			for (auto TILED_MAP : tmpPacketData)
 			{

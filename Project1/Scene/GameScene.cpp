@@ -64,6 +64,9 @@ UniqueBase GameScene::UpDate(UniqueBase nowScene)
 			std::cout << line << std::endl;
 		}
 
+
+
+
 		int idx = 0;
 		while (idx < timeList.size())
 		{
@@ -121,7 +124,21 @@ void GameScene::Draw()
 
 void GameScene::UpdateHost()
 {
+
 	ComUpdate();
+	// player‚ª1”C‚É‚È‚Á‚½‚çresult ‚ğ‘—‚é
+	if (character_.size() <= 1)
+	{
+		Header headerdata = { MesType::RESULT,0,0 ,5 };
+		std::vector<int> data;
+		data = { headerdata.data_[0],
+			headerdata.data_[1]};
+		for (auto handle : IpNetWorkState->GetNetWorkHandle())
+		{
+			NetWorkSend(handle.first, data.data(), data.size() * sizeof(int));
+		}
+		changeScene_ = true;
+	}
 }
 
 void GameScene::UpdateGuest()
@@ -272,24 +289,7 @@ void GameScene::ComUpdate()
 			}
 		}
 	}
-#ifdef DEBUG
 
-
-	// player‚ª1”C‚É‚È‚Á‚½‚çresult ‚ğ‘—‚é
-	if (character_.size() <= 1)
-	{
-		Header headerdata;
-		std::vector<int> data;
-		headerdata.mesdata_ = { MesType::RESULT,0,0 ,5 };
-		data = { headerdata.data_[0],
-			headerdata.data_[1],-1,-1,-1,-1,-1 };
-		for (auto handle : IpNetWorkState->GetNetWorkHandle())
-		{
-			NetWorkSend(handle.first, data.data(), data.size() * sizeof(int));
-		}
-		changeScene_ = true;
-	}
-#endif // DEBUG
 
 	// íœ‚·‚éˆ—
 
